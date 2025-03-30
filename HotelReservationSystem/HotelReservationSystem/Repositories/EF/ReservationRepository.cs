@@ -14,29 +14,33 @@ namespace HotelReservationSystem.Repositories.EF
             _context = context;
         }
 
-        public void Add(Reservation reservation)
+        public async Task Add(Reservation reservation)
         {
             _context.Reservations.Add(reservation);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public async IEnumerable<Reservation> GetAll()      
-           => _context.Reservations
+        public async Task<IEnumerable<Reservation>> GetAll()
+        {
+            return await _context.Reservations
                 .Include(r => r.Room)
                 .Include(g => g.Guest)
-                .ToList();
-        
+                .ToListAsync();
+        }
 
-        public async Reservation GetById(int id)
-            => _context.Reservations
+        public async Task<Reservation> GetById(int id)
+        {
+            return await _context.Reservations
                 .Include(r => r.Room)
                 .Include(g => g.Guest)
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id)
+                ?? throw new InvalidOperationException("Reservation not found");
+        }
 
-        public void Update(Reservation reservation)
+        public async Task Update(Reservation reservation)
         {
             _context.Reservations.Update(reservation);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

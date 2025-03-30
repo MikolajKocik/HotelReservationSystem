@@ -6,7 +6,7 @@ namespace HotelReservationSystem.Repositories.Interfaces
     {
         Task Add(Reservation reservation);
         Task<Reservation> GetById(int id);
-        IEnumerable<Reservation> GetAll();
+        Task<IEnumerable<Reservation>> GetAll();
         Task Update(Reservation reservation);
     }
 }

@@ -1,0 +1,27 @@
+﻿@using HotelReservationSystem.Models.ViewModels
+@model ReservationViewModel
+
+<form asp-action="Create" method="post">
+    <label>Data przyjazdu:</label>
+    <input asp-for="ArrivalDate" type="date" />
+
+    <label>Data wyjazdu:</label>
+    <input asp-for="DepartureDate" type="date" />
+
+    <label>Imię:</label>
+    <input asp-for="GuestFirstName" />
+
+    <label>Nazwisko:</label>
+    <input asp-for="GuestLastName" />
+
+    <label>Email:</label>
+    <input asp-for="GuestEmail" />
+
+    <label>Telefon:</label>
+    <input asp-for="GuestPhoneNumber" />
+
+    <label>Pokój:</label>
+    <select asp-for="RoomId" asp-items="ViewBag.Rooms"></select>
+
+    <button type="submit">Rezerwuj</button>
+</form>

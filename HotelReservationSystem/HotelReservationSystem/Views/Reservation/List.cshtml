@@ -1,0 +1,28 @@
+﻿@using HotelReservationSystem.Models.Domain
+@model IEnumerable<Reservation>
+
+<table>
+    <thead>
+        <tr>
+            <th>Pokój</th>
+            <th>Data przyjazdu</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Room.Number</td>
+                <td>@r.ArrivalDate.ToShortDateString()</td>
+                <td>@r.Status</td>
+                <td>
+                    <form asp-action="Confirm" asp-route-id="@r.Id" method="post">
+                        <button>Potwierdź</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
