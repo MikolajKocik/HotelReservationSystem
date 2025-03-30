@@ -6,7 +6,8 @@
         public DateTime ArrivalDate { get; set; }
         public DateTime DepartureDate { get; set; }
         public string Status { get; set; } = default!;
-       
+        public string Reason { get; set; } = default!;
+
         public int RoomId { get; set; }
         public Room Room { get; set; } = default!;
 
