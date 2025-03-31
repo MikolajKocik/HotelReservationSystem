@@ -12,19 +12,5 @@ namespace HotelReservationSystem.Services
         {
             _guestRepository = guestRepo;
         }
-
-        public async Task UpdateGuestAsync(int guestId, Guest updated)
-        {
-            var guest = await _guestRepository.GetByIdAsync(guestId);
-            guest.FirstName = updated.FirstName;
-            guest.PhoneNumber = updated.PhoneNumber;
-            await _guestRepository.UpdateAsync(guest);
-        }
-
-        public async Task<Guest> GetGuestByIdAsync(int id)
-        {
-            return await _guestRepository.GetByIdAsync(id);
-        }
     }
-
 }

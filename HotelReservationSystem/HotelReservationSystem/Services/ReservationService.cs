@@ -32,6 +32,15 @@ namespace HotelReservationSystem.Services
 
         public async Task<int> CreateReservation(ReservationViewModel model)
         {
+            var room = await _roomRepository.GetByIdAsync(model.RoomId);
+
+            if (room == null || !room.IsAvailable)
+            {
+                throw new InvalidOperationException("Wybrany pokój jest niedostępny.");
+            }
+
+            room.IsAvailable = false;
+
             var reservation = new Reservation
             {
                 ArrivalDate = model.ArrivalDate,
@@ -48,6 +57,7 @@ namespace HotelReservationSystem.Services
                 }
             };
             await _reservationRepository.Add(reservation);
+            await _roomRepository.UpdateAsync(room);
             return reservation.Id;
         }     
     }

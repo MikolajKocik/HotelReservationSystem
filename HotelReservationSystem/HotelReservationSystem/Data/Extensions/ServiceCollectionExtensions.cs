@@ -41,6 +41,7 @@ namespace HotelReservationSystem.Data.Extensions
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IGuestRepository, GuestRepository>();
 
         }
     }

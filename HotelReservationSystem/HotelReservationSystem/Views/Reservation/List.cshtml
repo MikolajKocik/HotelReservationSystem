@@ -33,13 +33,59 @@
                         <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
                             <button class="btn btn-success btn-sm">Potwierdź</button>
                         </form>
-                        <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
-                            <input type="hidden" name="reason" value="recepcjonista" />
-                            <button class="btn btn-danger btn-sm">Anuluj</button>
-                        </form>
                     }
+                    <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
+                        <input type="hidden" name="reason" value="recepcjonista" />
+                        <button class="btn btn-danger btn-sm">Anuluj</button>
+                    </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
+{
+    <h3 class="mt-5">Dostępność pokoi</h3>
+
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Numer pokoju</th>
+                <th>Typ</th>
+                <th>Cena</th>
+                <th>Dostępny</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in ViewBag.Rooms as List<Room>)
+            {
+                <tr>
+                    <td>@room.Number</td>
+                    <td>@room.Type</td>
+                    <td>@room.PricePerNight zł</td>
+                    <td>
+                        @if (room.IsAvailable)
+                        {
+                            <span class="text-success">Tak</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">Nie</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="ToggleRoomAvailability" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@room.Id" />
+                            <button class="btn btn-outline-secondary btn-sm">
+                                Zmień
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

@@ -29,17 +29,17 @@
                             <a class="nav-link text-dark" asp-controller="Reservation" asp-action="List">Moje rezerwacje</a>
                         </li>
 
-                        @if (User.IsInRole("Recepcjonista"))
+                        @if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Reservation" asp-action="All">Panel recepcjonisty</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="All">Panel recepcjonisty</a>
+                        </li>
                         }
 
                         @if (User.IsInRole("Kierownik"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Report" asp-action="Index">Raporty</a>
+                                <a class="nav-link text-dark" asp-controller="Reports" asp-action="Reports">Raporty</a>
                             </li>
                         }
 

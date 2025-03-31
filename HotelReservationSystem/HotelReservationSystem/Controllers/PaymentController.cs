@@ -1,5 +1,6 @@
 ﻿using HotelReservationSystem.Repositories.Interfaces;
 using HotelReservationSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Controllers
@@ -9,17 +10,21 @@ namespace HotelReservationSystem.Controllers
         private readonly IStripeService _stripeService;
         private readonly IConfiguration _configuration;
         private readonly IReservationRepository _reservationRepository;
+        private readonly IGuestRepository _guestRepository;
 
         public PaymentController(
             IStripeService stripeService,
             IConfiguration configuration,
-            IReservationRepository reservationRepository)
+            IReservationRepository reservationRepository,
+            IGuestRepository guestRepository)
         {
             _stripeService = stripeService;
             _configuration = configuration;
             _reservationRepository = reservationRepository;
+            _guestRepository = guestRepository;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Pay(int reservationId)
         {
             var reservation = await _reservationRepository.GetById(reservationId);
@@ -46,5 +51,15 @@ namespace HotelReservationSystem.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Recepcjonista, Kierownik")]
+        public async Task<IActionResult> Transactions()
+        {
+            var payments = await _guestRepository.GetTransactions();
+
+            return View(payments);
+        }
+
     }
 }

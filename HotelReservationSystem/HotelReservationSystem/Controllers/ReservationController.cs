@@ -24,14 +24,25 @@ namespace HotelReservationSystem.Controllers
             _roomRepository = roomRepository;
         }
 
+        [Authorize(Roles = "Recepcjonista, Kierownik")]
+        [HttpGet]
+        public IActionResult All()
+        {
+            return View("ReceptionPanel");
+        }
+
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var reservations = await _reservationRepository.GetAll(); 
+            var reservations = await _reservationRepository.GetAll();
+            var rooms = await _roomRepository.GetAll(); 
             if(reservations == null)
             {
                 return NotFound();
             }
+
+            ViewBag.Rooms = rooms;
+
             return View(reservations);
         }
 
@@ -84,7 +95,7 @@ namespace HotelReservationSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Recepcjonista")]
+        [Authorize(Roles = "Recepcjonista, Kierownik")]
         public async Task<IActionResult> Confirm(int id)
         {
             await _reservationService.ConfirmReservation(id);
@@ -99,5 +110,19 @@ namespace HotelReservationSystem.Controllers
             return RedirectToAction(nameof(List));
 
         }
+
+        [Authorize(Roles = "Recepcjonista, Kierownik")]
+        [HttpPost]
+        public async Task<IActionResult> ToggleRoomAvailability(int id)
+        {
+            var room = await _roomRepository.GetByIdAsync(id);
+            if (room == null) return NotFound();
+
+            room.IsAvailable = !room.IsAvailable;
+            await _roomRepository.UpdateAsync(room);
+
+            return RedirectToAction(nameof(List));
+        }
+
     }
 }

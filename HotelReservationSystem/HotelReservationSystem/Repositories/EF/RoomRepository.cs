@@ -25,6 +25,16 @@ namespace HotelReservationSystem.Repositories.EF
         {
             return await _context.Rooms.FindAsync(id);
         }
-    }
 
+        public async Task UpdateAsync(Room room)
+        {
+            _context.Rooms.Update(room);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<IEnumerable<Room>> GetAll()
+        {
+            return await _context.Rooms.ToListAsync();
+        }
+
+    }
 }
