@@ -1,0 +1,29 @@
+﻿@model IEnumerable<HotelReservationSystem.Models.Domain.Guest>
+
+@{
+    ViewData["Title"] = "Lista gości";
+}
+
+<h2 class="mb-4">Lista gości</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Email</th>
+            <th>Telefon</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model)
+        {
+            <tr>
+                <td>@g.FirstName</td>
+                <td>@g.LastName</td>
+                <td>@g.Email</td>
+                <td>@g.PhoneNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,91 @@
+﻿@using HotelReservationSystem.Models.Domain
+@model IEnumerable<Reservation>
+
+@{
+    ViewData["Title"] = "Lista rezerwacji";
+}
+
+<h2 class="mt-4">Lista rezerwacji</h2>
+
+<table class="table table-striped table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Pokój</th>
+            <th>Data przyjazdu</th>
+            <th>Data wyjazdu</th>
+            <th>Gość</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@(r.Room?.Number ?? "Brak")</td>
+                <td>@r.ArrivalDate.ToShortDateString()</td>
+                <td>@r.DepartureDate.ToShortDateString()</td>
+                <td>@($"{r.Guest?.FirstName} {r.Guest?.LastName}")</td>
+                <td>@r.Status</td>
+                <td>
+                    @if (User.IsInRole("Recepcjonista"))
+                    {
+                        <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
+                            <button class="btn btn-success btn-sm">Potwierdź</button>
+                        </form>
+                    }
+                    <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
+                        <input type="hidden" name="reason" value="recepcjonista" />
+                        <button class="btn btn-danger btn-sm">Anuluj</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
+{
+    <h3 class="mt-5">Dostępność pokoi</h3>
+
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Numer pokoju</th>
+                <th>Typ</th>
+                <th>Cena</th>
+                <th>Dostępny</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in ViewBag.Rooms as List<Room>)
+            {
+                <tr>
+                    <td>@room.Number</td>
+                    <td>@room.Type</td>
+                    <td>@room.PricePerNight zł</td>
+                    <td>
+                        @if (room.IsAvailable)
+                        {
+                            <span class="text-success">Tak</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">Nie</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="ToggleRoomAvailability" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@room.Id" />
+                            <button class="btn btn-outline-secondary btn-sm">
+                                Zmień
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

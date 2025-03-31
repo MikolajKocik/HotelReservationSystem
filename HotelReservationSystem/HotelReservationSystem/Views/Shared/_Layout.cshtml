@@ -20,12 +20,46 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Strona główna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="Create">Nowa rezerwacja</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="List">Moje rezerwacje</a>
+                        </li>
+
+                        @if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="All">Panel recepcjonisty</a>
+                        </li>
+                        }
+
+                        @if (User.IsInRole("Kierownik"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Reports" asp-action="Reports">Raporty</a>
+                            </li>
+                        }
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Wyloguj (@User.Identity.Name)</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Zaloguj</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Rejestracja</a>
+                            </li>
+                        }
                     </ul>
+
                 </div>
             </div>
         </nav>

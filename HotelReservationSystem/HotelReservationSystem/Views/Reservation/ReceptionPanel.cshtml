@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Panel recepcjonisty";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Panel recepcjonisty – Hotel Aurora</h2>
+
+    <div class="row text-white mb-4">
+        <div class="col-md-4">
+            <div class="bg-primary p-3 rounded shadow-sm">
+                <h5>Rezerwacje oczekujące</h5>
+                <p class="display-6">5</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-success p-3 rounded shadow-sm">
+                <h5>Potwierdzone dziś</h5>
+                <p class="display-6">2</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-info p-3 rounded shadow-sm">
+                <h5>Dostępne pokoje</h5>
+                <p class="display-6">8</p>
+            </div>
+        </div>
+    </div>
+
+    <h4>Akcje</h4>
+    <div class="list-group">
+        <a href="/Reservation/Create" class="list-group-item list-group-item-action">➕ Nowa rezerwacja</a>
+        <a href="/Reservation/List" class="list-group-item list-group-item-action">📋 Lista rezerwacji</a>
+        <a href="/Guest/List" class="list-group-item list-group-item-action">🧍‍♀️ Lista gości</a>
+        <a href="/Payment/Transactions" class="list-group-item list-group-item-action">💳 Transakcje</a>
+    </div>
+</div>

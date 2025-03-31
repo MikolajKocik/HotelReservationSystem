@@ -1,0 +1,50 @@
+﻿@using HotelReservationSystem.Models.Domain
+@model HotelReservationSystem.Models.ViewModels.ReportViewModel
+
+@{
+    ViewData["Title"] = "Raporty";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📊 Panel Raportów – Hotel Aurora</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="bg-light border rounded p-3 shadow-sm">
+                <h5 class="text-primary">Liczba rezerwacji (wszystkie)</h5>
+                <p class="display-6">@Model.TotalReservations</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-light border rounded p-3 shadow-sm">
+                <h5 class="text-success">Potwierdzone rezerwacje</h5>
+                <p class="display-6">@Model.ConfirmedReservations</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-light border rounded p-3 shadow-sm">
+                <h5 class="text-danger">Anulowane rezerwacje</h5>
+                <p class="display-6">@Model.CanceledReservations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="bg-light border rounded p-3 shadow-sm">
+                <h5 class="text-info">💰 Suma płatności (zł)</h5>
+                <p class="display-6">@Model.TotalPayments zł</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light border rounded p-3 shadow-sm">
+                <h5 class="text-warning">📦 Dostępne pokoje</h5>
+                <p class="display-6">@Model.AvailableRooms</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <a href="/Reservation/List" class="btn btn-outline-primary">Zarządzaj rezerwacjami</a>
+    </div>
+</div>

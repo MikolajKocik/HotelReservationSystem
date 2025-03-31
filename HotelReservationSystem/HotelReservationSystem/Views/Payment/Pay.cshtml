@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Płatność Stripe";
+}
+<script src="https://js.stripe.com/v3/"></script>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4 text-center">Zapłać: @ViewBag.Amount zł</h2>
+
+            <form id="payment-form">
+                <div class="form-group mb-3">
+                    <label for="card-element">Dane karty:</label>
+                    <div id="card-element" class="form-control p-2">
+                        <!-- Stripe injects input here -->
+                    </div>
+                </div>
+
+                <button id="submit" class="btn btn-primary w-100 mb-3">Zapłać</button>
+
+                <div id="payment-message" class="text-danger text-center"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const stripe = Stripe('@ViewBag.PublishableKey');
+    const elements = stripe.elements();
+
+    const style = {
+        base: {
+            color: "#32325d",
+            fontFamily: '"Segoe UI", "Helvetica Neue", sans-serif',
+            fontSmoothing: "antialiased",
+            fontSize: "16px",
+            "::placeholder": {
+                color: "#aab7c4"
+            }
+        },
+        invalid: {
+            color: "#fa755a",
+            iconColor: "#fa755a"
+        }
+    };
+
+    const card = elements.create('card', { style });
+    card.mount('#card-element');
+
+    const form = document.getElementById('payment-form');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const result = await stripe.confirmCardPayment('@ViewBag.ClientSecret', {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    address: {
+                        postal_code: '00-000' 
+                    }
+                }
+            }
+        });
+
+        const message = document.getElementById("payment-message");
+
+        if (result.error) {
+            message.innerText = result.error.message;
+        } else if (result.paymentIntent.status === 'succeeded') {
+            message.innerText = "Płatność zakończona sukcesem!";
+
+            await fetch('/Reservation/MarkPaid', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reservationId: @ViewBag.ReservationId,
+                    paymentIntentId: result.paymentIntent.id
+                })
+            });
+
+            setTimeout(() => {
+                window.location.href = "/Reservation/List";
+            }, 2000);
+        }
+    });
+</script>
