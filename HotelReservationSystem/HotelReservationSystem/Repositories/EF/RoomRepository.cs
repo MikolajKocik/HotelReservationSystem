@@ -14,11 +14,6 @@ namespace HotelReservationSystem.Repositories.EF
             _context = context;
         }
 
-        public IEnumerable<Room> GetAvailableRooms(DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime from, DateTime to)
         {
             return await _context.Rooms

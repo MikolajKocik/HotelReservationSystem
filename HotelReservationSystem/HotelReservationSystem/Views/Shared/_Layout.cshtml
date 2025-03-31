@@ -28,9 +28,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Reservation" asp-action="List">Moje rezerwacje</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Payment" asp-action="Pay" asp-route-amount="200" asp-route-reservationId="1">Płatność (test)</a>
-                        </li>
 
                         @if (User.IsInRole("Recepcjonista"))
                         {

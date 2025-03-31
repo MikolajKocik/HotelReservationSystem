@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Data
 {
     public class HotelDbContext : IdentityDbContext<IdentityUser>
     {
-        public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options) { }
+        public HotelDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
@@ -18,8 +18,8 @@ namespace HotelReservationSystem.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
-            modelBuilder.ApplyConfiguration(new ReservationConfiguration());
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
     }
 }

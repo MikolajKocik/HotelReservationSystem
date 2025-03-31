@@ -5,9 +5,15 @@ namespace HotelReservationSystem.Services
 {
     public class StripeService : IStripeService
     {
+        private readonly string _stripeApiKey;
         public StripeService(IConfiguration configuration)
         {
-            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
+            _stripeApiKey = Environment.GetEnvironmentVariable("STRIPE_API_KEY") ?? configuration["Stripe:SecretKey"]!; 
+            if (string.IsNullOrEmpty(_stripeApiKey))
+            {
+                throw new Exception("Klucz API Stripe nie został znaleziony w zmiennych środowiskowych ani konfiguracji.");
+            }
+            StripeConfiguration.ApiKey = _stripeApiKey;
         }
 
         public async Task<string> CreatePaymentIntentAsync(decimal amount, string currency = "pln")

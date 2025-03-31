@@ -30,7 +30,7 @@ namespace HotelReservationSystem.Services
             await _reservationRepository.Update(reservation);
         }
 
-        public async Task CreateReservation(ReservationViewModel model)
+        public async Task<int> CreateReservation(ReservationViewModel model)
         {
             var reservation = new Reservation
             {
@@ -38,6 +38,7 @@ namespace HotelReservationSystem.Services
                 DepartureDate = model.DepartureDate,
                 Status = "Oczekuje",
                 RoomId = model.RoomId,
+                Reason = "",
                 Guest = new Guest
                 {
                     FirstName = model.GuestFirstName,
@@ -47,6 +48,7 @@ namespace HotelReservationSystem.Services
                 }
             };
             await _reservationRepository.Add(reservation);
+            return reservation.Id;
         }     
     }
 }

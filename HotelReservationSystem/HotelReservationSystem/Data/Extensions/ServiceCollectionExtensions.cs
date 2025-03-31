@@ -11,21 +11,25 @@ namespace HotelReservationSystem.Data.Extensions
     {
         public static void Seed(this HotelDbContext context)
         {
-            var rooms = new[]
+
+            if (!context.Rooms.Any()) // tylko jeśli nie ma pokojów
             {
-                new Room { Number = "101", Type = "Single", PricePerNight = 100, IsAvailable = true },
-                new Room { Number = "102", Type = "Double", PricePerNight = 150, IsAvailable = true },
-                new Room { Number = "103", Type = "Single", PricePerNight = 100, IsAvailable = true },
-                new Room { Number = "104", Type = "Double", PricePerNight = 150, IsAvailable = true },
-                new Room { Number = "105", Type = "Single", PricePerNight = 100, IsAvailable = true },
-                new Room { Number = "106", Type = "Double", PricePerNight = 150, IsAvailable = true },
-                new Room { Number = "107", Type = "Single", PricePerNight = 100, IsAvailable = true },
-                new Room { Number = "108", Type = "Double", PricePerNight = 150, IsAvailable = true },
-                new Room { Number = "109", Type = "Single", PricePerNight = 100, IsAvailable = true },
-                new Room { Number = "110", Type = "Double", PricePerNight = 150, IsAvailable = true }
-            };
-            context.Rooms.AddRange(rooms);
-            context.SaveChanges();
+                var rooms = new[]
+                {
+                    new Room { Number = "101", Type = "Single", PricePerNight = 100, IsAvailable = true },
+                    new Room { Number = "102", Type = "Double", PricePerNight = 150, IsAvailable = true },
+                    new Room { Number = "103", Type = "Single", PricePerNight = 100, IsAvailable = true },
+                    new Room { Number = "104", Type = "Double", PricePerNight = 150, IsAvailable = true },
+                    new Room { Number = "105", Type = "Single", PricePerNight = 100, IsAvailable = true },
+                    new Room { Number = "106", Type = "Double", PricePerNight = 150, IsAvailable = true },
+                    new Room { Number = "107", Type = "Single", PricePerNight = 100, IsAvailable = true },
+                    new Room { Number = "108", Type = "Double", PricePerNight = 150, IsAvailable = true },
+                    new Room { Number = "109", Type = "Single", PricePerNight = 100, IsAvailable = true },
+                    new Room { Number = "110", Type = "Double", PricePerNight = 150, IsAvailable = true }
+                };
+                context.Rooms.AddRange(rooms);
+                context.SaveChanges();
+            }
         }
 
         public static void AddDbContextBasedServices(this IServiceCollection services, IConfiguration configuration)

@@ -5,6 +5,7 @@ using HotelReservationSystem.Repositories.Interfaces;
 using HotelReservationSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HotelReservationSystem.Controllers
 {
@@ -12,29 +13,39 @@ namespace HotelReservationSystem.Controllers
     {
         private readonly IReservationService _reservationService;
         private readonly IReservationRepository _reservationRepository;
+        private readonly IRoomRepository _roomRepository;
 
         public ReservationController(IReservationService reservationService,
-            IReservationRepository reservationRepository)
+            IReservationRepository reservationRepository,
+            IRoomRepository roomRepository)
         {
             _reservationService = reservationService;
             _reservationRepository = reservationRepository;
+            _roomRepository = roomRepository;
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> List()
         {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult List()
-        {
-            var reservations = _reservationRepository.GetAll(); 
+            var reservations = await _reservationRepository.GetAll(); 
             if(reservations == null)
             {
                 return NotFound();
             }
             return View(reservations);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(7));
+            ViewBag.Rooms = rooms.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} zł"
+            }).ToList();
+
+            return View();
         }
 
 
@@ -45,8 +56,10 @@ namespace HotelReservationSystem.Controllers
             {
                 return View(model);
             }
-            await _reservationService.CreateReservation(model);
-            return RedirectToAction(nameof(List));
+
+            var reservationId = await _reservationService.CreateReservation(model);
+
+            return RedirectToAction("Pay", "Payment", new { reservationId });
         }
 
         [HttpPost]
@@ -75,7 +88,7 @@ namespace HotelReservationSystem.Controllers
         public async Task<IActionResult> Confirm(int id)
         {
             await _reservationService.ConfirmReservation(id);
-            return RedirectToAction(nameof(List));
+            return RedirectToAction("List");
 
         }
 
