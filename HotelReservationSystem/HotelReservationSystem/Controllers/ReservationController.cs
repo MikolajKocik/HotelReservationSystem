@@ -1,6 +1,9 @@
-﻿using HotelReservationSystem.Models.ViewModels;
+﻿using HotelReservationSystem.Models.Domain;
+using HotelReservationSystem.Models.Dtos;
+using HotelReservationSystem.Models.ViewModels;
 using HotelReservationSystem.Repositories.Interfaces;
 using HotelReservationSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Controllers
@@ -47,6 +50,28 @@ namespace HotelReservationSystem.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> MarkPaid([FromBody] MarkPaidDto dto)
+        {
+            var reservation = await _reservationRepository.GetById(dto.ReservationId);
+
+            if (reservation == null) return NotFound();
+
+            reservation.Status = "Opłacona";
+
+            reservation.Payment = new Payment
+            {
+                Method = "Stripe",
+                Status = "Opłacona",
+                Amount = 200,
+                StripePaymentIntentId = dto.PaymentIntentId,
+            };
+
+            await _reservationRepository.Update(reservation);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Recepcjonista")]
         public async Task<IActionResult> Confirm(int id)
         {
             await _reservationService.ConfirmReservation(id);
