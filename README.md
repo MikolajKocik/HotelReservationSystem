@@ -154,7 +154,7 @@ HotelReservationSystem/
 
 ---
 
-## 📊 Przykładowy testowy numer karty Stripe:
+## 💳 Przykładowy testowy numer karty Stripe:
 ```
 Numer: 4242 4242 4242 4242
 Data: dowolna w przyszłości
