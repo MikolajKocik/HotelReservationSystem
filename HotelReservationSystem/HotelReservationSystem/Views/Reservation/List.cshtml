@@ -34,11 +34,21 @@
                             <button class="btn btn-success btn-sm">Potwierdź</button>
                         </form>
                     }
+
                     <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
                         <input type="hidden" name="reason" value="recepcjonista" />
                         <button class="btn btn-danger btn-sm">Anuluj</button>
                     </form>
+
+                    @* Jeśli rezerwacja oczekuje, pokaż przycisk „Dokończ płatność” *@
+                    @if (r.Status == "Oczekuje" && !(User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik")))
+                    {
+                        <a href="@Url.Action("Pay", "Payment", new { reservationId = r.Id })" class="btn btn-warning btn-sm mt-1">
+                            Dokończ płatność
+                        </a>
+                    }
                 </td>
+
             </tr>
         }
     </tbody>
