@@ -1,42 +1,42 @@
 # Hotel Reservation System - ASP.NET Core MVC
 
-Aplikacja webowa wspierająca system rezerwacji hotelowych, stworzona w architekturze MVC. Umożliwia dokonywanie rezerwacji pokoi, zarządzanie nimi przez recepcjonistów oraz generowanie raportów przez kierownika.
+A web application supporting a hotel reservation system, created in the MVC architecture. It allows you to make room reservations, manage them by receptionists and generate reports by the manager.
 
 ---
 
-## ✨ Funkcje
+## Features
 
-- Tworzenie i anulowanie rezerwacji
-- Potwierdzanie rezerwacji przez recepcjonistę / kierownika
-- Lista rezerwacji, zarządzanie dostępnością pokoi
-- Obsługa płatności online (Stripe)
-- Autoryzacja ról: Gość, Recepcjonista, Kierownik
-- Generowanie raportów i transakcji
+- Creating and canceling reservations
+- Confirming reservations by the receptionist / manager
+- List of reservations, managing room availability
+- Handling online payments (Stripe)
+- Authorization roles: Guest, Receptionist, Manager
+- Generating reports and transactions
 
 ---
 
-## 🚀 Technologia
+## Technology
 
 - ASP.NET Core MVC (.NET 8)
 - Entity Framework Core (code-first)
 - Microsoft SQL Server
-- Identity (autentykacja, autoryzacja)
-- Stripe API (testowe płatności)
+- Identity (authentication, authorization)
+- Stripe API (test payments)
 - FluentValidation (.NET)
 - Bootstrap 5
 
 ---
 
-## 💳 Stripe - konfiguracja
+## Stripe - configuration
 
-### 1. Załóż konto testowe na: https://dashboard.stripe.com/register
+### 1. Create a test account at: https://dashboard.stripe.com/register
 
-### 2. Uzyskaj klucze:
-- `STRIPE_API_KEY` (secret key, zaczyna się od `sk_test_...`)
-- `STRIPE_PUBLISHABLE_KEY` (public key, zaczyna się od `pk_test_...`)
+### 2. Get keys:
+- `STRIPE_API_KEY` (secret key, starts with `sk_test_...`)
+- `STRIPE_PUBLISHABLE_KEY` (public key, starts with `pk_test_...`)
 
-### 3. Ustaw je jako zmienne środowiskowe:
-#### Windows (CMD lub PowerShell):
+### 3. Set them as environment variables:
+#### Windows (CMD or PowerShell):
 ```bash
 setx STRIPE_API_KEY "sk_test_..."
 setx STRIPE_PUBLISHABLE_KEY "pk_test_..."
@@ -48,18 +48,18 @@ export STRIPE_API_KEY="sk_test_..."
 export STRIPE_PUBLISHABLE_KEY="pk_test_..."
 ```
 
-**Uwaga:** Klucze te są wymagane do poprawnego działania widoku płatności.
+**Note:** These keys are required for the payment view to work properly.
 
 ---
 
-## 🔧 Konfiguracja lokalna
+## Local configuration
 
-### 1. Wymagania:
+### 1. Requirements:
 - .NET SDK 8+
 - SQL Server
 - Stripe test account
 
-### 2. Uruchomienie:
+### 2. Startup:
 ```bash
 dotnet ef database update
 ```
@@ -69,77 +69,77 @@ dotnet run
 
 ---
 
-## 📝 Walidacja formularzy
+## Form validation
 
-W projekcie wykorzystano FluentValidation do walidacji danych w formularzach. Walidatory są automatycznie rejestrowane przez:
+The project uses FluentValidation to validate data in forms. Validators are automatically registered by:
 ```csharp
 builder.Services.AddValidatorsFromAssemblyContaining<ReservationValidator>();
 ```
 
 ---
 
-## 🚧 Seedowanie ról i użytkowników
+## Role and user seeding
 
-Przy starcie aplikacji tworzeni są użytkownicy testowi:
+When the application starts, test users are created:
 
-- **Recepcjonista**
-  - login: `recepcja@hotel.pl`
-  - hasło: `Test123!`
+- **Receptionist**
+- login: `recepcja@hotel.pl`
+- password: `Test123!`
 
-- **Kierownik**
-  - login: `manager@hotel.pl`
-  - hasło: `Test123!`
-
----
-
-## 🏨 Role i uprawnienia
-
-| Rola         | Możliwości |
-|--------------|------------------|
-| Gość        | Tworzenie rezerwacji |
-| Recepcjonista| Potwierdzanie, anulowanie, panel, lista gości |
-| Kierownik    | Wszystko + raporty + zarządzanie dostępnością |
+- **Manager**
+- login: `manager@hotel.pl`
+- password: `Test123!`
 
 ---
 
-## 📊 Raporty i transakcje
+## Roles and permissions
 
-- Raport zajętości i przychodów: dostępne tylko dla roli `Kierownik`
-- Lista transakcji płatności (Stripe)
+| Role | Capabilities |
+|--------------|-----------------|
+| Guest | Creating reservations |
+| Receptionist | Confirmation, cancellation, panel, guest list |
+| Manager | Everything + reports + availability management |
 
 ---
 
-## 📒 Struktura katalogów
+## Reports and Transactions
+
+- Occupancy and Revenue Report: available only for `Manager` role
+- Payment Transaction List (Stripe)
+
+---
+
+## Directory Structure
 
 ```
 HotelReservationSystem/
 ├── Controllers/
 ├── Data/
-│   ├── Configuration/
-│   └── Extensions/
+│ ├── Configuration/
+│ └── Extensions/
 ├── Migrations/
 ├── Models/
-│   ├── Domain/
-│   ├── Dtos/
-│   └── ViewModels/
+│ ├── Domain/
+│ ├── Dtos/
+│ └── ViewModels/
 ├── Repositories/
-│   ├── EF/
-│   └── Interfaces/
+│ ├── EF/
+│ └── Interfaces/
 ├── Services/
-│   ├── Interfaces/
-│   ├── GuestService.cs
-│   ├── ReportService.cs
-│   ├── ReservationService.cs
-│   └── StripeService.cs
+│ ├── Interfaces/
+│ ├── GuestService.cs
+│ ├── ReportService.cs
+│ ├── ReservationService.cs
+│ └── StripeService.cs
 ├── Validators/
 ├── Views/
-│   ├── Account/
-│   ├── Guest/
-│   ├── Home/
-│   ├── Payment/
-│   ├── Reports/
-│   ├── Reservation/
-│   └── Shared/
+│ ├── Account/
+│ ├── Guest/
+│ ├── Home/
+│ ├── Payment/
+│ ├── Reports/
+│ ├── Reservation/
+│ └── Shared/
 ├── wwwroot/
 ├── appsettings.json
 └── Program.cs
@@ -147,17 +147,15 @@ HotelReservationSystem/
 
 ---
 
+## Warning
 
-## ⚠️ Uwaga
-
-- Nie umieszczaj prawdziwych kluczy Stripe w kodzie!
+- Do not include real Stripe keys in your code!
 
 ---
 
-## 💳 Przykładowy testowy numer karty Stripe:
+## Sample test Stripe card number:
 ```
-Numer: 4242 4242 4242 4242
-Data: dowolna w przyszłości
+Number: 4242 4242 4242 4242
+Date: anytime in the future
 CVV: 123
 ```
-
