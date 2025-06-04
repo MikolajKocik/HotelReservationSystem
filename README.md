@@ -4,7 +4,7 @@ A web application supporting a hotel reservation system, created in the MVC arch
 
 ---
 
-## ✨ Features
+## Features
 
 - Creating and canceling reservations
 - Confirming reservations by the receptionist / manager
@@ -15,7 +15,7 @@ A web application supporting a hotel reservation system, created in the MVC arch
 
 ---
 
-## 🚀 Technology
+## Technology
 
 - ASP.NET Core MVC (.NET 8)
 - Entity Framework Core (code-first)
@@ -27,7 +27,7 @@ A web application supporting a hotel reservation system, created in the MVC arch
 
 ---
 
-## 💳 Stripe - configuration
+## Stripe - configuration
 
 ### 1. Create a test account at: https://dashboard.stripe.com/register
 
@@ -52,7 +52,7 @@ export STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
 ---
 
-## 🔧 Local configuration
+## Local configuration
 
 ### 1. Requirements:
 - .NET SDK 8+
@@ -69,7 +69,7 @@ dotnet run
 
 ---
 
-## 📝 Form validation
+## Form validation
 
 The project uses FluentValidation to validate data in forms. Validators are automatically registered by:
 ```csharp
@@ -78,7 +78,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<ReservationValidator>();
 
 ---
 
-## 🚧 Role and user seeding
+## Role and user seeding
 
 When the application starts, test users are created:
 
@@ -92,7 +92,7 @@ When the application starts, test users are created:
 
 ---
 
-## 🏨 Roles and permissions
+## Roles and permissions
 
 | Role | Capabilities |
 |--------------|-----------------|
@@ -109,7 +109,7 @@ When the application starts, test users are created:
 
 ---
 
-## 📒 Directory Structure
+## Directory Structure
 
 ```
 HotelReservationSystem/
@@ -147,13 +147,13 @@ HotelReservationSystem/
 
 ---
 
-## ⚠️ Warning
+## Warning
 
 - Do not include real Stripe keys in your code!
 
 ---
 
-## 💳 Sample test Stripe card number:
+## Sample test Stripe card number:
 ```
 Number: 4242 4242 4242 4242
 Date: anytime in the future
