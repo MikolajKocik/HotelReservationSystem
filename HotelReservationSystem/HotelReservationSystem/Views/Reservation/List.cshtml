@@ -28,27 +28,19 @@
                 <td>@($"{r.Guest?.FirstName} {r.Guest?.LastName}")</td>
                 <td>@r.Status</td>
                 <td>
-<<<<<<< HEAD
-
                     <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
                         <button class="btn btn-success btn-sm">Potwierdź</button>
                     </form>
-=======
                     @if (User.IsInRole("Recepcjonista"))
                     {
                         <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
                             <button class="btn btn-success btn-sm">Potwierdź</button>
                         </form>
                     }
->>>>>>> a87ab95c44b0e24e426abdecb4194f0100e69a6e
-
                     <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
                         <input type="hidden" name="reason" value="recepcjonista" />
                         <button class="btn btn-danger btn-sm">Anuluj</button>
                     </form>
-
-<<<<<<< HEAD
-=======
                     @* Jeśli rezerwacja oczekuje, pokaż przycisk „Dokończ płatność” *@
                     @if (r.Status == "Oczekuje" && !(User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik")))
                     {
@@ -56,7 +48,6 @@
                             Dokończ płatność
                         </a>
                     }
->>>>>>> a87ab95c44b0e24e426abdecb4194f0100e69a6e
                 </td>
 
             </tr>
