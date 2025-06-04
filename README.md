@@ -102,7 +102,7 @@ When the application starts, test users are created:
 
 ---
 
-## 📊 Reports and Transactions
+## Reports and Transactions
 
 - Occupancy and Revenue Report: available only for `Manager` role
 - Payment Transaction List (Stripe)
