@@ -25,15 +25,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Reservation" asp-action="Create">Nowa rezerwacja</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="List">Moje rezerwacje</a>
-                        </li>
-
                         @if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Reservation" asp-action="All">Panel recepcjonisty</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Reservation" asp-action="List">Rezerwacje gości</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Reservation" asp-action="All">Panel recepcjonisty</a>
+                            </li>
                         }
 
                         @if (User.IsInRole("Kierownik"))
@@ -51,13 +50,12 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Zaloguj</a>
+                            <li id="log-in" class="nav-item">
+                                 <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Zaloguj</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Rejestracja</a>
-                            </li>
-                        }
+                            <li id="log-out" class="nav-item">
+                                 <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Rejestracja</a>
+                            </li>                        }
                     </ul>
 
                 </div>

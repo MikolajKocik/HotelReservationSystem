@@ -28,16 +28,16 @@
                 <td>@($"{r.Guest?.FirstName} {r.Guest?.LastName}")</td>
                 <td>@r.Status</td>
                 <td>
-                    @if (User.IsInRole("Recepcjonista"))
-                    {
-                        <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
-                            <button class="btn btn-success btn-sm">Potwierdź</button>
-                        </form>
-                    }
+
+                    <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
+                        <button class="btn btn-success btn-sm">Potwierdź</button>
+                    </form>
+
                     <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
                         <input type="hidden" name="reason" value="recepcjonista" />
                         <button class="btn btn-danger btn-sm">Anuluj</button>
                     </form>
+
                 </td>
             </tr>
         }
