@@ -12,6 +12,11 @@
         {
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
+                    <img src="~/images/rooms/@(room.Type == "Single" ? "single-room.png" : "double-room.png")"
+                         alt="Zdjęcie pokoju"
+                         class="card-img-top"
+                         style="max-height:200px; object-fit:cover;">
+
                     <div class="card-body">
                         <h5 class="card-title">Pokój @room.Number</h5>
                         <p class="card-text"><strong>Typ:</strong> @room.Type</p>
@@ -21,6 +26,7 @@
                                 @(room.IsAvailable ? "Dostępny" : "Zajęty")
                             </span>
                         </p>
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             @if (room.IsAvailable)
