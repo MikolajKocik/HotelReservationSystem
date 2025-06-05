@@ -6,7 +6,6 @@ using HotelReservationSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Threading.Tasks;
 
 namespace HotelReservationSystem.Controllers
 {
@@ -68,6 +67,14 @@ namespace HotelReservationSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
+
+                var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(7));
+                ViewBag.Rooms = rooms.Select(r => new SelectListItem
+                {
+                    Value = r.Id.ToString(),
+                    Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} zł"
+                }).ToList();
+
                 return View(model);
             }
 
