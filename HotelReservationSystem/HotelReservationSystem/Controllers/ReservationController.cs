@@ -6,6 +6,7 @@ using HotelReservationSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 
 namespace HotelReservationSystem.Controllers
 {
@@ -26,9 +27,11 @@ namespace HotelReservationSystem.Controllers
 
         [Authorize(Roles = "Recepcjonista, Kierownik")]
         [HttpGet]
-        public IActionResult All()
+        public async Task<IActionResult> All()
         {
-            return View("ReceptionPanel");
+            var guests = await _reservationRepository.GetGuests();
+
+            return View("ReceptionPanel", guests);
         }
 
         [HttpGet]

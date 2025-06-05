@@ -1,5 +1,17 @@
-﻿@{
+﻿@model IEnumerable<HotelReservationSystem.Models.Domain.Guest>
+
+@{
     ViewData["Title"] = "Panel recepcjonisty";
+
+    var totalReservations = Model.Sum(guest => guest.Reservations.Count);
+
+    var pendingReservations = Model
+        .SelectMany(guest => guest.Reservations)
+        .Count(reservation => reservation.Status == "Oczekujące");
+
+    var confirmedToday = Model
+        .SelectMany(guest => guest.Reservations)
+        .Count(reservation => reservation.Status == "Potwierdzona" && reservation.ArrivalDate.Date == DateTime.Today);
 }
 
 <div class="container mt-4">
@@ -9,19 +21,19 @@
         <div class="col-md-4">
             <div class="bg-primary p-3 rounded shadow-sm">
                 <h5>Rezerwacje oczekujące</h5>
-                <p class="display-6">5</p>
+                <p class="display-6">@pendingReservations</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="bg-success p-3 rounded shadow-sm">
                 <h5>Potwierdzone dziś</h5>
-                <p class="display-6">2</p>
+                <p class="display-6">@confirmedToday</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="bg-info p-3 rounded shadow-sm">
-                <h5>Dostępne pokoje</h5>
-                <p class="display-6">8</p>
+                <h5>Łączna liczba rezerwacji</h5>
+                <p class="display-6">@totalReservations</p>
             </div>
         </div>
     </div>
@@ -34,5 +46,3 @@
         <a href="/Payment/Transactions" class="list-group-item list-group-item-action">💳 Transakcje</a>
     </div>
 </div>
-
-<!-- Zmieniać hardstackowanie parametrów na dynamiczne ->

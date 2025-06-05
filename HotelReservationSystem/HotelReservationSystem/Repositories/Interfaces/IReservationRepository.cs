@@ -8,5 +8,6 @@ namespace HotelReservationSystem.Repositories.Interfaces
         Task<Reservation> GetById(int id);
         Task<IEnumerable<Reservation>> GetAll();
         Task Update(Reservation reservation);
+        Task<List<Guest>> GetGuests();
     }
 }

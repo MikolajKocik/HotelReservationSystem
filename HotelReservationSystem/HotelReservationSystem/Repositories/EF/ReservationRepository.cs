@@ -42,5 +42,12 @@ namespace HotelReservationSystem.Repositories.EF
             _context.Reservations.Update(reservation);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Guest>> GetGuests()
+        {
+            return await _context.Guests
+                .Include(r => r.Reservations)
+                .ToListAsync();
+        }
     }
 }
