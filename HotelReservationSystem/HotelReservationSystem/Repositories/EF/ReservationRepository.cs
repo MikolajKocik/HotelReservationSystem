@@ -25,6 +25,7 @@ namespace HotelReservationSystem.Repositories.EF
             return await _context.Reservations
                 .Include(r => r.Room)
                 .Include(g => g.Guest)
+                .Include(p => p.Payment)
                 .ToListAsync();
         }
 
