@@ -28,6 +28,12 @@
                                 <a class="nav-link text-dark" asp-controller="Reservation" asp-action="Create">Nowa rezerwacja</a>
                             </li>
                         }
+                        @if (User.Identity.IsAuthenticated && !(User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Reservation" asp-action="MyReservations">Moje rezerwacje</a>
+                            </li>
+                        }
                         @if (User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik"))
                         {
                             <li class="nav-item">

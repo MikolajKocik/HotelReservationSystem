@@ -29,6 +29,15 @@ namespace HotelReservationSystem.Repositories.EF
                 .ToListAsync();
         }
 
+        public async Task<List<Reservation>> GuestReservations(string userEmail)
+        {
+            return await _context.Reservations
+                .Include(r => r.Room)
+                .Include(r => r.Guest)
+                .Where(r => r.Guest.Email == userEmail)
+                .ToListAsync();
+        }
+
         public async Task<Reservation> GetById(int id)
         {
             return await _context.Reservations

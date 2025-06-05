@@ -48,6 +48,22 @@ namespace HotelReservationSystem.Controllers
             return View(reservations);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyReservations()
+        {
+            var userEmail = User.Identity.Name;
+
+            if (userEmail is null)
+            {
+                return View();
+            }
+
+            var reservations = await _reservationRepository.GuestReservations(userEmail);
+
+            return View(reservations);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {

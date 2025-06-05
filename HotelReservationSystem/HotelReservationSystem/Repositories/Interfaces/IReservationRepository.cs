@@ -9,5 +9,6 @@ namespace HotelReservationSystem.Repositories.Interfaces
         Task<IEnumerable<Reservation>> GetAll();
         Task Update(Reservation reservation);
         Task<List<Guest>> GetGuests();
+        Task<List<Reservation>> GuestReservations(string userEmail);
     }
 }
