@@ -20,19 +20,10 @@ body {
         font-size: 16px;
 
     }
-    #log-in {
-        margin-left: 83%;
-        display: inline-flex;
-    }
 }
 
 @media (max-width: 1080px) {
     html {
         font-size: 16px;
-    }
-
-    #log-in {
-        margin-left: 65%;
-        display: inline-flex;
     }
 }
