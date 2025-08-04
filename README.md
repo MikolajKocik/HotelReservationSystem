@@ -1,4 +1,5 @@
 # Hotel Reservation System - ASP.NET Core MVC
+(project done during studies)
 
 A web application supporting a hotel reservation system, created in the MVC architecture. It allows you to make room reservations, manage them by receptionists and generate reports by the manager.
 
