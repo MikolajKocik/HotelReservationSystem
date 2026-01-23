@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "module": "esnext",
+    "outDir": "wwwroot/js",
+    "target": "es6",
+    "lib": [ "DOM", "DOM.Iterable", "ESNext" ]
+  },
+  "include": [
+    "Scripts/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}

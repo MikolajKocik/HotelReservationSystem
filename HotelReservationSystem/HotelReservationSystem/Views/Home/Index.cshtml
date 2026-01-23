@@ -1,37 +1,47 @@
-﻿<section>
+﻿<section id="up-wrapper">
 
 </section>
 
 <section>
-    <div class="main-wrapper">
-        <div class="main-container">
+    <div id="main-wrapper">
+        <div id="right-container" class="main-container">
             <div class="text-container">
-                <span id="hotel-stars"></span>
-                <p id="room-img-desc"></p>
+                <h3 id="stars">-  ★  ★  ★  ★  ★ -</h3>
+                <p class="description">
+                    Szukasz idealnego balansu między ceną a luksusem? Nasze pokoje łączą nowoczesny design z funkcjonalnością. Odpocznij w samym sercu miasta.
+                </p>
                 <button id="availability-rooms">
-
+                    Dostępne pokoje
                 </button>
             </div>
-            <div>
-                <img />
+            <div class="image-container">
+                <img src="~/images/services/spa.jpg" />
             </div>
         </div>
 
-        <div class="main-container">
-            <div class="text-container">
-                <div>
-                    <span id="restaurant-title"></span>
-                    <svg></svg>
-                </div>
-                <p id="restaurant-desc"></p>
+        <div id="left-container" class="main-container">
+            <div class="image-container">
+                <img src="~/images/services/restaurant.jpg"/>
             </div>
-            <div>
-                <img />
+            <div class="text-container">
+                <div class="text-title-section">
+                    <h3 id="restaurant"> Restauracja</h3>
+                    <svg width="100%" height="100%" viewBox="0 0 143 119" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M113.208 63.8137V106.604C113.208 110.715 109.21 114.042 104.271 114.042C99.3314 114.042 95.3333 110.715 95.3333 106.604V63.8137C79.371 61.5627 71.5 52.836 71.5 37.1875C71.5 24.4842 73.3233 12.014 73.4007 11.4885C74.0085 7.40774 78.4236 4.51703 83.3631 5.01287C88.2608 5.51366 91.7464 9.22745 91.1446 13.3032C91.1268 13.4222 89.381 25.4214 89.381 37.1875C89.381 44.0201 90.7454 47.238 95.3393 48.6313V12.3958C95.3393 8.28537 99.3373 4.95833 104.277 4.95833C109.216 4.95833 113.214 8.28537 113.214 12.3958V48.6313C117.808 47.238 119.173 44.0151 119.173 37.1875C119.173 25.3619 117.635 13.3131 117.623 13.1892C117.099 9.10845 120.644 5.43928 125.554 5.00295C130.404 4.54183 134.861 7.51683 135.391 11.6025C135.463 12.1231 137.048 24.5388 137.048 37.1925C137.048 52.841 129.177 61.5676 113.214 63.8187L113.208 63.8137ZM41.7083 59.5C41.7083 78.0342 49.2278 84.2917 71.5 84.2917C76.0879 84.2917 80.0204 84.009 83.4167 83.424V71.3554C67.925 66.2037 59.5833 54.5317 59.5833 37.1875C59.5833 36.647 59.5893 36.1115 59.5953 35.5711C46.481 37.8172 41.7083 44.7737 41.7083 59.5ZM83.4167 93.4398C79.7881 93.9356 75.8436 94.2083 71.5 94.2083C42.6557 94.2083 29.7917 83.5033 29.7917 59.5C29.7917 38.9725 39.2356 28.198 60.0004 25.5007C60.5665 17.0765 61.5138 10.6406 61.5734 10.2637C61.8475 8.42916 62.5446 6.73837 63.4384 5.14674C23.2613 7.02595 5.95834 23.5917 5.95834 59.5C5.95834 97.7287 25.5613 114.042 71.5 114.042C76.3501 114.042 80.8486 113.819 85.1208 113.447C84.0304 111.344 83.4167 109.034 83.4167 106.604V93.4398Z" />
+                    </svg>
+                </div>
+                <p class="description">
+                    Nasza restauracja to serce hotelu, gdzie luksus spotyka się z pasją do gotowania.
+                </p>
             </div>
         </div>
     </div>
 </section>
 
-<section>
+<section id="down-wrapper">
 
 </section>
+
+@section Scripts{
+    <link rel="stylesheet" href="~/css/home.css" />
+}

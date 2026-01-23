@@ -17,7 +17,7 @@ html {
 header {
     display: flex;
     flex-direction: column;
-    background-image: url("../images/home-img.png");
+    background-image: url("../images/general/home-img.png");
     background-size: cover;
     height: 22rem;
     width: auto;
@@ -192,12 +192,18 @@ body {
     flex-direction: column;
 }
 
-body > .container {
+body > .container-fluid {
     flex: 1 0 auto;
+    width: 100%;
+}
+
+.container-fluid {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
 }
 
 footer {
-    background-color: #ADC7DD;
+    background-color: #122642;
 }
 
 .footer-wrapper {
@@ -206,7 +212,7 @@ footer {
     grid-template-areas:
         "footer-content-1 footer-content-2"
         "footer-content-3 footer-content-3";
-    margin-top: 1.3rem;
+    margin-top: 2rem;
 }
 
 .footer-content-1 {
