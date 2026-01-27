@@ -1,5 +1,5 @@
-﻿using HotelReservationSystem.Models.ViewModels;
-using HotelReservationSystem.Repositories.Interfaces;
+using HotelReservationSystem.Web.ViewModels;
+using HotelReservationSystem.Application.CQRS.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,29 +8,28 @@ namespace HotelReservationSystem.Controllers
     [Authorize(Roles = "Kierownik")]
     public class ReportsController : Controller
     {
-        private readonly IReservationRepository _reservationRepository;
-        private readonly IRoomRepository _roomRepository;
+        private readonly ICQRSMediator mediator;
 
-        public ReportsController(IReservationRepository reservationRepository, IRoomRepository roomRepository)
+        public ReportsController(ICQRSMediator mediator)
         {
-            _reservationRepository = reservationRepository;
-            _roomRepository = roomRepository;
+            this.mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Reports()
+        public IActionResult Reports()
         {
-            var reservations = await _reservationRepository.GetAll();
-            var payments = reservations.Select(r => r.Payment?.Amount ?? 0);
-            var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(30));
+            // TODO: Create GenerateReportQuery in CQRS structure
+            // var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
+            // var reportData = await mediator.SendAsync(query);
 
             var model = new ReportViewModel
             {
-                TotalReservations = reservations.Count(),
-                ConfirmedReservations = reservations.Count(r => r.Status == "Potwierdzona"),
-                CanceledReservations = reservations.Count(r => r.Status == "Anulowana"),
-                TotalPayments = payments.Sum(),
-                AvailableRooms = rooms.Count()
+                // TODO: Replace with actual CQRS query results
+                TotalReservations = 0, // reportData.TotalReservations,
+                ConfirmedReservations = 0, // reportData.ConfirmedReservations,
+                CanceledReservations = 0, // reportData.CancelledReservations,
+                TotalPayments = 0, // reportData.TotalRevenue,
+                AvailableRooms = 0 // reportData.AvailableRooms
             };
 
             return View(model);

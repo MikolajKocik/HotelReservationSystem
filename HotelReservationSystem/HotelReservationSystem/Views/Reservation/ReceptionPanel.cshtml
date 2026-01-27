@@ -1,4 +1,5 @@
-﻿@model IEnumerable<HotelReservationSystem.Models.Domain.Guest>
+﻿@using HotelReservationSystem.Core.Domain.Enums
+@model IEnumerable<HotelReservationSystem.Core.Domain.Entities.Guest>
 
 @{
     ViewData["Title"] = "Panel recepcjonisty";
@@ -7,11 +8,11 @@
 
     var pendingReservations = Model
         .SelectMany(guest => guest.Reservations)
-        .Count(reservation => reservation.Status == "Oczekujące");
+        .Count(reservation => reservation.Status == ReservationStatus.Pending);
 
     var confirmedToday = Model
         .SelectMany(guest => guest.Reservations)
-        .Count(reservation => reservation.Status == "Potwierdzona" && reservation.ArrivalDate.Date == DateTime.Today);
+        .Count(reservation => reservation.Status == ReservationStatus.Confirmed && reservation.ArrivalDate.Date == DateTime.Today);
 }
 
 <div class="container mt-4">

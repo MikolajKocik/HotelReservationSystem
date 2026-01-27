@@ -1,4 +1,4 @@
-﻿using HotelReservationSystem.Data;
+﻿using HotelReservationSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,16 +6,16 @@ namespace HotelReservationSystem.Controllers
 {
     public class GuestController : Controller
     {
-        private readonly HotelDbContext _context;
+        private readonly HotelDbContext context;
 
         public GuestController(HotelDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public async Task<IActionResult> List()
         {
-            var guests = await _context.Guests.ToListAsync();
+            var guests = await context.Guests.ToListAsync();
             return View(guests);
         }
     }

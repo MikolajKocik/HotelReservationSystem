@@ -1,7 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using HotelReservationSystem.Data;
-using HotelReservationSystem.Data.Extensions;
+using HotelReservationSystem.Infrastructure.Data;
+using HotelReservationSystem.Infrastructure.Data.Extensions;
+using HotelReservationSystem.Infrastructure.Extensions;
+using HotelReservationSystem.Application.Interfaces;
+using HotelReservationSystem.Application.UseCases;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +14,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContextBasedServices(builder.Configuration);
+
+// Register CQRS Services
+builder.Services.AddCQRSServices();
+
+// Register remaining Application Services
+builder.Services.AddScoped<IStripeService, StripeService>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<HotelDbContext>()

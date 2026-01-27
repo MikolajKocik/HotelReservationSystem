@@ -1,26 +1,24 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using HotelReservationSystem.Models;
-using HotelReservationSystem.Models.ViewModels;
-using HotelReservationSystem.Repositories.Interfaces;
-using HotelReservationSystem.Repositories.EF;
+using HotelReservationSystem.Web.ViewModels;
+using HotelReservationSystem.Core.Domain.Interfaces;
 
 namespace HotelReservationSystem.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly IRoomRepository _roomRepository;
+    private readonly ILogger<HomeController> logger;
+    private readonly IRoomRepository roomRepository;
 
     public HomeController(ILogger<HomeController> logger, IRoomRepository roomRepository)
     {
-        _logger = logger;
-        _roomRepository = roomRepository;
+        this.logger = logger;
+        this.roomRepository = roomRepository;
     }
 
     public async Task<IActionResult> Index()
     {
-        var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(1));
+        var rooms = await roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(1));
         return View(rooms);
     }
 

@@ -1,154 +1,147 @@
-﻿using HotelReservationSystem.Models.Domain;
-using HotelReservationSystem.Models.Dtos;
-using HotelReservationSystem.Models.ViewModels;
-using HotelReservationSystem.Repositories.Interfaces;
-using HotelReservationSystem.Services.Interfaces;
+using HotelReservationSystem.Application.CQRS;
+using HotelReservationSystem.Application.CQRS.Reservations.Queries;
+using HotelReservationSystem.Application.CQRS.Reservations.Commands;
+using HotelReservationSystem.Application.Dtos.Reservation;
+using HotelReservationSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using HotelReservationSystem.Application.CQRS.Abstractions;
 
-namespace HotelReservationSystem.Controllers
+namespace HotelReservationSystem.Controllers;
+
+public class ReservationController : Controller
 {
-    public class ReservationController : Controller
+    private readonly ICQRSMediator mediator;
+
+    public ReservationController(ICQRSMediator mediator)
     {
-        private readonly IReservationService _reservationService;
-        private readonly IReservationRepository _reservationRepository;
-        private readonly IRoomRepository _roomRepository;
+        this.mediator = mediator;
+    }
 
-        public ReservationController(IReservationService reservationService,
-            IReservationRepository reservationRepository,
-            IRoomRepository roomRepository)
+    public async Task<IActionResult> Index()
+    {
+        var query = new GetAllReservationsQuery();
+        var reservations = await mediator.SendAsync(query);
+        return View(await reservations.ToListAsync());
+    }
+
+    [Authorize(Roles = "Recepcjonista, Kierownik")]
+    public async Task<IActionResult> List()
+    {
+        var query = new GetAllReservationsQuery();
+        var reservations = await mediator.SendAsync(query);
+        return View(await reservations.ToListAsync());
+    }
+
+    [Authorize(Roles = "Recepcjonista, Kierownik")]
+    public async Task<IActionResult> ReceptionPanel()
+    {
+        return View();
+    }
+
+    public async Task<IActionResult> MyReservations()
+    {
+        if (!User.Identity.IsAuthenticated)
         {
-            _reservationService = reservationService;
-            _reservationRepository = reservationRepository;
-            _roomRepository = roomRepository;
+            return RedirectToAction("Login", "Account");
         }
 
-        [Authorize(Roles = "Recepcjonista, Kierownik")]
-        [HttpGet]
-        public async Task<IActionResult> All()
+        var userEmail = User.Identity.Name;
+        if (string.IsNullOrEmpty(userEmail))
         {
-            var guests = await _reservationRepository.GetGuests();
-
-            return View("ReceptionPanel", guests);
+            return RedirectToAction("Login", "Account");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> List()
+        var query = new GetReservationsByGuestEmailQuery(userEmail);
+        var reservations = await mediator.SendAsync(query);
+
+        return View(await reservations.ToListAsync());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+        // TODO: Create GetAvailableRoomsQuery in CQRS structure
+        // var roomsQuery = new GetAvailableRoomsQuery(DateTime.Today, DateTime.Today.AddDays(7));
+        // var rooms = await mediator.SendAsync(roomsQuery);
+        ViewBag.Rooms = new List<SelectListItem>(); // Temporary empty list
+        /* (await rooms.ToListAsync()).Select(r => new SelectListItem
         {
-            var reservations = await _reservationRepository.GetAll();
-            var rooms = await _roomRepository.GetAll(); 
-            if(reservations == null)
-            {
-                return NotFound();
-            }
+            Value = r.Id.ToString(),
+            Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} zł"
+        }).ToList(); */
 
-            ViewBag.Rooms = rooms;
+        return View();
+    }
 
-            return View(reservations);
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> MyReservations()
+    [HttpPost]
+    public async Task<IActionResult> Create(ReservationViewModel model)
+    {
+        if (!ModelState.IsValid)
         {
-            var userEmail = User.Identity.Name;
-
-            if (userEmail is null)
-            {
-                return View();
-            }
-
-            var reservations = await _reservationRepository.GuestReservations(userEmail);
-
-            return View(reservations);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(7));
-            ViewBag.Rooms = rooms.Select(r => new SelectListItem
+            // TODO: Create GetAvailableRoomsQuery in CQRS structure
+            // var roomsQuery = new GetAvailableRoomsQuery(DateTime.Today, DateTime.Today.AddDays(7));
+            // var rooms = await mediator.SendAsync(roomsQuery);
+            ViewBag.Rooms = new List<SelectListItem>(); // Temporary empty list
+            /*
+            ViewBag.Rooms = (await rooms.ToListAsync()).Select(r => new SelectListItem
             {
                 Value = r.Id.ToString(),
                 Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} zł"
             }).ToList();
+            */
 
-            return View();
+            return View(model);
         }
 
+        var command = new CreateReservationCommand(
+            model.ArrivalDate,
+            model.DepartureDate,
+            model.RoomId,
+            model.GuestFirstName,
+            model.GuestLastName,
+            model.GuestEmail,
+            model.GuestPhoneNumber);
 
-        [HttpPost]
-        public async Task<IActionResult> Create(ReservationViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
+        var reservationId = await mediator.SendAsync(command);
 
-                var rooms = await _roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(7));
-                ViewBag.Rooms = rooms.Select(r => new SelectListItem
-                {
-                    Value = r.Id.ToString(),
-                    Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} zł"
-                }).ToList();
+        return RedirectToAction("Pay", "Payment", new { reservationId });
+    }
 
-                return View(model);
-            }
+    [HttpPost]
+    public async Task<IActionResult> MarkPaid([FromBody] MarkPaidDto dto)
+    {
+        var command = new MarkReservationAsPaidCommand(dto.ReservationId, dto.PaymentIntentId);
+        await mediator.SendAsync(command);
+        return Ok();
+    }
 
-            var reservationId = await _reservationService.CreateReservation(model);
+    [HttpPost]
+    [Authorize(Roles = "Recepcjonista, Kierownik")]
+    public async Task<IActionResult> Confirm(string id)
+    {
+        var command = new ConfirmReservationCommand(id);
+        await mediator.SendAsync(command);
+        return RedirectToAction("List");
+    }
 
-            return RedirectToAction("Pay", "Payment", new { reservationId });
-        }
+    [HttpPost]
+    public async Task<IActionResult> Cancel(string id, string reason)
+    {
+        var command = new CancelReservationCommand(id, reason);
+        await mediator.SendAsync(command);
+        return RedirectToAction(nameof(List));
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> MarkPaid([FromBody] MarkPaidDto dto)
-        {
-            var reservation = await _reservationRepository.GetById(dto.ReservationId);
-
-            if (reservation == null) return NotFound();
-
-            reservation.Status = "Opłacona";
-
-            reservation.Payment = new Payment
-            {
-                Method = "Stripe",
-                Status = "Opłacona",
-                Amount = 200,
-                StripePaymentIntentId = dto.PaymentIntentId,
-            };
-
-            await _reservationRepository.Update(reservation);
-            return Ok();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Recepcjonista, Kierownik")]
-        public async Task<IActionResult> Confirm(int id)
-        {
-            await _reservationService.ConfirmReservation(id);
-            return RedirectToAction("List");
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Cancel(int id, string reason)
-        {
-            await _reservationService.CancelReservation(id, reason);
-            return RedirectToAction(nameof(List));
-
-        }
-
-        [Authorize(Roles = "Recepcjonista, Kierownik")]
-        [HttpPost]
-        public async Task<IActionResult> ToggleRoomAvailability(int id)
-        {
-            var room = await _roomRepository.GetByIdAsync(id);
-            if (room == null) return NotFound();
-
-            room.IsAvailable = !room.IsAvailable;
-            await _roomRepository.UpdateAsync(room);
-
-            return RedirectToAction(nameof(List));
-        }
-
+    [Authorize(Roles = "Recepcjonista, Kierownik")]
+    [HttpPost]
+    public async Task<IActionResult> ToggleRoomAvailability(int id)
+    {
+        // TODO: Create ToggleRoomAvailabilityCommand in CQRS structure
+        // var toggleCommand = new ToggleRoomAvailabilityCommand(id);
+        // await mediator.SendAsync(toggleCommand);
+        return RedirectToAction(nameof(List));
     }
 }
