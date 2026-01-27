@@ -2,10 +2,10 @@ using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Application.Dtos.Room;
 
-public class CreateRoomDto
+public record CreateRoomDto
 {
-    public string Number { get; set; } = default!;
-    public RoomType Type { get; set; }
-    public decimal PricePerNight { get; set; }
-    public string? ImagePath { get; set; }
+    public string Number { get; init; } = string.Empty;
+    public RoomType Type { get; init; }
+    public decimal PricePerNight { get; init; }
+    public string? ImagePath { get; init; }
 }

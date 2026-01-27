@@ -2,9 +2,9 @@ using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Application.Dtos.Reservation;
 
-public class UpdateReservationDto
+public record UpdateReservationDto
 {
-    public string ReservationId { get; set; } = default!;
-    public ReservationStatus Status { get; set; }
-    public string Reason { get; set; } = string.Empty;
+    public string ReservationId { get; init; } = string.Empty;
+    public ReservationStatus Status { get; init; }
+    public string Reason { get; init; } = string.Empty;
 }

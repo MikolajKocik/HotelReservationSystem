@@ -1,9 +1,9 @@
 namespace HotelReservationSystem.Application.Dtos.Opinion;
 
-public class CreateOpinionDto
+public record CreateOpinionDto
 {
-    public double Rating { get; set; }
-    public string Comment { get; set; } = default!;
-    public string ReservationId { get; set; } = default!;
-    public string GuestId { get; set; } = default!;
+    public double Rating { get; init; }
+    public string Comment { get; init; } = string.Empty;
+    public string ReservationId { get; init; } = string.Empty;
+    public string GuestId { get; init; } = string.Empty;
 }

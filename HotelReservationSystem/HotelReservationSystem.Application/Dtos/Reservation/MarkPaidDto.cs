@@ -1,7 +1,7 @@
 namespace HotelReservationSystem.Application.Dtos.Reservation;
 
-public class MarkPaidDto
+public record MarkPaidDto
 {
-    public string ReservationId { get; set; } = default!;
-    public string PaymentIntentId { get; set; } = default!;
+    public string ReservationId { get; init; } = string.Empty;
+    public string PaymentIntentId { get; init; } = string.Empty;
 }

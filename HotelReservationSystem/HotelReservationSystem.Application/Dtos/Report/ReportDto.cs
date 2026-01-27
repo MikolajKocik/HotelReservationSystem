@@ -1,8 +1,10 @@
 namespace HotelReservationSystem.Application.Dtos.Report;
 
-public class ReportDto
+public record ReportDto
 {
-    public int TotalReservations { get; set; }
-    public int Confirmed { get; set; }
-    public decimal TotalIncome { get; set; }
+    public int TotalReservations { get; init; }
+    public int ConfirmedReservations { get; init; }
+    public int CanceledReservations { get; init; }
+    public decimal TotalPayments { get; init; }
+    public int AvailableRooms { get; init; }
 }

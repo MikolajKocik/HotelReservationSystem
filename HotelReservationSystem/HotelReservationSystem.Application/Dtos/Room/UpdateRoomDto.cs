@@ -1,9 +1,9 @@
 namespace HotelReservationSystem.Application.Dtos.Room;
 
-public class UpdateRoomDto
+public record UpdateRoomDto
 {
-    public int Id { get; set; }
-    public decimal PricePerNight { get; set; }
-    public bool IsAvailable { get; set; }
-    public string? ImagePath { get; set; }
+    public int Id { get; init; }
+    public decimal PricePerNight { get; init; }
+    public bool IsAvailable { get; init; }
+    public string? ImagePath { get; init; }
 }

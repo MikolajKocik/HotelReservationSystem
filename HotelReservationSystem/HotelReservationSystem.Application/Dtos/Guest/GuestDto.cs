@@ -1,12 +1,12 @@
 namespace HotelReservationSystem.Application.Dtos.Guest;
 
-public class GuestDto
+public record GuestDto
 {
-    public string Id { get; set; } = default!;
-    public string FirstName { get; set; } = default!;
-    public string LastName { get; set; } = default!;
-    public string Email { get; set; } = default!;
-    public string PhoneNumber { get; set; } = default!;
-    public DateTime CreatedAt { get; set; }
-    public int ReservationsCount { get; set; }
+    public string Id { get; init; } = string.Empty;
+    public string FirstName { get; init; } = string.Empty;
+    public string LastName { get; init; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
+    public string PhoneNumber { get; init; } = string.Empty;
+    public DateTime CreatedAt { get; init; }
+    public int ReservationsCount { get; init; }
 }

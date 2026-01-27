@@ -1,9 +1,9 @@
 namespace HotelReservationSystem.Application.Dtos.Payment;
 
-public class CreatePaymentDto
+public record CreatePaymentDto
 {
-    public string Method { get; set; } = default!;
-    public decimal Amount { get; set; }
-    public string StripePaymentIntentId { get; set; } = default!;
-    public string ReservationId { get; set; } = default!;
+    public string Method { get; init; } = string.Empty;
+    public decimal Amount { get; init; }
+    public string StripePaymentIntentId { get; init; } = string.Empty;
+    public string ReservationId { get; init; } = string.Empty;
 }

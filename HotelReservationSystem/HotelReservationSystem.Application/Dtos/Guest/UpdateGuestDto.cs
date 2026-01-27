@@ -1,8 +1,8 @@
 namespace HotelReservationSystem.Application.Dtos.Guest;
 
-public class UpdateGuestDto
+public record UpdateGuestDto
 {
-    public string GuestId { get; set; } = default!;
-    public string Email { get; set; } = default!;
-    public string PhoneNumber { get; set; } = default!;
+    public string GuestId { get; init; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
+    public string PhoneNumber { get; init; } = string.Empty;
 }

@@ -2,8 +2,8 @@ using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Application.Dtos.Payment;
 
-public class UpdatePaymentStatusDto
+public record UpdatePaymentStatusDto
 {
-    public int PaymentId { get; set; }
-    public PaymentStatus Status { get; set; }
+    public int PaymentId { get; init; }
+    public PaymentStatus Status { get; init; }
 }
