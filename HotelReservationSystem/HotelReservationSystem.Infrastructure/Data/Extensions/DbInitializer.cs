@@ -1,61 +1,57 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HotelReservationSystem.Infrastructure.Data.Extensions
+namespace HotelReservationSystem.Infrastructure.Data.Extensions;
+
+public static class DbInitializer
 {
-    public static class DbInitializer
+    public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
     {
-        public static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
+        RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        UserManager<IdentityUser> userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+        string[] roles = { "Recepcionist", "Manager", "Guest" };
+
+        foreach (var role in roles)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+        }
 
-            string[] roles = { "Recepcjonista", "Kierownik" };
-
-            foreach (var role in roles)
+        IdentityUser? user = await userManager.FindByEmailAsync("recepcja@hotel.pl");
+        if (user == null)
+        {
+            var newUser = new IdentityUser
             {
-                if (!await roleManager.RoleExistsAsync(role))
-                    await roleManager.CreateAsync(new IdentityRole(role));
+                UserName = "recepcja@hotel.pl",
+                Email = "recepcja@hotel.pl",
+                EmailConfirmed = true
+            };
+
+            IdentityResult result = await userManager.CreateAsync(newUser, "Test123!");
+
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(newUser, "Recepcionist");
             }
+        }
 
-            // Tworzenie użytkownika testowego (Recepcjonista)
-            var user = await userManager.FindByEmailAsync("recepcja@hotel.pl");
-            if (user == null)
+        IdentityUser? manager = await userManager.FindByEmailAsync("manager@hotel.pl");
+        if (manager == null)
+        {
+            var newManager = new IdentityUser
             {
-                var newUser = new IdentityUser
-                {
-                    UserName = "recepcja@hotel.pl",
-                    Email = "recepcja@hotel.pl",
-                    EmailConfirmed = true
-                };
+                UserName = "manager@hotel.pl",
+                Email = "manager@hotel.pl",
+                EmailConfirmed = true
+            };
 
-                var result = await userManager.CreateAsync(newUser, "Test123!");
+            IdentityResult result = await userManager.CreateAsync(newManager, "Test123!");
 
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(newUser, "Recepcjonista");
-                }
-            }
-
-            // Tworzenie użytkownika testowego (Kierownik)
-            var manager = await userManager.FindByEmailAsync("manager@hotel.pl");
-            if (manager == null)
+            if (result.Succeeded)
             {
-                var newManager = new IdentityUser
-                {
-                    UserName = "manager@hotel.pl",
-                    Email = "manager@hotel.pl",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(newManager, "Test123!");
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(newManager, "Kierownik");
-                }
+                await userManager.AddToRoleAsync(newManager, "Manager");
             }
         }
     }
-
 }
