@@ -1,6 +1,5 @@
 using HotelReservationSystem.Application.Interfaces;
 using HotelReservationSystem.Application.Dtos.Reservation;
-using HotelReservationSystem.Application.Dtos.Guest;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Enums;
@@ -41,16 +40,16 @@ namespace HotelReservationSystem.Application.UseCases
 
         public async Task<string> CreateReservation(CreateReservationDto model)
         {
-            var room = await roomRepository.GetByIdAsync(model.RoomId);
+            Room? room = await roomRepository.GetByIdAsync(model.RoomId);
             if (room == null)
             {
-                throw new Exception("Pokój nie istnieje");
+                throw new Exception("Room does not exist");
             }
 
             var guest = new Guest(model.FirstName, model.LastName, model.Email, model.PhoneNumber);
 
-            var stayDuration = (model.DepartureDate - model.ArrivalDate).Days;
-            var totalPrice = stayDuration * room.PricePerNight;
+            int stayDuration = (model.DepartureDate - model.ArrivalDate).Days;
+            decimal totalPrice = stayDuration * room.PricePerNight;
 
             var reservation = new Reservation(
                 model.ArrivalDate,
