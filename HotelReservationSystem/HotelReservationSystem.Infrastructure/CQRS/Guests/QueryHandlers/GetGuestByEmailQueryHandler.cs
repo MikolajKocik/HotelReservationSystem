@@ -2,6 +2,7 @@ using HotelReservationSystem.Application.CQRS.Abstractions.Queries;
 using HotelReservationSystem.Application.CQRS.Guests.Queries;
 using HotelReservationSystem.Application.Dtos.Guest;
 using HotelReservationSystem.Core.Domain.Interfaces;
+using HotelReservationSystem.Core.Domain.Entities;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 
@@ -22,7 +23,7 @@ public class GetGuestByEmailQueryHandler : IQueryHandler<GetGuestByEmailQuery, G
     /// </summary>
     public async Task<GuestDto?> HandleAsync(GetGuestByEmailQuery query, CancellationToken cancellationToken = default)
     {
-        var guest = await guestRepository.GetByEmailAsync(query.Email);
+        Guest? guest = await guestRepository.GetByEmailAsync(query.Email);
         
         return guest == null ? null : new GuestDto
         {

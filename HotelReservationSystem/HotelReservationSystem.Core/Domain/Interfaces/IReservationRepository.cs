@@ -43,6 +43,11 @@ namespace HotelReservationSystem.Core.Domain.Interfaces
         Task DeleteAsync(string id);
         
         /// <summary>
+        /// Gets reservations for a specific room within a date range
+        /// </summary>
+        Task<IQueryable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to);
+        
+        /// <summary>
         /// Gets all guests for lookup purposes
         /// </summary>
         Task<List<Guest>> GetGuestsAsync();

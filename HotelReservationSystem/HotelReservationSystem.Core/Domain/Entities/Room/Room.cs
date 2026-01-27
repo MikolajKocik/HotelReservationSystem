@@ -9,7 +9,7 @@ public sealed partial class Room
         _reservations = new List<Reservation>();
     } 
 
-    public Room(string number, RoomType type, decimal pricePerNight, string? imagePath = null)
+    public Room(string number, RoomType type, decimal pricePerNight, string currency, string? imagePath = null)
     {
         ValidateInput(number, pricePerNight);
         
@@ -20,17 +20,19 @@ public sealed partial class Room
         this.IsAvailable = true;
         this.ImagePath = imagePath;
         this.CreatedAt = DateTime.UtcNow;
-        _reservations = new List<Reservation>();
+        this.Currency = currency;
+        this._reservations = new List<Reservation>();
     }
 
     public int Id { get; private set; }
     public string Number { get; private set; } = default!;
     public RoomType Type { get; private set; }
     public decimal PricePerNight { get; private set; }
+    public string Currency { get; private set; } = default!;
     public bool IsAvailable { get; private set; }
     public string? ImagePath { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
     private readonly List<Reservation> _reservations = new List<Reservation>();
-    public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
+    public IReadOnlyCollection<Reservation> Reservations => this._reservations.AsReadOnly();
 }
