@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using HotelReservationSystem.Web.ViewModels;
+using Microsoft.AspNetCore.RateLimiting;
 
-public class AccountController : Controller
+public sealed class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
@@ -17,12 +18,12 @@ public class AccountController : Controller
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
 
         var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-        var result = await userManager.CreateAsync(user, model.Password);
+        IdentityResult? result = await userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
         {
@@ -40,18 +41,26 @@ public class AccountController : Controller
     public IActionResult Login() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    [EnableRateLimiting("LoginPolicy")]
+    public async Task<IActionResult> Login([FromForm] LoginViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
 
-        var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+        Microsoft.AspNetCore.Identity.SignInResult? result = await signInManager.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe, 
+            false
+        );
+
         if (result.Succeeded)
             return RedirectToAction("Index", "Home");
 
-        ModelState.AddModelError("", "Nieprawidłowe dane logowania.");
+        ModelState.AddModelError("", "Invalid login attempt.");
         return View(model);
     }
 
+    [HttpPost]
     public async Task<IActionResult> Logout()
     {
         await signInManager.SignOutAsync();

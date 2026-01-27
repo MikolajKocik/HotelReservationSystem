@@ -1,38 +1,37 @@
 using HotelReservationSystem.Web.ViewModels;
 using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Reports.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HotelReservationSystem.Application.Dtos.Report;
 
-namespace HotelReservationSystem.Controllers
+namespace HotelReservationSystem.Controllers;
+
+[Authorize(Policy = "RequireManager")]
+public sealed class ReportsController : Controller
 {
-    [Authorize(Roles = "Kierownik")]
-    public class ReportsController : Controller
+    private readonly ICQRSMediator mediator;
+
+    public ReportsController(ICQRSMediator mediator)
     {
-        private readonly ICQRSMediator mediator;
+        this.mediator = mediator;
+    }
 
-        public ReportsController(ICQRSMediator mediator)
+    [HttpGet]
+    public async Task<IActionResult> Reports()
+    {
+        var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
+        ReportDto reportData = await mediator.SendAsync(query);
+
+        var model = new ReportViewModel
         {
-            this.mediator = mediator;
-        }
+            TotalReservations = reportData.TotalReservations,
+            ConfirmedReservations = reportData.ConfirmedReservations,
+            CanceledReservations = reportData.CanceledReservations,
+            TotalPayments = reportData.TotalPayments,
+            AvailableRooms = reportData.AvailableRooms
+        };
 
-        [HttpGet]
-        public IActionResult Reports()
-        {
-            // TODO: Create GenerateReportQuery in CQRS structure
-            // var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
-            // var reportData = await mediator.SendAsync(query);
-
-            var model = new ReportViewModel
-            {
-                // TODO: Replace with actual CQRS query results
-                TotalReservations = 0, // reportData.TotalReservations,
-                ConfirmedReservations = 0, // reportData.ConfirmedReservations,
-                CanceledReservations = 0, // reportData.CancelledReservations,
-                TotalPayments = 0, // reportData.TotalRevenue,
-                AvailableRooms = 0 // reportData.AvailableRooms
-            };
-
-            return View(model);
-        }
+        return View(model);
     }
 }

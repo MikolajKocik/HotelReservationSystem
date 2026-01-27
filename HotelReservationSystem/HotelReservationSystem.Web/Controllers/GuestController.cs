@@ -1,22 +1,31 @@
-﻿using HotelReservationSystem.Infrastructure.Data;
+﻿using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Guests.Queries;
+using HotelReservationSystem.Application.Dtos.Guest;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using HotelReservationSystem.Web.Utils;
 
-namespace HotelReservationSystem.Controllers
+namespace HotelReservationSystem.Controllers;
+
+public sealed class GuestController : Controller
 {
-    public class GuestController : Controller
+    private readonly ICQRSMediator mediator;
+
+    public GuestController(ICQRSMediator mediator)
     {
-        private readonly HotelDbContext context;
+        this.mediator = mediator;
+    }
 
-        public GuestController(HotelDbContext context)
-        {
-            this.context = context;
-        }
+    [HttpGet]
+    public async Task<IActionResult> List()
+    {
+        var query = new GetAllGuestsQuery();
+        IQueryable<GuestDto> guests = await mediator.SendAsync(query);
 
-        public async Task<IActionResult> List()
-        {
-            var guests = await context.Guests.ToListAsync();
-            return View(guests);
-        }
+        var viewModels = guests.Select(
+            GuestMappingHelper.MapToGuestViewModel).
+            ToList();
+
+        return View(viewModels);
     }
 }
+

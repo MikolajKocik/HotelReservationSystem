@@ -1,88 +1,61 @@
-using HotelReservationSystem.Application.CQRS;
-using HotelReservationSystem.Application.CQRS.Reservations.Queries;
-using HotelReservationSystem.Application.CQRS.Reservations.Commands;
 using HotelReservationSystem.Application.CQRS.Abstractions;
-using HotelReservationSystem.Application.Interfaces;
+using HotelReservationSystem.Application.CQRS.Payments.Commands;
+using HotelReservationSystem.Application.Dtos.Reservation;
 using Microsoft.AspNetCore.Mvc;
+using HotelReservationSystem.Application.CQRS.Payments.Queries;
+using HotelReservationSystem.Web.ViewModels;
 
-namespace HotelReservationSystem.Controllers
+namespace HotelReservationSystem.Controllers;
+
+public sealed class PaymentController : Controller
 {
-    public class PaymentController : Controller
+    private readonly ICQRSMediator mediator;
+
+    public PaymentController(
+        ICQRSMediator mediator
+        )
     {
-        private readonly ICQRSMediator mediator;
-        private readonly IStripeService stripeService;
-        private readonly IConfiguration configuration;
+        this.mediator = mediator;
+    }
 
-        public PaymentController(
-            ICQRSMediator mediator,
-            IStripeService stripeService,
-            IConfiguration configuration)
+    [HttpGet]
+    public async Task<IActionResult> Pay(string reservationId)
+    {
+        var query = new GetPaymentInfoQuery(reservationId);
+        PaymentInfoDto? paymentInfo = await mediator.SendAsync(query);
+
+        if (paymentInfo == null)
+            return NotFound("Reservation not found.");
+
+        var viewModel = new PaymentViewModel
         {
-            this.mediator = mediator;
-            this.stripeService = stripeService;
-            this.configuration = configuration;
+            ReservationId = paymentInfo.ReservationId,
+            TotalAmount = paymentInfo.TotalAmount,
+            ClientSecret = paymentInfo.ClientSecret,
+            PublishableKey = paymentInfo.PublishableKey,
+            Currency = paymentInfo.Currency
+        };
+
+        if (string.IsNullOrEmpty(viewModel.PublishableKey))
+        {
+            return BadRequest("Stripe Publishable Key is not configured.");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Pay(string reservationId)
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ProcessPayment(string reservationId, string paymentMethodId)
+    {
+        try
         {
-            var query = new GetReservationByIdQuery(reservationId);
-            var reservation = await mediator.SendAsync(query);
-
-            if (reservation == null)
-                return NotFound("Rezerwacja nie znaleziona.");
-
-            var nights = (reservation.DepartureDate - reservation.ArrivalDate).Days;
-            if (nights <= 0)
-                nights = 1; 
-
-            var totalAmount = reservation.RoomPricePerNight * nights;
-
-            var clientSecret = await stripeService.CreatePaymentIntentAsync(totalAmount);
-
-            ViewBag.ClientSecret = clientSecret;
-            ViewBag.Amount = totalAmount;
-            ViewBag.ReservationId = reservationId;
-            ViewBag.PublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY")
-                ?? configuration["Stripe:PublishableKey"];
-
-            if (string.IsNullOrEmpty(ViewBag.PublishableKey))
-            {
-                return BadRequest("Stripe Publishable Key nie jest skonfigurowany.");
-            }
-
-            return View();
+            var confirmCommand = new ConfirmPaymentCommand(reservationId, paymentMethodId);
+            await mediator.SendAsync(confirmCommand);
+            return Json(new { success = true });
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ProcessPayment(string reservationId, string paymentMethodId)
+        catch (Exception ex)
         {
-            try
-            {
-                var query = new GetReservationByIdQuery(reservationId);
-                var reservation = await mediator.SendAsync(query);
-
-                if (reservation == null)
-                    return NotFound("Rezerwacja nie znaleziona.");
-
-                var nights = (reservation.DepartureDate - reservation.ArrivalDate).Days;
-                if (nights <= 0)
-                    nights = 1;
-
-                var totalAmount = reservation.RoomPricePerNight * nights;
-
-                var paymentIntentId = await stripeService.CreatePaymentIntentAsync(totalAmount);
-                
-                // TODO: Create ConfirmPaymentCommand in CQRS structure
-                // var confirmCommand = new ConfirmPaymentCommand(reservationId, paymentIntentId);
-                // await mediator.SendAsync(confirmCommand);
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex.Message });
-            }
+            return Json(new { success = false, error = ex.Message });
         }
     }
 }
