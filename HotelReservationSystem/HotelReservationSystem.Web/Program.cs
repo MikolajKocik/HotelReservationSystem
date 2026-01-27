@@ -1,33 +1,17 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Infrastructure.Data.Extensions;
 using HotelReservationSystem.Infrastructure.Extensions;
-using HotelReservationSystem.Application.Interfaces;
-using HotelReservationSystem.Application.UseCases;
-using Microsoft.AspNetCore.Identity;
+using HotelReservationSystem.Application.Extensions;
+using HotelReservationSystem.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContextBasedServices(builder.Configuration);
-
-// Register CQRS Services
-builder.Services.AddCQRSServices();
-
-// Register remaining Application Services
-builder.Services.AddScoped<IStripeService, StripeService>();
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<HotelDbContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+// Register all services using main extension methods per layer
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+builder.Services.AddWebServices();
 
 var app = builder.Build();
 
@@ -42,20 +26,23 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
     context.Database.Migrate();
-    context.Seed(); // extension seed method
+    context.Seed(); 
 }
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await DbInitializer.SeedRolesAndAdminAsync(services);
+    await DbInitializer.SeedRolesAsync(services);
 }
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
- 
+
+app.UseErrorHandlingMiddleware();
+app.UseCultureHandling();
+
 app.UseRouting();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
