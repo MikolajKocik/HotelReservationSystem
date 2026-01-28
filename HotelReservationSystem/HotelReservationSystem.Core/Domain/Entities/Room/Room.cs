@@ -13,7 +13,6 @@ public sealed partial class Room
     {
         ValidateInput(number, pricePerNight);
         
-        this.Id = Random.Shared.Next(1, int.MaxValue);
         this.Number = number;
         this.Type = type;
         this.PricePerNight = pricePerNight;

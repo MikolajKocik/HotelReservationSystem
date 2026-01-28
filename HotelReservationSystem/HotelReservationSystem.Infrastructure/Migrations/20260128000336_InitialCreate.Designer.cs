@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HotelReservationSystem.Migrations
+namespace HotelReservationSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20260127193510_AddOpinionEntity")]
-    partial class AddOpinionEntity
+    [Migration("20260128000336_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -189,9 +189,6 @@ namespace HotelReservationSystem.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("GuestId1")
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<int>("NumberOfGuests")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -208,9 +205,6 @@ namespace HotelReservationSystem.Migrations
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RoomId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -224,11 +218,7 @@ namespace HotelReservationSystem.Migrations
 
                     b.HasIndex("GuestId");
 
-                    b.HasIndex("GuestId1");
-
                     b.HasIndex("RoomId");
-
-                    b.HasIndex("RoomId1");
 
                     b.HasIndex("Status");
 
@@ -518,24 +508,16 @@ namespace HotelReservationSystem.Migrations
             modelBuilder.Entity("HotelReservationSystem.Core.Domain.Entities.Reservation", b =>
                 {
                     b.HasOne("HotelReservationSystem.Core.Domain.Entities.Guest", "Guest")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("GuestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("HotelReservationSystem.Core.Domain.Entities.Guest", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("GuestId1");
-
                     b.HasOne("HotelReservationSystem.Core.Domain.Entities.Room", "Room")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("HotelReservationSystem.Core.Domain.Entities.Room", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("RoomId1");
 
                     b.Navigation("Guest");
 

@@ -47,12 +47,12 @@ namespace HotelReservationSystem.Infrastructure.Data.Configuration
                 .IsRequired();
 
             builder.HasOne(r => r.Guest)
-                .WithMany()
+                .WithMany(g => g.Reservations)
                 .HasForeignKey(r => r.GuestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(r => r.Room)
-                .WithMany()
+                .WithMany(room => room.Reservations)
                 .HasForeignKey(r => r.RoomId)
                 .OnDelete(DeleteBehavior.Restrict);
 
