@@ -3,10 +3,10 @@ using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.CQRS.Rooms.Commands;
 using HotelReservationSystem.Application.Dtos.Room;
 using HotelReservationSystem.Web.Services;
+using HotelReservationSystem.Web.Utils.ModelMappings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Web.ViewModels.Room;
-using HotelReservationSystem.Web.Utils;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -28,7 +28,7 @@ public sealed class RoomController : Controller
         var query = new GetAllRoomsQuery();
         IQueryable<RoomDto> rooms = await mediator.SendAsync(query);
 
-        var roomViewModels = rooms.Select(
+        List<RoomViewModel> roomViewModels = rooms.Select(
             RoomMappingHelper.MapToRoomViewModel)
             .ToList();
 
@@ -46,7 +46,7 @@ public sealed class RoomController : Controller
             return NotFound();
         }
 
-        var viewModel = RoomMappingHelper.MapToRoomViewModel(room);
+        RoomViewModel viewModel = RoomMappingHelper.MapToRoomViewModel(room);
         return View(viewModel);
     }
 
@@ -95,7 +95,7 @@ public sealed class RoomController : Controller
             return NotFound();
         }
 
-        var viewModel = RoomMappingHelper.MapToEditRoomViewModel(room);
+        EditRoomViewModel viewModel = RoomMappingHelper.MapToEditRoomViewModel(room);
         return View(viewModel);
     }
 

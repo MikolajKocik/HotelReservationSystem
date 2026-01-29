@@ -4,12 +4,12 @@ using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.CQRS.Rooms.Commands;
 using HotelReservationSystem.Application.Dtos.Reservation;
 using HotelReservationSystem.Application.Dtos.Room;
+using HotelReservationSystem.Web.Utils.ModelMappings;
 using HotelReservationSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HotelReservationSystem.Application.CQRS.Abstractions;
-using HotelReservationSystem.Web.Utils;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -28,7 +28,7 @@ public sealed class ReservationController : Controller
         var query = new GetAllReservationsQuery();
         IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
 
-        var viewModels = reservations.Select(
+        List<ReservationViewModel> viewModels = reservations.Select(
             ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
@@ -42,7 +42,7 @@ public sealed class ReservationController : Controller
         var query = new GetAllReservationsQuery();
         IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
 
-        var viewModels = reservations.Select(
+        List<ReservationViewModel> viewModels = reservations.Select(
             ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
@@ -73,7 +73,7 @@ public sealed class ReservationController : Controller
         var query = new GetReservationsByGuestEmailQuery(userEmail);
         IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
 
-        var viewModels = reservations.Select(
+        List<ReservationViewModel> viewModels = reservations.Select(
             ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
@@ -81,22 +81,17 @@ public sealed class ReservationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> CreateSingle(int? roomId = null)
     {
-        var query = new GetAvailableRoomsSelectListQuery(
-            DateTime.Today,
-            DateTime.Today.AddDays(7)
-        );
+        await PopulateAvailableRoomsSelectList(roomId);
+        return View("CreateSingle");
+    }
 
-        List<RoomSelectDto> rooms = await mediator.SendAsync(query);
-
-        ViewBag.Rooms = rooms.Select(r => new SelectListItem
-        {
-            Value = r.Id.ToString(),
-            Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
-        }).ToList();
-
-        return View();
+    [HttpGet]
+    public async Task<IActionResult> CreateDouble(int? roomId = null)
+    {
+        await PopulateAvailableRoomsSelectList(roomId);
+        return View("CreateDouble");
     }
 
     [HttpPost]
@@ -132,6 +127,8 @@ public sealed class ReservationController : Controller
                 Value = r.Id.ToString(),
                 Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
             }).ToList();
+
+            ViewBag.RoomsJson = System.Text.Json.JsonSerializer.Serialize(rooms);
 
             return View(model);
         }
@@ -170,5 +167,24 @@ public sealed class ReservationController : Controller
         var toggleCommand = new ToggleRoomAvailabilityCommand(id);
         await mediator.SendAsync(toggleCommand);
         return RedirectToAction(nameof(List));
+    }
+
+
+    private async Task PopulateAvailableRoomsSelectList(int? roomId = null)
+    {
+        var query = new GetAvailableRoomsSelectListQuery(
+            DateTime.Today,
+            DateTime.Today.AddDays(7)
+        );
+
+        List<RoomSelectDto> rooms = await mediator.SendAsync(query);
+
+        ViewBag.Rooms = rooms.Select(r => new SelectListItem
+        {
+            Value = r.Id.ToString(),
+            Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
+        }).ToList();
+        ViewBag.RoomsJson = System.Text.Json.JsonSerializer.Serialize(rooms);
+        ViewBag.SelectedRoomId = roomId;
     }
 }

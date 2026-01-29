@@ -1,0 +1,59 @@
+@using HotelReservationSystem.Web.ViewModels.Room
+@model IEnumerable<RoomViewModel>
+
+@{
+    ViewData["Title"] = "Lista pokoi";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4 text-center border-bottom pb-3">Dostępne pokoje w naszym hotelu</h2>
+
+    <div class="row">
+        @foreach (var room in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-5">
+                            <img src="@(room.ImagePath ?? "/images/rooms/default.jpg")" 
+                                 class="img-fluid rounded-start h-100" 
+                                 alt="Pokój @room.Number" 
+                                 style="object-fit:cover;" />
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card-body d-flex flex-column h-100">
+                                <h5 class="card-title h4">Pokój @room.Number</h5>
+                                <h6 class="text-primary mb-3">Typ: @room.Type</h6>
+                                
+                                <p class="card-text flex-grow-1">
+                                    Cena za noc: <span class="h5 text-dark fw-bold">@room.PricePerNight @room.Currency</span>
+                                </p>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="badge @(room.IsAvailable ? "bg-success" : "bg-danger")">
+                                        @(room.IsAvailable ? "Wolny" : "Zajęty")
+                                    </span>
+                                </div>
+
+                                <div class="mt-auto">
+                                    @if (room.IsAvailable)
+                                    {
+                                        string actionName = room.Type.ToString() == "Single" ? "CreateSingle" : "CreateDouble";
+                                        <a asp-controller="Reservation" 
+                                           asp-action="@actionName" 
+                                           asp-route-roomId="@room.Id" 
+                                           class="btn btn-primary w-100">Zarezerwuj ten pokój</a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-secondary w-100" disabled>Obecnie niedostępny</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
