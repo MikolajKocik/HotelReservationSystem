@@ -23,9 +23,28 @@ public class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryabl
     /// </summary>
     public async Task<IQueryable<RoomDto>> HandleAsync(GetAllRoomsQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Room> rooms = await roomRepository.GetAllAsync();
+        IQueryable<Room> roomsQuery;
 
-        return rooms.Select(r => new RoomDto
+        if (query.ArrivalDate.HasValue && query.DepartureDate.HasValue)
+        {
+            roomsQuery = await roomRepository.GetAvailableRoomsAsync(query.ArrivalDate.Value, query.DepartureDate.Value);
+        }
+        else
+        {
+            roomsQuery = await roomRepository.GetAllAsync();
+        }
+
+        if (!string.IsNullOrEmpty(query.RoomType))
+        {
+            roomsQuery = roomsQuery.Where(r => r.Type.ToString() == query.RoomType);
+        }
+
+        if (!string.IsNullOrEmpty(query.SearchPhrase))
+        {
+            roomsQuery = roomsQuery.Where(r => r.Number.Contains(query.SearchPhrase));
+        }
+
+        return roomsQuery.Select(r => new RoomDto
         {
             Id = r.Id,
             Number = r.Number,
@@ -33,7 +52,7 @@ public class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryabl
             PricePerNight = r.PricePerNight,
             IsAvailable = r.IsAvailable,
             ImagePath = r.ImagePath,
-            CreatedAt = r.CreatedAt
+            Currency = r.Currency
         });
     }
 }

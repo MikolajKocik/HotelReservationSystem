@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Web.ViewModels;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
+using System.ComponentModel.Design;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -17,6 +18,12 @@ public sealed class HomeController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Index()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Gallery()
     {
         return View();
     }

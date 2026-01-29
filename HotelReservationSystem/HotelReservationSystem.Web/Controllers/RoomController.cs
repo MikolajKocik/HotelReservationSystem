@@ -12,7 +12,6 @@ using HotelReservationSystem.Web.ViewModels.Room;
 
 namespace HotelReservationSystem.Controllers;
 
-[Authorize(Policy = "RequireManager")]
 public sealed class RoomController : Controller
 {
     private readonly ICQRSMediator mediator;
@@ -25,9 +24,15 @@ public sealed class RoomController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    [AllowAnonymous]
+    public async Task<IActionResult> Index(
+        string? roomType, 
+        DateTime? arrivalDate, 
+        DateTime? departureDate, 
+        int? guests, 
+        string? searchPhrase)
     {
-        var query = new GetAllRoomsQuery();
+        var query = new GetAllRoomsQuery(roomType, arrivalDate, departureDate, guests, searchPhrase);
         IQueryable<RoomDto> rooms = await mediator.SendAsync(query);
 
         List<RoomViewModel> roomViewModels = rooms.Select(
@@ -38,6 +43,7 @@ public sealed class RoomController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Details(int id)
     {
         var query = new GetRoomByIdQuery(id);
@@ -53,12 +59,14 @@ public sealed class RoomController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "RequireManager")]
     public IActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Policy = "RequireManager")]
     public async Task<IActionResult> Create([FromForm] CreateRoomViewModel model)
     {
         try
@@ -87,6 +95,7 @@ public sealed class RoomController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "RequireManager")]
     public async Task<IActionResult> Edit(int id)
     {
         var query = new GetRoomByIdQuery(id);
@@ -102,6 +111,7 @@ public sealed class RoomController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "RequireManager")]
     public async Task<IActionResult> Edit(int id, [FromForm] EditRoomViewModel model)
     {
         if (id != model.Id)
@@ -135,6 +145,7 @@ public sealed class RoomController : Controller
     }
 
     [HttpDelete]
+    [Authorize(Policy = "RequireManager")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var command = new DeleteRoomCommand(id);
@@ -143,6 +154,7 @@ public sealed class RoomController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "RequireStaff")]
     public async Task<IActionResult> ToggleAvailability(int id)
     {
         var command = new ToggleRoomAvailabilityCommand(id);
