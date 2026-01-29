@@ -4,15 +4,17 @@
 @{
     ViewData["Title"] = "Panel recepcjonisty";
 
-    var totalReservations = Model.Sum(guest => guest.Reservations.Count);
+    int totalReservations = Model.Sum(guest => guest.Reservations.Count);
 
-    var pendingReservations = Model
+    int pendingReservations = Model
         .SelectMany(guest => guest.Reservations)
         .Count(reservation => reservation.Status == ReservationStatus.Pending);
 
-    var confirmedToday = Model
+    int confirmedToday = Model
         .SelectMany(guest => guest.Reservations)
-        .Count(reservation => reservation.Status == ReservationStatus.Confirmed && reservation.ArrivalDate.Date == DateTime.Today);
+        .Count(reservation => 
+            reservation.Status == ReservationStatus.Confirmed 
+            && reservation.ArrivalDate.Date == DateTime.Today);
 }
 
 <div class="container mt-4">
@@ -41,9 +43,12 @@
 
     <h4>Akcje</h4>
     <div class="list-group">
-        <a href="/Reservation/Create" class="list-group-item list-group-item-action">➕ Nowa rezerwacja</a>
-        <a href="/Reservation/List" class="list-group-item list-group-item-action">📋 Lista rezerwacji</a>
-        <a href="/Guest/List" class="list-group-item list-group-item-action">🧍‍♀️ Lista gości</a>
-        <a href="/Payment/Transactions" class="list-group-item list-group-item-action">💳 Transakcje</a>
+        <a href="/Reservation/Create" class="list-group-item list-group-item-action">Nowa rezerwacja</a>
+        <a href="/Reservation/List" class="list-group-item list-group-item-action">Lista rezerwacji</a>
+        <a href="/Guest/List" class="list-group-item list-group-item-action">Lista gości</a>
+        @if (User.IsInRole("Receptionist"))
+        {
+            <a asp-controller="Payment" asp-action="Transactions" class="list-group-item list-group-item-action">Transakcje</a>
+        }
     </div>
 </div>

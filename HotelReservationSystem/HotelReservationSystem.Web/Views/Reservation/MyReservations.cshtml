@@ -34,8 +34,7 @@
                             <button class="btn btn-danger btn-sm">Anuluj</button>
                         </form>
                     }
-                    @* Jeśli rezerwacja oczekuje, pokaż przycisk „Dokończ płatność” *@
-                    @if (r.Status == ReservationStatus.Pending && !(User.IsInRole("Recepcjonista") || User.IsInRole("Kierownik")))
+                    @if (r.Status == ReservationStatus.Pending && !(User.IsInRole("Recepcionist") || User.IsInRole("Manager")))
                     {
                         <a href="@Url.Action("Pay", "Payment", new { reservationId = r.Id })" class="btn btn-warning btn-sm mt-1">
                             Dokończ płatność

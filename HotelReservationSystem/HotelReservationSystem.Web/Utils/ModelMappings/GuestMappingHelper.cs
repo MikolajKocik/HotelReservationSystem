@@ -1,7 +1,7 @@
 using HotelReservationSystem.Application.Dtos.Guest;
 using HotelReservationSystem.Web.ViewModels;
 
-namespace HotelReservationSystem.Web.Utils
+namespace HotelReservationSystem.Web.Utils.ModelMappings
 {
     public static class GuestMappingHelper
     {
