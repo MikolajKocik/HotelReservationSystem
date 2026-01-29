@@ -1,6 +1,7 @@
 ﻿using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Guests.Queries;
 using HotelReservationSystem.Application.Dtos.Guest;
+using HotelReservationSystem.Web.Utils.ModelMappings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Controllers;

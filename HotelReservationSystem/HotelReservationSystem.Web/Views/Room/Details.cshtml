@@ -1,0 +1,38 @@
+@model HotelReservationSystem.Web.ViewModels.Room.RoomViewModel
+
+@{
+    ViewData["Title"] = "Szczegóły pokoju";
+}
+
+<h1>Pokój @Model.Number</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Typ pokoju</dt>
+        <dd class="col-sm-9">@Model.Type</dd>
+
+        <dt class="col-sm-3">Cena za noc</dt>
+        <dd class="col-sm-9">@Model.PricePerNight.ToString("C")</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            <span class="badge @(Model.IsAvailable ? "bg-success" : "bg-danger")">
+                @(Model.IsAvailable ? "Dostępny" : "Zajęty/Niedostępny")
+            </span>
+        </dd>
+
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <dt class="col-sm-3">Zdjęcie</dt>
+            <dd class="col-sm-9">
+                <img src="@Model.ImagePath" alt="Pokój @Model.Number" class="img-fluid rounded" style="max-height: 400px;" />
+            </dd>
+        }
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edytuj</a>
+    <a asp-action="Index" class="btn btn-secondary">Powrót do listy</a>
+</div>

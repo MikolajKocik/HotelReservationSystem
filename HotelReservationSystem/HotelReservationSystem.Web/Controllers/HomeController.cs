@@ -18,8 +18,7 @@ public sealed class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        IQueryable<Room> rooms = await roomRepository.GetAvailableRoomsAsync(DateTime.Today, DateTime.Today.AddDays(1));
-        return View(rooms);
+        return View();
     }
 
     [HttpGet]

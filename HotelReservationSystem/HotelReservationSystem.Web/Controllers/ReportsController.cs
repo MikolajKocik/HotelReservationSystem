@@ -4,6 +4,7 @@ using HotelReservationSystem.Application.CQRS.Reports.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Application.Dtos.Report;
+using HotelReservationSystem.Web.Utils.ModelMappings;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -23,14 +24,7 @@ public sealed class ReportsController : Controller
         var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
         ReportDto reportData = await mediator.SendAsync(query);
 
-        var model = new ReportViewModel
-        {
-            TotalReservations = reportData.TotalReservations,
-            ConfirmedReservations = reportData.ConfirmedReservations,
-            CanceledReservations = reportData.CanceledReservations,
-            TotalPayments = reportData.TotalPayments,
-            AvailableRooms = reportData.AvailableRooms
-        };
+        var model = ReportMappingHelper.MapToReportViewModel(reportData);
 
         return View(model);
     }

@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Collections.Generic;
 using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.CQRS.Rooms.Commands;

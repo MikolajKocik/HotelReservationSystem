@@ -1,0 +1,52 @@
+@model HotelReservationSystem.Web.ViewModels.Room.EditRoomViewModel
+@using HotelReservationSystem.Core.Domain.Enums
+
+@{
+    ViewData["Title"] = "Edytuj pokój";
+}
+
+<h1>Edytuj pokój @Model.Number</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ImagePath" />
+            <input type="hidden" asp-for="Number" />
+            <input type="hidden" asp-for="Type" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <p><strong>Typ:</strong> @Model.Type</p>
+
+            <div class="form-group mb-3">
+                <label asp-for="PricePerNight" class="control-label"></label>
+                <input asp-for="PricePerNight" class="form-control" />
+                <span asp-validation-for="PricePerNight" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="IsAvailable" class="form-check-input" />
+                <label asp-for="IsAvailable" class="form-check-label"></label>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="mb-3">
+                    <p>Aktualne zdjęcie:</p>
+                    <img src="@Model.ImagePath" alt="Pokój" style="max-width: 200px;" class="img-thumbnail" />
+                </div>
+            }
+
+            <div class="form-group mb-3">
+                <label asp-for="ImageFile" class="control-label">Zmień zdjęcie</label>
+                <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" />
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+                <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>

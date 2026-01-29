@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Linq;
+using System.Collections.Generic;
 using HotelReservationSystem.Application.CQRS.Reservations.Queries;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
 using HotelReservationSystem.Application.CQRS.Rooms.Queries;
@@ -128,7 +131,7 @@ public sealed class ReservationController : Controller
                 Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
             }).ToList();
 
-            ViewBag.RoomsJson = System.Text.Json.JsonSerializer.Serialize(rooms);
+            ViewBag.RoomsJson = JsonSerializer.Serialize(rooms);
 
             return View(model);
         }
@@ -184,7 +187,7 @@ public sealed class ReservationController : Controller
             Value = r.Id.ToString(),
             Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
         }).ToList();
-        ViewBag.RoomsJson = System.Text.Json.JsonSerializer.Serialize(rooms);
+        ViewBag.RoomsJson = JsonSerializer.Serialize(rooms);
         ViewBag.SelectedRoomId = roomId;
     }
 }

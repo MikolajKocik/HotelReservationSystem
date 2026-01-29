@@ -19,28 +19,19 @@
             </div>
             <ul class="nav-list">
                 <li>
-                    <a asp-controller="" asp-action="" title="Sprawdź dostępne pokoje">Pokoje</a>
-                </li>
-                <li>
-                    <a asp-controller="" asp-action="" title="Cennik usług hotelu">Cennik</a>
+                    <a asp-controller="Home" asp-action="Index" title="Cennik usług hotelu">Pokoje</a>
                 </li>
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li>
-                        <a asp-controller="" asp-action="" title="Sprawdź swoje rezerwacje">Moje rezerwacje</a>
+                        <a asp-controller="Reservation" asp-action="MyReservations" title="Sprawdź swoje rezerwacje">Moje rezerwacje</a>
                     </li>
                     <li>
-                        <a asp-controller="" asp-action="" title="Zgłoś incydent lub naruszenie">Zgłoś incydent</a>
+                        <a asp-controller="Home" asp-action="Index" title="Zgłoś incydent lub naruszenie">Zgłoś incydent</a>
                     </li>
                 }
                 <li>
-                    <a asp-controller="" asp-action="" title="Informacje o naszym hotelu">O nas</a>
-                </li>
-                <li>
-                    <a asp-controller="" asp-action="" title="Zobacz jak się z nami skontaktować">Kontakt</a>
-                </li>
-                <li>
-                    <a asp-controller="" asp-action="" title="Sprawdź opinie naszych klientów">Opinie</a>
+                    <a asp-controller="Home" asp-action="Privacy" title="Informacje o naszym hotelu">O nas</a>
                 </li>
             </ul>
 
@@ -62,26 +53,26 @@
         </nav>
 
         <div class="search-container">
-            <form method="post" onsubmit="serach-btn">
+            <form asp-controller="Room" asp-action="Index" method="get">
                 <div class="search-options">
                     <div class="form-select-element">
-                        <select id="roomType">
-                            <option>Typ pokoju</option>
-                            <option value="double">Single</option>
-                            <option value="double">Double</option>
+                        <select name="roomType" id="roomType">
+                            <option value="">Typ pokoju</option>
+                            <option value="Single">Single</option>
+                            <option value="Double">Double</option>
                         </select>
                     </div>
                     <div class="form-element">
                         <label class="form-label-element">[Data przyjazdu]</label>
-                        <input class="date" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
+                        <input name="arrivalDate" class="date" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
                     </div>
                     <div class="form-element">
                         <label class="form-label-element">[Data wyjazdu]</label>
-                        <input class="date" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
+                        <input name="departureDate" class="date" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")">
                     </div>
                     <div>
-                        <select id="guests">
-                            <option>Liczba gości</option>
+                        <select name="guests" id="guests">
+                            <option value="1">Liczba gości</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                         </select>
@@ -89,7 +80,7 @@
                 </div>
                 <div class="search-bar">
                     <div class="search-wrapper">
-                        <input id="search-input" type="text" placeholder="Wyszukaj po frazie.." />
+                        <input name="searchPhrase" id="search-input" type="text" placeholder="Wyszukaj po frazie.." />
                         <button class="search-btn">
                             <svg width="100%" height="100%" viewBox="0 0 94 90" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                                 <path d="M82.25 78.75L65.2125 62.4375M74.4167 41.25C74.4167 57.8185 60.3883 71.25 43.0833 71.25C25.7784 71.25 11.75 57.8185 11.75 41.25C11.75 24.6815 25.7784 11.25 43.0833 11.25C60.3883 11.25 74.4167 24.6815 74.4167 41.25Z" stroke="#EAE3E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />

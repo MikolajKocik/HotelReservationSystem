@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Application.CQRS.Payments.Queries;
 using HotelReservationSystem.Web.ViewModels;
+using HotelReservationSystem.Web.Utils.ModelMappings;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -28,14 +29,7 @@ public sealed class PaymentController : Controller
         if (paymentInfo == null)
             return NotFound("Reservation not found.");
 
-        var viewModel = new PaymentViewModel
-        {
-            ReservationId = paymentInfo.ReservationId,
-            TotalAmount = paymentInfo.TotalAmount,
-            ClientSecret = paymentInfo.ClientSecret,
-            PublishableKey = paymentInfo.PublishableKey,
-            Currency = paymentInfo.Currency
-        };
+        PaymentViewModel viewModel = PaymentMappingHelper.MapToPaymentViewModel(paymentInfo);
 
         if (string.IsNullOrEmpty(viewModel.PublishableKey))
         {
