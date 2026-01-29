@@ -1,0 +1,31 @@
+name: Check system information
+
+on:
+    push:
+        branches: [ main ]
+    
+jobs:
+    check-info:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            - name: Display system information
+              run: |
+                echo "System Information:"
+                uname -a
+                echo "Disk Usage:"
+                df -h
+                echo "Memory Usage:"
+                free -h
+                echo "CPU Information:"
+                lscpu
+    date-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            - name: Check current date and time
+              run: |
+                echo "Current Date and Time:"
+                date

@@ -8,14 +8,12 @@ using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register all services using main extension methods per layer
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddWebServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

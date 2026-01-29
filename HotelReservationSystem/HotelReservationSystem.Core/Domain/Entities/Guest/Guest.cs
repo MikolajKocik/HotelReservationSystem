@@ -6,7 +6,7 @@ public sealed partial class Guest
     {
         this.Id = string.Empty;
         _reservations = new List<Reservation>();
-    } // EF constructor 
+    }
 
     public Guest(string firstName, string lastName, string email, string phoneNumber)
     {

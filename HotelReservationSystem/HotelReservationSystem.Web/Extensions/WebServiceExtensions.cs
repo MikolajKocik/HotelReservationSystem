@@ -87,12 +87,10 @@ public static class WebServiceExtensions
     {
         services.AddAuthorization(options =>
         {
-            // Role-based policies
             options.AddPolicy("RequireManager", policy => policy.RequireRole("Manager"));
             options.AddPolicy("RequireReceptionist", policy => policy.RequireRole("Receptionist"));
             options.AddPolicy("RequireGuest", policy => policy.RequireRole("Guest"));
 
-            // Composite policies
             options.AddPolicy("RequireStaff", policy =>
                 policy.RequireRole("Manager", "Receptionist"));
             options.AddPolicy("RequireAnyUser", policy =>
