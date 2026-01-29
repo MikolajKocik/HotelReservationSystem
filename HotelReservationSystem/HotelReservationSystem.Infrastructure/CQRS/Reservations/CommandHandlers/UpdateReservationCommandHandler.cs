@@ -34,7 +34,6 @@ public class UpdateReservationCommandHandler : ICommandHandler<UpdateReservation
         }
 
         // Note: Updating dates would require additional validation
-        // For now, only status update is supported
 
         await reservationRepository.UpdateAsync(reservation);
     }

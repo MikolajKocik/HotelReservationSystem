@@ -24,7 +24,6 @@ public static class CQRSServiceExtensions
     {
         services.AddScoped<ICQRSMediator, CQRSMediator>();
 
-        // Guest handlers
         services.AddScoped<GetAllGuestsQueryHandler>();
         services.AddScoped<GetGuestByIdQueryHandler>();
         services.AddScoped<GetGuestByEmailQueryHandler>();
@@ -32,7 +31,6 @@ public static class CQRSServiceExtensions
         services.AddScoped<UpdateGuestCommandHandler>();
         services.AddScoped<DeleteGuestCommandHandler>();
 
-        // Room handlers
         services.AddScoped<GetAvailableRoomsQueryHandler>();
         services.AddScoped<GetAllRoomsQueryHandler>();
         services.AddScoped<GetRoomByIdQueryHandler>();
@@ -42,13 +40,10 @@ public static class CQRSServiceExtensions
         services.AddScoped<DeleteRoomCommandHandler>();
         services.AddScoped<ToggleRoomAvailabilityCommandHandler>();
 
-        // Report handlers
         services.AddScoped<GenerateReportQueryHandler>();
 
-        // Payment handlers
         services.AddScoped<ConfirmPaymentCommandHandler>();
 
-        // Reservation handlers
         services.AddScoped<GetAllReservationsQueryHandler>();
         services.AddScoped<GetReservationByIdQueryHandler>();
         services.AddScoped<GetReservationsByGuestEmailQueryHandler>();

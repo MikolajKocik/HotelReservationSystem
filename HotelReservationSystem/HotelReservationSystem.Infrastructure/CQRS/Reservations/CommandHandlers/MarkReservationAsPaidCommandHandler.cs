@@ -1,5 +1,6 @@
 using HotelReservationSystem.Application.CQRS.Abstractions.Commands;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
+using HotelReservationSystem.Core.Domain.Enums;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
 
@@ -11,10 +12,14 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandler
 public class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservationAsPaidCommand>
 {
     private readonly IReservationRepository reservationRepository;
+    private readonly IPaymentRepository paymentRepository;
 
-    public MarkReservationAsPaidCommandHandler(IReservationRepository reservationRepository)
+    public MarkReservationAsPaidCommandHandler(
+        IReservationRepository reservationRepository,
+        IPaymentRepository paymentRepository)
     {
         this.reservationRepository = reservationRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     /// <summary>
@@ -28,9 +33,28 @@ public class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservati
             throw new Exception("Reservation not found");
         }
 
-        // reate/update payment record
-        // For now, just update status
-        reservation.UpdateStatus(Core.Domain.Enums.ReservationStatus.Confirmed);
+        Payment? payment = await paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
+        if (payment == null)
+        {
+            payment = new Payment(
+                method: "card",
+                amount: reservation.TotalPrice,
+                stripePaymentIntentId: command.PaymentIntentId,
+                reservationId: reservation.Id);
+
+            await paymentRepository.CreateAsync(payment);
+        }
+        else
+        {
+            if (payment.IsPending)
+            {
+                payment.MarkAsPaid();
+                await paymentRepository.UpdateAsync(payment);
+            }
+        }
+
+        reservation.Payment = payment;
+        reservation.UpdateStatus(ReservationStatus.Confirmed);
         await reservationRepository.UpdateAsync(reservation);
     }
 }
