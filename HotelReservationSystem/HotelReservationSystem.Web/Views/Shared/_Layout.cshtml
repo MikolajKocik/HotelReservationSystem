@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HotelReservationSystem.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
     <header>
@@ -159,7 +160,30 @@
                         </div>
                     </div>
                 </div>
-                <div id="copyright" class="footer-content-3">
+                <div class="footer-content-3">
+                    <p><strong>Mapa strony</strong></p>
+                    <ul class="footer-nav-list">
+                        <li>
+                            <a asp-controller="Home" asp-action="Index">Strona główna</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Home" asp-action="Privacy">O nas</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Room" asp-action="Index">Pokoje</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Reservation" asp-action="Create">Rezerwacje</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Home" asp-action="Contact">Kontakt</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Report" asp-action="Index">Raporty</a>
+                        </li>
+                    </ul>
+                </div>
+                <div id="copyright" class="footer-content-4">
                     &copy; 2026 - HotelReservationSystem - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </div>
             </div>
@@ -167,7 +191,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/Scripts/datePicker.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

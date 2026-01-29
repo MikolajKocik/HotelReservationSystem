@@ -1,48 +1,52 @@
 ﻿@model IEnumerable<HotelReservationSystem.Core.Domain.Entities.Payment>
+@inject IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = "Transakcje";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-center">Historia transakcji – Hotel Aurora</h2>
+@if ((await AuthorizationService.AuthorizeAsync(User, "RequireStaff")).Succeeded)
+{
+    <div class="container mt-4">
+        <h2 class="mb-4 text-center">Historia transakcji – Hotel Aurora</h2>
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info text-center">Brak zarejestrowanych płatności.</div>
-    }
-    else
-    {
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Data</th>
-                    <th>Gość</th>
-                    <th>Pokój</th>
-                    <th>Kwota</th>
-                    <th>Metoda</th>
-                    <th>Status</th>
-                    <th>ID Stripe</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in Model)
-                {
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center">Brak zarejestrowanych płatności.</div>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
                     <tr>
-                        <td>@p.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@p.Reservation?.Guest?.FirstName @p.Reservation?.Guest?.LastName</td>
-                        <td>@p.Reservation?.Room?.Number</td>
-                        <td>@p.Amount zł</td>
-                        <td>@p.Method</td>
-                        <td>
-                            <span class="badge bg-success">@p.Status</span>
-                        </td>
-                        <td>
-                            <code>@p.StripePaymentIntentId</code>
-                        </td>
+                        <th>Data</th>
+                        <th>Gość</th>
+                        <th>Pokój</th>
+                        <th>Kwota</th>
+                        <th>Metoda</th>
+                        <th>Status</th>
+                        <th>ID Stripe</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@p.Reservation?.Guest?.FirstName @p.Reservation?.Guest?.LastName</td>
+                            <td>@p.Reservation?.Room?.Number</td>
+                            <td>@p.Amount zł</td>
+                            <td>@p.Method</td>
+                            <td>
+                                <span class="badge bg-success">@p.Status</span>
+                            </td>
+                            <td>
+                                <code>@p.StripePaymentIntentId</code>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}
