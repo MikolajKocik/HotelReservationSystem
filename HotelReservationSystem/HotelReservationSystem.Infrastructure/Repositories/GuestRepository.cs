@@ -2,13 +2,14 @@ using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace HotelReservationSystem.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository implementation for guest entities
 /// </summary>
-public class GuestRepository : IGuestRepository
+public sealed class GuestRepository : IGuestRepository
 {
     private readonly HotelDbContext context;
 
@@ -21,7 +22,7 @@ public class GuestRepository : IGuestRepository
     /// Gets all guests with pagination and filtering support
     /// </summary>
     public async Task<IQueryable<Guest>> GetAllAsync()
-        => await Task.FromResult(context.Guests
+        => await Task.FromResult(this.context.Guests
                 .AsNoTracking()
                 .Include(g => g.Reservations));
 
@@ -29,7 +30,7 @@ public class GuestRepository : IGuestRepository
     /// Gets a guest by their unique identifier
     /// </summary>
     public async Task<Guest?> GetByIdAsync(string id)
-        => await context.Guests
+        => await this.context.Guests
                 .Include(g => g.Reservations)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
@@ -37,7 +38,7 @@ public class GuestRepository : IGuestRepository
     /// Gets a guest by their email address
     /// </summary>
     public async Task<Guest?> GetByEmailAsync(string email)
-        => await context.Guests
+        => await this.context.Guests
             .Include(g => g.Reservations)
             .FirstOrDefaultAsync(g => g.Email == email);
 
@@ -46,8 +47,8 @@ public class GuestRepository : IGuestRepository
     /// </summary>
     public async Task<string> CreateAsync(Guest guest)
     {
-        context.Guests.Add(guest);
-        await context.SaveChangesAsync();
+        this.context.Guests.Add(guest);
+        await this.context.SaveChangesAsync();
         return guest.Id;
     }
 
@@ -56,8 +57,8 @@ public class GuestRepository : IGuestRepository
     /// </summary>
     public async Task UpdateAsync(Guest guest)
     {
-        context.Guests.Update(guest);
-        await context.SaveChangesAsync();
+        this.context.Guests.Update(guest);
+        await this.context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -68,8 +69,8 @@ public class GuestRepository : IGuestRepository
         var guest = await GetByIdAsync(id);
         if (guest != null)
         {
-            context.Guests.Remove(guest);
-            await context.SaveChangesAsync();
+            this.context.Guests.Remove(guest);
+            await this.context.SaveChangesAsync();
         }
     }
 
@@ -77,9 +78,43 @@ public class GuestRepository : IGuestRepository
     /// Gets payment transactions for reporting
     /// </summary>
     public async Task<List<Payment>> GetTransactions()
-        => await context.Payments
-            .Include(p => p.Reservation)
-            .ThenInclude(r => r.Guest)
-            .ToListAsync();
-}
+        {
+            using var conn = this.context.Database.GetDbConnection();
+            string sql = @"
+                SELECT 
+                    p.Id, p.Method, p.Status, p.Amount, p.StripePaymentIntentId, p.CreatedAt, p.CompletedAt, p.ReservationId,
+                    r.Id, r.GuestId,
+                    g.Id, g.FirstName, g.LastName, g.Email
+                FROM Payments p
+                LEFT JOIN Reservations r ON p.ReservationId = r.Id
+                LEFT JOIN Guests g ON r.GuestId = g.Id";
 
+            var lookup = new Dictionary<int, Payment>();
+
+            var result = (await conn.QueryAsync<Payment, Reservation, Guest, Payment>(
+                sql, 
+                (payment, reservation, guest) =>
+                {
+                    if (!lookup.TryGetValue(payment.Id, out var currentPayment))
+                    {
+                        currentPayment = payment;
+                        lookup.Add(currentPayment.Id, currentPayment);
+                    }
+
+                    if (reservation != null)
+                    {
+                        currentPayment.Reservation = reservation;
+                        if (guest != null)
+                        {
+                            currentPayment.Reservation.Guest = guest;
+                        }
+                    }
+
+                    return currentPayment;
+                }, 
+                splitOn: "Id,Id" 
+            )).Distinct().ToList();
+
+            return result;
+        }
+}

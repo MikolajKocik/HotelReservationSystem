@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.CommandHandlers;
 /// <summary>
 /// Handler for creating a new room
 /// </summary>
-public class CreateRoomCommandHandler : ICommandHandler<CreateRoomCommand, int>
+public sealed class CreateRoomCommandHandler : ICommandHandler<CreateRoomCommand, int>
 {
     private readonly IRoomRepository roomRepository;
 
@@ -30,6 +30,6 @@ public class CreateRoomCommandHandler : ICommandHandler<CreateRoomCommand, int>
             command.ImagePath
         );
 
-        return await roomRepository.CreateAsync(room);
+        return await this.roomRepository.CreateAsync(room);
     }
 }

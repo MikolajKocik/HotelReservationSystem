@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
 /// <summary>
 /// Handler for retrieving available rooms for a date range
 /// </summary>
-public class GetAvailableRoomsQueryHandler : IQueryHandler<GetAvailableRoomsQuery, IQueryable<RoomDto>>
+public sealed class GetAvailableRoomsQueryHandler : IQueryHandler<GetAvailableRoomsQuery, IQueryable<RoomDto>>
 {
     private readonly IRoomRepository roomRepository;
 

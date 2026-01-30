@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
 /// <summary>
 /// Handler for retrieving available rooms for reservation creation
 /// </summary>
-public class GetAvailableRoomsSelectListQueryHandler : IQueryHandler<GetAvailableRoomsSelectListQuery, List<RoomSelectDto>>
+public sealed class GetAvailableRoomsSelectListQueryHandler : IQueryHandler<GetAvailableRoomsSelectListQuery, List<RoomSelectDto>>
 {
     private readonly IRoomRepository roomRepository;
 
@@ -23,7 +23,7 @@ public class GetAvailableRoomsSelectListQueryHandler : IQueryHandler<GetAvailabl
     /// </summary>
     public async Task<List<RoomSelectDto>> HandleAsync(GetAvailableRoomsSelectListQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Room> rooms = await roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
+        IQueryable<Room> rooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
 
         return rooms.Select(r => new RoomSelectDto
         {

@@ -5,18 +5,18 @@ using HotelReservationSystem.Core.Domain.Interfaces;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Opinions.QueryHandlers;
 
-public class GetOpinionByIdQueryHandler : IQueryHandler<GetOpinionByIdQuery, OpinionDto?>
+public sealed class GetOpinionByIdQueryHandler : IQueryHandler<GetOpinionByIdQuery, OpinionDto?>
 {
-    private readonly IOpinionRepository _opinionRepository;
+    private readonly IOpinionRepository opinionRepository;
 
     public GetOpinionByIdQueryHandler(IOpinionRepository opinionRepository)
     {
-        _opinionRepository = opinionRepository;
+        this.opinionRepository = opinionRepository;
     }
 
     public async Task<OpinionDto?> HandleAsync(GetOpinionByIdQuery request, CancellationToken cancellationToken)
     {
-        var opinion = await _opinionRepository.GetByIdAsync(request.OpinionId);
+        var opinion = await this.opinionRepository.GetByIdAsync(request.OpinionId);
         if (opinion == null)
         {
             return null;

@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 /// <summary>
 /// Handler for retrieving a reservation by ID
 /// </summary>
-public class GetReservationByIdQueryHandler : IQueryHandler<GetReservationByIdQuery, ReservationDto?>
+public sealed class GetReservationByIdQueryHandler : IQueryHandler<GetReservationByIdQuery, ReservationDto?>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -23,7 +23,7 @@ public class GetReservationByIdQueryHandler : IQueryHandler<GetReservationByIdQu
     /// </summary>
     public async Task<ReservationDto?> HandleAsync(GetReservationByIdQuery query, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await reservationRepository.GetByIdAsync(query.Id);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(query.Id);
 
         if (reservation == null)
         {

@@ -16,7 +16,7 @@ public sealed class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQ
 
     public async Task<IEnumerable<Payment>> HandleAsync(GetTransactionsQuery query, CancellationToken cancellationToken = default)
     {
-        List<Payment> list = await guestRepository.GetTransactions();
+        List<Payment> list = await this.guestRepository.GetTransactions();
         return list ?? Enumerable.Empty<Payment>();
     }
 }

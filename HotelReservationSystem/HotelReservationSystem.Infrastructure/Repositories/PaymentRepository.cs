@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.Repositories;
 /// <summary>
 /// Repository implementation for payment entities
 /// </summary>
-public class PaymentRepository : IPaymentRepository
+public sealed class PaymentRepository : IPaymentRepository
 {
     private readonly HotelDbContext context;
 
@@ -21,7 +21,7 @@ public class PaymentRepository : IPaymentRepository
     /// Gets a payment by its Stripe payment intent ID
     /// </summary>
     public async Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId)
-        => await context.Payments
+        => await this.context.Payments
             .FirstOrDefaultAsync(p => p.StripePaymentIntentId == stripePaymentIntentId);
 
     /// <summary>
@@ -29,8 +29,8 @@ public class PaymentRepository : IPaymentRepository
     /// </summary>
     public async Task<int> CreateAsync(Payment payment)
     {
-        context.Payments.Add(payment);
-        await context.SaveChangesAsync();
+        this.context.Payments.Add(payment);
+        await this.context.SaveChangesAsync();
         return payment.Id;
     }
 
@@ -39,7 +39,7 @@ public class PaymentRepository : IPaymentRepository
     /// </summary>
     public async Task UpdateAsync(Payment payment)
     {
-        context.Payments.Update(payment);
-        await context.SaveChangesAsync();
+        this.context.Payments.Update(payment);
+        await this.context.SaveChangesAsync();
     }
 }

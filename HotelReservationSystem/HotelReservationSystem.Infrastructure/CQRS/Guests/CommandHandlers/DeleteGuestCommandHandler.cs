@@ -7,7 +7,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Guests.CommandHandlers;
 /// <summary>
 /// Handler for deleting a guest
 /// </summary>
-public class DeleteGuestCommandHandler : ICommandHandler<DeleteGuestCommand>
+public sealed class DeleteGuestCommandHandler : ICommandHandler<DeleteGuestCommand>
 {
     private readonly IGuestRepository guestRepository;
 
@@ -21,6 +21,6 @@ public class DeleteGuestCommandHandler : ICommandHandler<DeleteGuestCommand>
     /// </summary>
     public async Task HandleAsync(DeleteGuestCommand command, CancellationToken cancellationToken = default)
     {
-        await guestRepository.DeleteAsync(command.Id);
+        await this.guestRepository.DeleteAsync(command.Id);
     }
 }

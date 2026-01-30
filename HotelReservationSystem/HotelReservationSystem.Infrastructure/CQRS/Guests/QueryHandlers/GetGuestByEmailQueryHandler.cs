@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 /// <summary>
 /// Handler for retrieving a guest by email
 /// </summary>
-public class GetGuestByEmailQueryHandler : IQueryHandler<GetGuestByEmailQuery, GuestDto?>
+public sealed class GetGuestByEmailQueryHandler : IQueryHandler<GetGuestByEmailQuery, GuestDto?>
 {
     private readonly IGuestRepository guestRepository;
 
@@ -23,7 +23,7 @@ public class GetGuestByEmailQueryHandler : IQueryHandler<GetGuestByEmailQuery, G
     /// </summary>
     public async Task<GuestDto?> HandleAsync(GetGuestByEmailQuery query, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await guestRepository.GetByEmailAsync(query.Email);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(query.Email);
         
         return guest == null ? null : new GuestDto
         {

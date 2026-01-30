@@ -6,7 +6,7 @@ using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Opinions.CommandHandlers;
 
-public class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionCommand, string>
+public sealed class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionCommand, string>
 {
     private readonly IOpinionRepository opinionRepository;
     private readonly IReservationRepository reservationRepository;
@@ -24,13 +24,13 @@ public class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionCommand,
 
     public async Task<string> HandleAsync(CreateOpinionCommand request, CancellationToken cancellationToken)
     {
-        Guest? guest = await guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Reservation? reservation = await reservationRepository.GetByIdAsync(request.OpinionDto.ReservationId);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(request.OpinionDto.ReservationId);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
@@ -41,7 +41,7 @@ public class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionCommand,
             throw new Exception("Can only add opinion to confirmed or completed reservations");
         }
 
-        Opinion? existingOpinion = await opinionRepository.GetByReservationIdAsync(request.OpinionDto.ReservationId);
+        Opinion? existingOpinion = await this.opinionRepository.GetByReservationIdAsync(request.OpinionDto.ReservationId);
         if (existingOpinion != null)
         {
             throw new Exception("Opinion already exists for this reservation");
@@ -54,7 +54,7 @@ public class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionCommand,
             guest.Id
         );
 
-        await opinionRepository.AddAsync(opinion);
+        await this.opinionRepository.AddAsync(opinion);
         return opinion.Id;
     }
 }

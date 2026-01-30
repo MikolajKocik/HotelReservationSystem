@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandler
 /// <summary>
 /// Handler for updating a reservation
 /// </summary>
-public class UpdateReservationCommandHandler : ICommandHandler<UpdateReservationCommand>
+public sealed class UpdateReservationCommandHandler : ICommandHandler<UpdateReservationCommand>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -22,7 +22,7 @@ public class UpdateReservationCommandHandler : ICommandHandler<UpdateReservation
     /// </summary>
     public async Task HandleAsync(UpdateReservationCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await reservationRepository.GetByIdAsync(command.Id);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.Id);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
@@ -33,7 +33,6 @@ public class UpdateReservationCommandHandler : ICommandHandler<UpdateReservation
             reservation.UpdateStatus(command.Status, command.Reason ?? string.Empty);
         }
 
-        // Note: Updating dates would require additional validation
 
         await reservationRepository.UpdateAsync(reservation);
     }

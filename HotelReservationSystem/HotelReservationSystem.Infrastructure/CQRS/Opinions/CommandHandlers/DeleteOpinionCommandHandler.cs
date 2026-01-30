@@ -5,7 +5,7 @@ using HotelReservationSystem.Core.Domain.Entities;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Opinions.CommandHandlers;
 
-public class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionCommand>
+public sealed class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionCommand>
 {
     private readonly IOpinionRepository opinionRepository;
     private readonly IGuestRepository guestRepository;
@@ -20,13 +20,13 @@ public class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionCommand>
 
     public async Task HandleAsync(DeleteOpinionCommand request, CancellationToken cancellationToken)
     {
-        Guest? guest = await guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Opinion? opinion = await opinionRepository.GetByIdAsync(request.OpinionId);
+        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionId);
         if (opinion == null)
         {
             throw new Exception("Opinion not found");
@@ -37,6 +37,6 @@ public class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionCommand>
             throw new Exception("Opinion does not belong to the user");
         }
 
-        await opinionRepository.DeleteAsync(request.OpinionId);
+        await this.opinionRepository.DeleteAsync(request.OpinionId);
     }
 }

@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Guests.CommandHandlers;
 /// <summary>
 /// Handler for creating a new guest
 /// </summary>
-public class CreateGuestCommandHandler : ICommandHandler<CreateGuestCommand, string>
+public sealed class CreateGuestCommandHandler : ICommandHandler<CreateGuestCommand, string>
 {
     private readonly IGuestRepository guestRepository;
 
@@ -29,6 +29,6 @@ public class CreateGuestCommandHandler : ICommandHandler<CreateGuestCommand, str
             command.PhoneNumber
         );
 
-        return await guestRepository.CreateAsync(guest);
+        return await this.guestRepository.CreateAsync(guest);
     }
 }

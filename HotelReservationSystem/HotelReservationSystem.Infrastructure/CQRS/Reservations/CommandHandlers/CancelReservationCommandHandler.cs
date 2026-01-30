@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandler
 /// <summary>
 /// Handler for canceling a reservation
 /// </summary>
-public class CancelReservationCommandHandler : ICommandHandler<CancelReservationCommand>
+public sealed class CancelReservationCommandHandler : ICommandHandler<CancelReservationCommand>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -23,13 +23,13 @@ public class CancelReservationCommandHandler : ICommandHandler<CancelReservation
     /// </summary>
     public async Task HandleAsync(CancelReservationCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await reservationRepository.GetByIdAsync(command.Id);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.Id);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
         }
 
         reservation.UpdateStatus(ReservationStatus.Cancelled, command.Reason);
-        await reservationRepository.UpdateAsync(reservation);
+        await this.reservationRepository.UpdateAsync(reservation);
     }
 }

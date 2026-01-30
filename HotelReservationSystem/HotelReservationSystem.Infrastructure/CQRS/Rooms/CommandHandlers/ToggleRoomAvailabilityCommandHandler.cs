@@ -7,7 +7,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.CommandHandlers;
 /// <summary>
 /// Handler for toggling room availability
 /// </summary>
-public class ToggleRoomAvailabilityCommandHandler : ICommandHandler<ToggleRoomAvailabilityCommand>
+public sealed class ToggleRoomAvailabilityCommandHandler : ICommandHandler<ToggleRoomAvailabilityCommand>
 {
     private readonly IRoomRepository roomRepository;
 
@@ -21,6 +21,6 @@ public class ToggleRoomAvailabilityCommandHandler : ICommandHandler<ToggleRoomAv
     /// </summary>
     public async Task HandleAsync(ToggleRoomAvailabilityCommand command, CancellationToken cancellationToken = default)
     {
-        await roomRepository.ToggleAvailabilityAsync(command.RoomId);
+        await this.roomRepository.ToggleAvailabilityAsync(command.RoomId);
     }
 }

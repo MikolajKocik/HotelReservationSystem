@@ -1,34 +1,26 @@
 using HotelReservationSystem.Application.CQRS.Abstractions.Commands;
 using HotelReservationSystem.Application.CQRS.Payments.Commands;
-using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
+using HotelReservationSystem.Core.Domain.Entities;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Payments.CommandHandlers;
 
-/// <summary>
-/// Handler for confirming payments
-/// </summary>
-public sealed class ConfirmPaymentCommandHandler : ICommandHandler<ConfirmPaymentCommand>
+public sealed class RefusePaymentCommandHandler : ICommandHandler<RefusePaymentCommand>
 {
     private readonly IPaymentRepository paymentRepository;
 
-    public ConfirmPaymentCommandHandler(IPaymentRepository paymentRepository)
+    public RefusePaymentCommandHandler(IPaymentRepository paymentRepository)
     {
         this.paymentRepository = paymentRepository;
     }
 
-    /// <summary>
-    /// Handles the command to confirm a payment by marking it as paid
-    /// </summary>
-    public async Task HandleAsync(ConfirmPaymentCommand command, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(RefusePaymentCommand command, CancellationToken cancellationToken = default)
     {
         Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
         if (payment == null)
-        {
-            throw new Exception("Payment not found");
-        }
+            return;
 
-        payment.MarkAsPaid();
+        payment.MarkAsFailed();
         await this.paymentRepository.UpdateAsync(payment);
     }
 }

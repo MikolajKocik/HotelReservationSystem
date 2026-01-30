@@ -5,7 +5,7 @@ using HotelReservationSystem.Core.Domain.Entities;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Opinions.CommandHandlers;
 
-public class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionCommand>
+public sealed class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionCommand>
 {
     private readonly IOpinionRepository opinionRepository;
     private readonly IGuestRepository guestRepository;
@@ -20,13 +20,13 @@ public class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionCommand>
 
     public async Task HandleAsync(UpdateOpinionCommand request, CancellationToken cancellationToken)
     {
-        Guest? guest = await guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Opinion? opinion = await opinionRepository.GetByIdAsync(request.OpinionDto.OpinionId);
+        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionDto.OpinionId);
         if (opinion == null)
         {
             throw new Exception("Opinion not found");
@@ -40,6 +40,6 @@ public class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionCommand>
         opinion.UpdateRating(request.OpinionDto.Rating);
         opinion.UpdateComment(request.OpinionDto.Comment);
 
-        await opinionRepository.UpdateAsync(opinion);
+        await this.opinionRepository.UpdateAsync(opinion);
     }
 }

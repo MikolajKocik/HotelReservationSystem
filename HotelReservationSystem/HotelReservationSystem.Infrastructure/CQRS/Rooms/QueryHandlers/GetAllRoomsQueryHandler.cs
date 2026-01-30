@@ -11,7 +11,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
 /// <summary>
 /// Handler for retrieving all rooms
 /// </summary>
-public class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryable<RoomDto>>
+public sealed class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryable<RoomDto>>
 {
     private readonly IRoomRepository roomRepository;
 
@@ -29,11 +29,11 @@ public class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryabl
 
         if (query.ArrivalDate.HasValue && query.DepartureDate.HasValue)
         {
-            roomsQuery = await roomRepository.GetAvailableRoomsAsync(query.ArrivalDate.Value, query.DepartureDate.Value);
+            roomsQuery = await this.roomRepository.GetAvailableRoomsAsync(query.ArrivalDate.Value, query.DepartureDate.Value);
         }
         else
         {
-            roomsQuery = await roomRepository.GetAllAsync();
+            roomsQuery = await this.roomRepository.GetAllAsync();
         }
 
         if (!string.IsNullOrEmpty(query.RoomType) && Enum.TryParse<RoomType>(query.RoomType, out var parsedType))

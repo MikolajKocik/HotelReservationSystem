@@ -2,13 +2,14 @@ using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository implementation for room entities
 /// </summary>
-public class RoomRepository : IRoomRepository
+public sealed class RoomRepository : IRoomRepository
 {
     private readonly HotelDbContext context;
 
@@ -21,7 +22,7 @@ public class RoomRepository : IRoomRepository
     /// Gets all rooms with related data
     /// </summary>
     public async Task<IQueryable<Room>> GetAllAsync()
-        => await Task.FromResult(context.Rooms
+        => await Task.FromResult(this.context.Rooms
             .AsNoTracking()
             .Include(r => r.Reservations));
 
@@ -30,7 +31,7 @@ public class RoomRepository : IRoomRepository
     /// Gets a room by its unique identifier
     /// </summary>
     public async Task<Room?> GetByIdAsync(int id)
-        => await context.Rooms
+        => await this.context.Rooms
             .Include(r => r.Reservations)
             .FirstOrDefaultAsync(r => r.Id == id);
 
@@ -39,10 +40,11 @@ public class RoomRepository : IRoomRepository
     /// Gets available rooms for a date range
     /// </summary>
     public async Task<IQueryable<Room>> GetAvailableRoomsAsync(DateTime from, DateTime to)
-        => await Task.FromResult(context.Rooms
+        => await Task.FromResult(this.context.Rooms
             .AsNoTracking()
             .Where(r => r.IsAvailable &&
                        !r.Reservations.Any(res =>
+                           (res.Status == ReservationStatus.Confirmed || res.Status == ReservationStatus.Pending) &&
                            res.ArrivalDate < to && res.DepartureDate > from)));
 
 
@@ -51,8 +53,8 @@ public class RoomRepository : IRoomRepository
     /// </summary>
     public async Task<int> CreateAsync(Room room)
     {
-        context.Rooms.Add(room);
-        await context.SaveChangesAsync();
+        this.context.Rooms.Add(room);
+        await this.context.SaveChangesAsync();
         return room.Id;
     }
 
@@ -61,8 +63,8 @@ public class RoomRepository : IRoomRepository
     /// </summary>
     public async Task UpdateAsync(Room room)
     {
-        context.Rooms.Update(room);
-        await context.SaveChangesAsync();
+        this.context.Rooms.Update(room);
+        await this.context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -73,8 +75,8 @@ public class RoomRepository : IRoomRepository
         Room? room = await GetByIdAsync(id);
         if (room != null)
         {
-            context.Rooms.Remove(room);
-            await context.SaveChangesAsync();
+            this.context.Rooms.Remove(room);
+            await this.context.SaveChangesAsync();
         }
     }
 

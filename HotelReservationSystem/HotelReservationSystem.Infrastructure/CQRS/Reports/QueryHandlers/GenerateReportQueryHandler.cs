@@ -11,7 +11,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reports.QueryHandlers;
 /// <summary>
 /// Handler for generating reports
 /// </summary>
-public class GenerateReportQueryHandler : IQueryHandler<GenerateReportQuery, ReportDto>
+public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQuery, ReportDto>
 {
     private readonly IReservationRepository reservationRepository;
     private readonly IRoomRepository roomRepository;
@@ -29,7 +29,7 @@ public class GenerateReportQueryHandler : IQueryHandler<GenerateReportQuery, Rep
     /// </summary>
     public async Task<ReportDto> HandleAsync(GenerateReportQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Reservation> reservations = await reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
+        IQueryable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
         List<Reservation> reservationsList = await reservations.ToListAsync();
 
         int totalReservations = reservationsList.Count;
@@ -37,7 +37,7 @@ public class GenerateReportQueryHandler : IQueryHandler<GenerateReportQuery, Rep
         int canceledReservations = reservationsList.Count(r => r.Status == ReservationStatus.Cancelled);
         decimal totalPayments = reservationsList.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice);
 
-        IQueryable<Room> availableRooms = await roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
+        IQueryable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
         int availableRoomsCount = await availableRooms.CountAsync();
 
         return new ReportDto

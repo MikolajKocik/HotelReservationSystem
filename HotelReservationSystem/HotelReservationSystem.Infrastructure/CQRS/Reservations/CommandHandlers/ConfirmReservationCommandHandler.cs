@@ -1,5 +1,6 @@
 using HotelReservationSystem.Application.CQRS.Abstractions.Commands;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
+using HotelReservationSystem.Core.Domain.Enums;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
 
@@ -8,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandler
 /// <summary>
 /// Handler for confirming a reservation
 /// </summary>
-public class ConfirmReservationCommandHandler : ICommandHandler<ConfirmReservationCommand>
+public sealed class ConfirmReservationCommandHandler : ICommandHandler<ConfirmReservationCommand>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -22,13 +23,13 @@ public class ConfirmReservationCommandHandler : ICommandHandler<ConfirmReservati
     /// </summary>
     public async Task HandleAsync(ConfirmReservationCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await reservationRepository.GetByIdAsync(command.Id);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.Id);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
         }
 
-        reservation.UpdateStatus(Core.Domain.Enums.ReservationStatus.Confirmed);
-        await reservationRepository.UpdateAsync(reservation);
+        reservation.UpdateStatus(ReservationStatus.Confirmed); 
+        await this.reservationRepository.UpdateAsync(reservation);
     }
 }

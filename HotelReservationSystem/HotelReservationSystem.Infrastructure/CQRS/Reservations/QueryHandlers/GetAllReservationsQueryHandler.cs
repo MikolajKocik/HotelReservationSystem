@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 /// <summary>
 /// Handler for retrieving all reservations
 /// </summary>
-public class GetAllReservationsQueryHandler : IQueryHandler<GetAllReservationsQuery, IQueryable<ReservationDto>>
+public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReservationsQuery, IQueryable<ReservationDto>>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -23,7 +23,7 @@ public class GetAllReservationsQueryHandler : IQueryHandler<GetAllReservationsQu
     /// </summary>
     public async Task<IQueryable<ReservationDto>> HandleAsync(GetAllReservationsQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Reservation> reservations = await reservationRepository.GetAllAsync();
+        IQueryable<Reservation> reservations = await this.reservationRepository.GetAllAsync();
 
         return reservations.Select(r => new ReservationDto
         {

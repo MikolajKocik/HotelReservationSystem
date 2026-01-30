@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandler
 /// <summary>
 /// Handler for marking a reservation as paid
 /// </summary>
-public class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservationAsPaidCommand>
+public sealed class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservationAsPaidCommand>
 {
     private readonly IReservationRepository reservationRepository;
     private readonly IPaymentRepository paymentRepository;
@@ -27,13 +27,13 @@ public class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservati
     /// </summary>
     public async Task HandleAsync(MarkReservationAsPaidCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await reservationRepository.GetByIdAsync(command.ReservationId);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.ReservationId);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
         }
 
-        Payment? payment = await paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
+        Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
         if (payment == null)
         {
             payment = new Payment(
@@ -42,19 +42,19 @@ public class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkReservati
                 stripePaymentIntentId: command.PaymentIntentId,
                 reservationId: reservation.Id);
 
-            await paymentRepository.CreateAsync(payment);
+            await this.paymentRepository.CreateAsync(payment);
         }
         else
         {
             if (payment.IsPending)
             {
                 payment.MarkAsPaid();
-                await paymentRepository.UpdateAsync(payment);
+                await this.paymentRepository.UpdateAsync(payment);
             }
         }
 
         reservation.Payment = payment;
-        reservation.UpdateStatus(ReservationStatus.Confirmed);
-        await reservationRepository.UpdateAsync(reservation);
+        reservation.UpdateStatus(ReservationStatus.Confirmed); 
+        await this.reservationRepository.UpdateAsync(reservation);
     }
 }
