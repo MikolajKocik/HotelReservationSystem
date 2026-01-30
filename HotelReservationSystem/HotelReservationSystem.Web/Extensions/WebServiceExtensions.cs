@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.RateLimiting;
 using HotelReservationSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.RateLimiting;
+using HotelReservationSystem.Application.Interfaces;
+using HotelReservationSystem.Application.Services;
+
 
 namespace HotelReservationSystem.Web.Extensions;
 
@@ -29,7 +32,9 @@ public static class WebServiceExtensions
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
         });
 
-        services.AddScoped<HotelReservationSystem.Web.Services.IFileService, HotelReservationSystem.Web.Services.FileService>();
+        services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IExportService, ExportService>();
+        services.AddHttpClient();
 
         return services;
     }
