@@ -1,7 +1,7 @@
 @using HotelReservationSystem.Web.ViewModels
 @model ReservationViewModel
 
-<form asp-action="Create" method="post" class="row g-3">
+<form id="doubleReservationForm" asp-action="Create" method="post" class="row g-3">
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <input type="hidden" name="RoomType" value="Double" />
 
@@ -44,8 +44,36 @@
     <span asp-validation-for="RoomId" class="text-danger"></span>
   </div>
 
+  <div class="row g-3 align-items-center mt-3">
+    <div class="col-md-6">
+      <label asp-for="DiscountCode" class="form-label">Masz kod rabatowy? Wprowadź go tutaj</label>
+      <input asp-for="DiscountCode" type="text" class="form-control" placeholder="Kod rabatowy" />
+    </div>
+    <div class="col-md-6 d-flex align-items-center">
+      <label asp-for="TotalSum" class="form-label me-3 mb-0">Suma całkowita</label>
+      <div class="fs-5 fw-bold" id="double-total-sum">@Model.TotalSum</div>
+      <input asp-for="TotalSum" type="hidden" id="double-total-input" />
+    </div>
+  </div>
+
+  <div class="col-12 mt-3">
+    <label asp-for="AdditionalRequests" class="form-label font-weight-bold">Uwagi do rezerwacji</label>
+    <textarea asp-for="AdditionalRequests" class="form-control" rows="4" placeholder="Uwagi do rezerwacji..."></textarea>
+  </div>
+
+  <div class="col-12 mt-2">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="AcceptPrivacy" id="double-accept-privacy" />
+      <label class="form-check-label" for="double-accept-privacy">* Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką prywatności w celu realizacji rezerwacji</label>
+    </div>
+  </div>
+
   <div class="col-12 mt-4 text-end">
     <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='@Url.Action("Index", "Room")'">Anuluj</button>
     <button type="submit" class="btn btn-dark btn-lg px-5">Zarezerwuj teraz</button>
   </div>
 </form>
+
+@section Scripts {
+  <script src="~/js/calculateReservation.js"></script>
+}

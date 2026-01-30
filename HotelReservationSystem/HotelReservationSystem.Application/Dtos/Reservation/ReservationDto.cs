@@ -13,6 +13,7 @@ public record ReservationDto
     public ReservationStatus Status { get; init; }
     public string Reason { get; init; } = string.Empty;
     public DateTime CreatedAt { get; init; }
+    public string DiscountCode { get; init; } = string.Empty;
 
     public int RoomId { get; init; }
     public string RoomNumber { get; init; } = string.Empty;
@@ -23,6 +24,7 @@ public record ReservationDto
     public string GuestFirstName { get; init; } = string.Empty;
     public string GuestLastName { get; init; } = string.Empty;
     public string GuestEmail { get; init; } = string.Empty;
+    public string GuestPhoneNumber { get; init; } = string.Empty;
 
     public int? PaymentId { get; init; }
     public PaymentStatus? PaymentStatus { get; init; }

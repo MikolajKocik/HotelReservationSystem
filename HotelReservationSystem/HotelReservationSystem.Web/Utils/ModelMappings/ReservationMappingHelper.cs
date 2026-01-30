@@ -15,7 +15,9 @@ namespace HotelReservationSystem.Web.Utils.ModelMappings
                 GuestFirstName = dto.GuestFirstName,
                 GuestLastName = dto.GuestLastName,
                 GuestEmail = dto.GuestEmail,
-                GuestPhoneNumber = string.Empty 
+                GuestPhoneNumber = dto.GuestPhoneNumber, 
+                DiscountCode = dto.DiscountCode,
+                AdditionalRequests = dto.AdditionalRequests
             };
         }
     }
