@@ -1,7 +1,6 @@
 ﻿using HotelReservationSystem.Core.Domain.Entities;
 
-namespace HotelReservationSystem.Core.Domain.Interfaces
-{
+namespace HotelReservationSystem.Core.Domain.Interfaces;
     /// <summary>
     /// Repository interface for managing reservation entities
     /// </summary>
@@ -52,4 +51,3 @@ namespace HotelReservationSystem.Core.Domain.Interfaces
         /// </summary>
         Task<List<Guest>> GetGuestsAsync();
     }
-}

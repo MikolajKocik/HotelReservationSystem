@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HotelReservationSystem.Infrastructure.Data.Configuration
+namespace HotelReservationSystem.Infrastructure.Data.Configuration;
+
+public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 {
-    public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
+    public void Configure(EntityTypeBuilder<Reservation> builder)
     {
-        public void Configure(EntityTypeBuilder<Reservation> builder)
-        {
             builder.HasKey(r => r.Id);
             
             builder.Property(r => r.Id)
@@ -67,4 +67,3 @@ namespace HotelReservationSystem.Infrastructure.Data.Configuration
             builder.HasIndex(r => r.Status);
         }
     }
-}

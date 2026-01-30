@@ -46,7 +46,7 @@ public sealed partial class Room
         if (!this.IsAvailable) return false;
         
         return !this.Reservations.Any(r => 
-            r.Status == ReservationStatus.Confirmed &&
+            (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Pending) &&
             arrivalDate < r.DepartureDate && 
             departureDate > r.ArrivalDate);
     }

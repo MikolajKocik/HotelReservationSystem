@@ -1,7 +1,6 @@
 ﻿using HotelReservationSystem.Core.Domain.Entities;
 
-namespace HotelReservationSystem.Core.Domain.Interfaces
-{
+namespace HotelReservationSystem.Core.Domain.Interfaces;
     /// <summary>
     /// Repository interface for managing room entities
     /// </summary>
@@ -42,4 +41,3 @@ namespace HotelReservationSystem.Core.Domain.Interfaces
         /// </summary>
         Task ToggleAvailabilityAsync(int id);
     }
-}

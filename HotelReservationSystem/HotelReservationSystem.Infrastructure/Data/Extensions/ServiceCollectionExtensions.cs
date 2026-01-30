@@ -2,9 +2,11 @@
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using HotelReservationSystem.Infrastructure.Repositories;
+using HotelReservationSystem.Infrastructure.Repositories; 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HotelReservationSystem.Application.Interfaces;
 
 namespace HotelReservationSystem.Infrastructure.Data.Extensions;
 
@@ -37,10 +39,20 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(configuration["ConnectionString"]));
 
-        services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IGuestRepository, GuestRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IOpinionRepository, OpinionRepository>();
+
+        services.AddMemoryCache();
+        services.AddSingleton<ReservationQueue>();
+        services.AddSingleton<IReservationQueue>(sp => sp.GetRequiredService<ReservationQueue>());
+
+        services.AddScoped<IReservationRepository, ReservationRepository>(sp =>
+        {
+            HotelDbContext ctx = sp.GetRequiredService<HotelDbContext>();
+            IMemoryCache cache = sp.GetRequiredService<IMemoryCache>();
+            return new ReservationRepository(ctx, cache);
+        });
     }
 }

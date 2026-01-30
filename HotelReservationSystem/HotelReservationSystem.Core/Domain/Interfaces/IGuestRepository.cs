@@ -1,8 +1,8 @@
 ﻿using HotelReservationSystem.Core.Domain.Entities;
 
-namespace HotelReservationSystem.Core.Domain.Interfaces
-{
-    /// <summary>
+namespace HotelReservationSystem.Core.Domain.Interfaces;
+
+/// <summary>
     /// Repository interface for managing guest entities
     /// </summary>
     public interface IGuestRepository
@@ -41,5 +41,4 @@ namespace HotelReservationSystem.Core.Domain.Interfaces
         /// Gets payment transactions for reporting
         /// </summary>
         Task<List<Payment>> GetTransactions();
-    }
-}
+    }  

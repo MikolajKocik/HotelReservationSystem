@@ -9,15 +9,15 @@ public sealed partial class Reservation
     /// </summary>
     public void ConfirmReservation()
     {
-        this.Status = ReservationStatus.Confirmed;
+        UpdateStatus(ReservationStatus.Confirmed);
     }
 
     /// <summary>
     /// Cancels the reservation by setting its status to Cancelled.
     /// </summary>
-    public void CancelReservation()
+    public void CancelReservation(string reason)
     {
-        this.Status = ReservationStatus.Cancelled;
+        UpdateStatus(ReservationStatus.Cancelled, reason);
     }
 
     /// <summary>
@@ -25,7 +25,8 @@ public sealed partial class Reservation
     /// </summary>
     public void CompleteReservation()
     {
-        this.Status = ReservationStatus.Completed;
+        UpdateStatus(ReservationStatus.Completed);
     }
 
 }
+
