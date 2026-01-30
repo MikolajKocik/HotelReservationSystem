@@ -62,12 +62,12 @@ public sealed class ReservationController : Controller
     [HttpGet]
     public async Task<IActionResult> MyReservations()
     {
-        if (!User.Identity.IsAuthenticated)
+        if (!(User?.Identity?.IsAuthenticated ?? false))
         {
             return RedirectToAction("Login", "Account");
         }
 
-        string? userEmail = User.Identity.Name;
+        string? userEmail = User?.Identity?.Name;
         if (string.IsNullOrEmpty(userEmail))
         {
             return RedirectToAction("Login", "Account");
@@ -109,7 +109,10 @@ public sealed class ReservationController : Controller
                 model.GuestFirstName,
                 model.GuestLastName,
                 model.GuestEmail,
-                model.GuestPhoneNumber);
+                model.GuestPhoneNumber,
+                model.DiscountCode,
+                model.AdditionalRequests,
+                model.AcceptPrivacy);
 
             string reservationId = await mediator.SendAsync(command);
 

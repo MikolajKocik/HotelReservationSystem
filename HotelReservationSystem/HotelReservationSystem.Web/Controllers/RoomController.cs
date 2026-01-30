@@ -4,7 +4,7 @@ using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.CQRS.Rooms.Commands;
 using HotelReservationSystem.Application.Dtos.Room;
-using HotelReservationSystem.Web.Services;
+using HotelReservationSystem.Application.Interfaces;
 using HotelReservationSystem.Web.Utils.ModelMappings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,7 @@
 using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Payments.Commands;
 using HotelReservationSystem.Application.Dtos.Reservation;
+using HotelReservationSystem.Application.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace HotelReservationSystem.Controllers;
 public sealed class PaymentController : Controller
 {
     private readonly ICQRSMediator mediator;
+    private readonly IStripeService stripeService;
 
-    public PaymentController(ICQRSMediator mediator)
+    public PaymentController(ICQRSMediator mediator, IStripeService stripeService)
     {
         this.mediator = mediator;
+        this.stripeService = stripeService;
     }
 
     [HttpGet]
@@ -29,14 +32,17 @@ public sealed class PaymentController : Controller
         if (paymentInfo == null)
             return NotFound("Reservation not found.");
 
-        PaymentViewModel viewModel = PaymentMappingHelper.MapToPaymentViewModel(paymentInfo);
-
-        if (string.IsNullOrEmpty(viewModel.PublishableKey))
+        if (string.IsNullOrEmpty(paymentInfo.PublishableKey))
         {
             return BadRequest("Stripe Publishable Key is not configured.");
         }
 
-        return View(viewModel);
+        string successUrl = Url.Action("MyReservations", "Reservation", null, Request.Scheme) ?? "/";
+        string cancelUrl = Url.Action("MyReservations", "Reservation", null, Request.Scheme) ?? "/";
+
+        string sessionUrl = await stripeService.CreateCheckoutSessionAsync(paymentInfo.ReservationId, paymentInfo.TotalAmount, paymentInfo.Currency, successUrl, cancelUrl);
+
+        return Redirect(sessionUrl);
     }
 
     [HttpPost]
