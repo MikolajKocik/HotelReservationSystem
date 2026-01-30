@@ -1,10 +1,10 @@
 namespace HotelReservationSystem.Web.ViewModels;
 
-public class PaymentViewModel
+public record PaymentViewModel
 {
-    public string ReservationId { get; set; } = string.Empty;
-    public decimal TotalAmount { get; set; }
-    public string ClientSecret { get; set; } = string.Empty;
-    public string PublishableKey { get; set; } = string.Empty;
-    public string Currency { get; set; } = "PLN";
+    public string ReservationId { get; init; } = string.Empty;
+    public decimal TotalAmount { get; init; }
+    public string ClientSecret { get; init; } = string.Empty;
+    public string PublishableKey { get; init; } = string.Empty;
+    public string Currency { get; init; } = "PLN";
 }

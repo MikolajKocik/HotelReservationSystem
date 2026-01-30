@@ -1,11 +1,10 @@
-﻿namespace HotelReservationSystem.Web.ViewModels
+﻿namespace HotelReservationSystem.Web.ViewModels;
+
+public record ReportViewModel
 {
-    public class ReportViewModel
-    {
-        public int TotalReservations { get; set; }
-        public int ConfirmedReservations { get; set; }
-        public int CanceledReservations { get; set; }
-        public decimal TotalPayments { get; set; }
-        public int AvailableRooms { get; set; }
-    }
+    public int TotalReservations { get; init; }
+    public int ConfirmedReservations { get; init; }
+    public int CanceledReservations { get; init; }
+    public decimal TotalPayments { get; init; }
+    public int AvailableRooms { get; init; }
 }

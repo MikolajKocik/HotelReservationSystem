@@ -2,14 +2,14 @@ using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Web.ViewModels.Room;
 
-public class RoomViewModel
+public record RoomViewModel
 {
-    public int Id { get; set; }
-    public string Number { get; set; } = string.Empty;
-    public RoomType Type { get; set; }
-    public decimal PricePerNight { get; set; }
-    public bool IsAvailable { get; set; }
-    public string? ImagePath { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public string Currency { get; set; } = string.Empty;
+    public int Id { get; init; }
+    public string Number { get; init; } = string.Empty;
+    public RoomType Type { get; init; }
+    public decimal PricePerNight { get; init; }
+    public bool IsAvailable { get; init; }
+    public string? ImagePath { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public string Currency { get; init; } = string.Empty;
 }

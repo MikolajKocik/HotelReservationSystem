@@ -1,12 +1,12 @@
 namespace HotelReservationSystem.Web.ViewModels;
 
-public class ReservationListViewModel
+public record ReservationListViewModel
 {
-    public string Id { get; set; } = string.Empty;
-    public DateTime ArrivalDate { get; set; }
-    public DateTime DepartureDate { get; set; }
-    public string RoomNumber { get; set; } = string.Empty;
-    public string GuestFullName { get; set; } = string.Empty;
-    public decimal TotalPrice { get; set; }
-    public string Status { get; set; } = string.Empty;
+    public string Id { get; init; } = string.Empty;
+    public DateTime ArrivalDate { get; init; }
+    public DateTime DepartureDate { get; init; }
+    public string RoomNumber { get; init; } = string.Empty;
+    public string GuestFullName { get; init; } = string.Empty;
+    public decimal TotalPrice { get; init; }
+    public string Status { get; init; } = string.Empty;
 }

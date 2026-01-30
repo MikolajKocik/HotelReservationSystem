@@ -1,9 +1,8 @@
-namespace HotelReservationSystem.Web.ViewModels
-{
-    public class ErrorViewModel
-    {
-        public string? RequestId { get; set; }
+namespace HotelReservationSystem.Web.ViewModels;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    }
+public record ErrorViewModel
+{
+    public string? RequestId { get; init; }
+
+    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }

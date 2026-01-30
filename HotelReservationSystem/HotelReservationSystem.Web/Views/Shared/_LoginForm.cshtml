@@ -1,18 +1,27 @@
 @using HotelReservationSystem.Web.ViewModels
 @model LoginViewModel
 
-<form asp-action="Login" method="post">
+<form asp-action="Login" method="post" novalidate class="needs-validation" id="loginForm">
     <div class="mb-3">
-        <input asp-for="Email" class="form-control" placeholder="Email" />
+        <label asp-for="Email" class="form-label visually-hidden"></label>
+        <input asp-for="Email" class="form-control" placeholder="Email" aria-describedby="emailHelp" required />
+        <div class="invalid-feedback">Wprowadź poprawny adres email.</div>
     </div>
     <div class="mb-3">
-        <input asp-for="Password" type="password" class="form-control" placeholder="Hasło" />
+        <label asp-for="Password" class="form-label visually-hidden"></label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Hasło" required minlength="6" />
+        <div class="invalid-feedback">Hasło jest wymagane (min. 6 znaków).</div>
     </div>
     <div class="form-check mb-3">
-        <input asp-for="RememberMe" class="form-check-input" />
+        <input asp-for="RememberMe" class="form-check-input" id="rememberMe" />
         <label class="form-check-label" asp-for="RememberMe">Zapamiętaj mnie</label>
     </div>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-between align-items-center">
+        <a asp-controller="Account" asp-action="Register" class="text-muted small">Nie masz konta? Zarejestruj się</a>
         <button type="submit" class="btn btn-primary">Zaloguj</button>
     </div>
 </form>
+
+@section Scripts {
+    <script src="~/js/loginForm.js"></script>
+}

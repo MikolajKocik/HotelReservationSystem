@@ -1,18 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HotelReservationSystem.Web.ViewModels
+namespace HotelReservationSystem.Web.ViewModels;
+
+public record LoginViewModel
 {
-    public class LoginViewModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    public string Email { get; init; } = string.Empty;
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; init; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
-        public bool RememberMe { get; set; }
-    }
-
+    public bool RememberMe { get; init; }
 }

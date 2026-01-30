@@ -1,20 +1,20 @@
 namespace HotelReservationSystem.Web.ViewModels;
 
-public class ReservationDetailsViewModel
+public record ReservationDetailsViewModel
 {
-    public string Id { get; set; } = string.Empty;
-    public DateTime ArrivalDate { get; set; }
-    public DateTime DepartureDate { get; set; }
-    public int NumberOfGuests { get; set; }
-    public decimal TotalPrice { get; set; }
-    public string AdditionalRequests { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
-    public string Reason { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public string RoomNumber { get; set; } = string.Empty;
-    public string RoomType { get; set; } = string.Empty;
-    public decimal RoomPricePerNight { get; set; }
-    public string GuestFullName { get; set; } = string.Empty;
-    public string GuestEmail { get; set; } = string.Empty;
-    public string? PaymentStatus { get; set; }
+    public string Id { get; init; } = string.Empty;
+    public DateTime ArrivalDate { get; init; }
+    public DateTime DepartureDate { get; init; }
+    public int NumberOfGuests { get; init; }
+    public decimal TotalPrice { get; init; }
+    public string AdditionalRequests { get; init; } = string.Empty;
+    public string Status { get; init; } = string.Empty;
+    public string Reason { get; init; } = string.Empty;
+    public DateTime CreatedAt { get; init; }
+    public string RoomNumber { get; init; } = string.Empty;
+    public string RoomType { get; init; } = string.Empty;
+    public decimal RoomPricePerNight { get; init; }
+    public string GuestFullName { get; init; } = string.Empty;
+    public string GuestEmail { get; init; } = string.Empty;
+    public string? PaymentStatus { get; init; }
 }
