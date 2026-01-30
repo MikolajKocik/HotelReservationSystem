@@ -25,7 +25,38 @@ header {
 }
 
 .nav-container {
-    background-color: rgba(64, 64, 64, 0.4);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background-color: rgba(64, 64, 64, 0.6); 
+}
+
+.nav-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem; 
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list li {
+    background-color: rgba(111, 136, 138, 0.7);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    transition: 0.3s;
+}
+
+.nav-list li a, 
+.auth-links a, 
+.user-name {
+    text-decoration: none;
+    color: rgb(228, 196, 109) !important; 
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .nav-container,
@@ -34,22 +65,17 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 5rem;
-    font-size: 2rem;
+    gap: 3rem;
+    font-size: 1rem; 
     list-style: none;
-    padding-top: 0.5rem;
-}
-
-.nav-container ul {
-    margin-right: 9.5rem;
+    padding-top: 0.25rem;
 }
 
 .nav-container li {
     background-color: rgb(111, 136, 138, 0.7);
-    height: 3.5rem;
+    height: 2.6rem; 
     width: auto;
-    padding: 0.5rem;
-    padding-top: 0.2rem;
+    padding: 0.35rem 0.6rem;
     border-radius: 0.4rem;
     cursor: pointer;
 }
@@ -68,10 +94,10 @@ header {
 
 .nav-logo {
     font-weight: 500;
-    font-size: 3rem;
-    padding-bottom: 0.8rem;
-    padding-left: 2rem;
-    margin-left: 2.2rem;
+    font-size: 2.2rem; 
+    padding-bottom: 0.4rem;
+    padding-left: 1.25rem;
+    margin-left: 1.25rem;
     cursor: pointer;
 }
 
@@ -80,20 +106,42 @@ header {
     color: rgb(195, 168, 39);
 }
 
-.nav-user {
-    margin-right: 2rem;
-    margin-bottom: 0.5rem;
-    height: 3rem;
-    cursor: pointer;
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Odstęp między Logowanie | Rejestracja */
 }
 
-.nav-user svg {
-    height: 3rem;
-    width: auto;
-    color: rgb(228, 196, 109);
-    background-color: rgb(111, 136, 138, 0.7);
-    padding: 0.3rem;
-    border-radius: 0.6rem;
+.auth-links .divider {
+    color: #ccc;
+}
+
+.user-logged-in {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-btn {
+    background: #7d4346; 
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: rgb(117, 156, 160);
+    transform: scale(1.05);
+}
+
+.nav-separator {
+    background: none !important; 
+    cursor: default !important;
 }
 
 .search-container {
@@ -370,6 +418,15 @@ footer {
     }
     .footer-content-3 ul { 
         max-width: 100%; 
+    }
+}
+
+@media (max-width: 1200px) {
+    .nav-list {
+        gap: 0.8rem;
+    }
+    .nav-list li a {
+        font-size: 0.9rem;
     }
 }
 

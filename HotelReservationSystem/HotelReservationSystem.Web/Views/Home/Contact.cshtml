@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Kontakt";
+}
+
+<div class="privacy-container">
+    <h1>@ViewData["Title"]</h1>
+    <div class="row">
+        <div class="col-lg-4">
+            <section class="contact-info">
+                <p><strong>Adres:</strong> ul. Hotelowa 1, 00-000 Miasto</p>
+                <p><strong>Telefon:</strong> +48 123 456 789</p>
+                <p><strong>Email:</strong> <a href="mailto:recepcja@hotel.pl">recepcja@hotel.pl</a></p>
+            </section>
+        </div>
+        <div class="col-lg-6">
+            <h2>Formularz kontaktowy</h2>
+            <form method="post" action="#">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Imię i nazwisko" />
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" placeholder="Email" />
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="4" placeholder="Wiadomość"></textarea>
+                </div>
+                <button class="btn btn-primary">Wyślij</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+@using HotelReservationSystem.Web.ViewModels
+@model ReservationViewModel
+
+<div id="createDoubleModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Zarezerwuj pokój dwuosobowy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row g-0">
+          <div class="col-lg-5 bg-light border-end">
+            <img src="@Url.Content("~/images/rooms/double-room.jpg")" class="img-fluid" alt="Pokój dwuosobowy" style="height: 100%; object-fit: cover; min-height: 400px;" />
+            <div class="p-4">
+              <h4>Wyposażenie</h4>
+              <ul class="text-muted">
+                <li>Dwa duże, wygodne łóżka</li>
+                <li>Strefa wypoczynkowa</li>
+                <li>Mini bar i Smart TV</li>
+              </ul>
+              <p class="h4 text-success">Cena za noc: <strong>700 zł</strong></p>
+            </div>
+          </div>
+          <div class="col-lg-7 p-4">
+            @await Html.PartialAsync("_CreateDoubleForm", Model)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

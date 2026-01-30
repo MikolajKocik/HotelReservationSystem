@@ -321,6 +321,8 @@ h3 {
     padding: 0.5rem 1rem;
     border-radius: 999px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    position: static;
+    margin: 0.5rem auto;
 }
 
 .bottom-nav-dots .dot {
@@ -404,6 +406,10 @@ h3 {
         bottom: 0.6rem;
     }
     .bottom-nav-dots {
+        position: fixed; 
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 1rem;
         background: rgba(255,255,255,0.98);
     }
 }

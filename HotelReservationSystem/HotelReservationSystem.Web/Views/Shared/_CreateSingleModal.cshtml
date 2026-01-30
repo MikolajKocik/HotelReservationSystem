@@ -1,0 +1,32 @@
+@using HotelReservationSystem.Web.ViewModels
+@model ReservationViewModel
+
+<div id="createSingleModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Zarezerwuj pokój jednoosobowy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row g-0">
+          <div class="col-lg-5 bg-light border-end">
+            <img src="@Url.Content("~/images/rooms/single-room.jpg")" class="img-fluid" alt="Pokój jednoosobowy" style="height: 100%; object-fit: cover; min-height: 400px;" />
+            <div class="p-4">
+              <h4>Wyposażenie</h4>
+              <ul class="text-muted">
+                <li>Jedno wygodne łóżko</li>
+                <li>Biurko do pracy</li>
+                <li>Bezpłatne Wi-Fi</li>
+              </ul>
+              <p class="h4 text-primary">Cena za noc: <strong>550 zł</strong></p>
+            </div>
+          </div>
+          <div class="col-lg-7 p-4">
+            @await Html.PartialAsync("_CreateSingleForm", Model)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
+<div class="privacy-container">
+    <h1>@ViewData["Title"]</h1>
 
-<section class="privacy-intro">
+    <section class="privacy-intro">
     <p>Witamy w polityce prywatności HotelReservationSystem. Szanujemy prywatność naszych gości i dbamy o bezpieczeństwo danych osobowych. Poniżej znajdziesz informacje o tym, jakie dane zbieramy, dlaczego je przetwarzamy i jakie masz prawa jako użytkownik.</p>
-</section>
+    </section>
 
-<section class="privacy-details">
+    <section class="privacy-details">
     <h2>Jakie dane zbieramy</h2>
     <ul>
         <li>Dane kontaktowe (imię, nazwisko, e-mail, telefon) — potrzebne do potwierdzeń rezerwacji i komunikacji.</li>
@@ -20,12 +21,14 @@
 
     <h2>Twoje prawa</h2>
     <p>Masz prawo do dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia danych. W przypadku pytań skontaktuj się z administratorem.</p>
-</section>
+    </section>
 
-<section class="privacy-contact">
+    <section class="privacy-contact">
     <h2>Kontakt</h2>
     <p>W przypadku pytań dotyczących prywatności napisz na: <a href="mailto:privacy@example.com">privacy@example.com</a>.</p>
-</section>
+    </section>
+
+</div>
 
 @section Scripts {
     <link rel="stylesheet" href="~/css/privacy.css" />

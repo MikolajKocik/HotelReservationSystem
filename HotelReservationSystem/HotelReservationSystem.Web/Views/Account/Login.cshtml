@@ -3,11 +3,6 @@
 
 <h2>Logowanie</h2>
 
-<form asp-action="Login" method="post">
-    <input asp-for="Email" class="form-control" placeholder="Email" />
-    <input asp-for="Password" type="password" class="form-control" placeholder="Hasło" />
-    <label>
-        <input asp-for="RememberMe" /> Zapamiętaj mnie
-    </label>
-    <button type="submit" class="btn btn-primary">Zaloguj</button>
-</form>
+<div class="privacy-container">
+    @await Html.PartialAsync("~/Views/Shared/_LoginForm.cshtml", new LoginViewModel())
+</div>

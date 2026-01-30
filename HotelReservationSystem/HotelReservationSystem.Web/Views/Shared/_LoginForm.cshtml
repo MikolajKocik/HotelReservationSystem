@@ -1,0 +1,18 @@
+@using HotelReservationSystem.Web.ViewModels
+@model LoginViewModel
+
+<form asp-action="Login" method="post">
+    <div class="mb-3">
+        <input asp-for="Email" class="form-control" placeholder="Email" />
+    </div>
+    <div class="mb-3">
+        <input asp-for="Password" type="password" class="form-control" placeholder="Hasło" />
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="RememberMe" class="form-check-input" />
+        <label class="form-check-label" asp-for="RememberMe">Zapamiętaj mnie</label>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Zaloguj</button>
+    </div>
+</form>

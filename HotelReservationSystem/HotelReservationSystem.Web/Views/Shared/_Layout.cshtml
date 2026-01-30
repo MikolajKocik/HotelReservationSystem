@@ -23,85 +23,57 @@
                 <li>
                     <a asp-controller="Room" asp-action="Index" title="Zobacz nasze pokoje">Pokoje</a>
                 </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Gallery" title="Zobacz zdjęcia naszego hotelu">Galeria</a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Contact" title="Skontaktuj się z nami">Kontakt</a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="About" title="Informacje o naszym hotelu">O nas</a>
+                </li>
 
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <li class="nav-separator">|</li>
                     <li>
-                        <a asp-controller="Reservation" asp-action="MyReservations" title="Sprawdź swoje rezerwacje">Moje
-                            rezerwacje</a>
+                        <a asp-controller="Reservation" asp-action="MyReservations" title="Twoje rezerwacje">Moje rezerwacje</a>
                     </li>
                     <li>
-                        <a asp-controller="Opinion" asp-action="Create" title="Podziel się swoją opinią o pobycie">Zostaw
-                            opinię</a>
+                        <a asp-controller="Opinion" asp-action="Create" title="Wystaw opinię">Zostaw opinię</a>
                     </li>
 
                     @if (User.IsInRole("Manager"))
                     {
                         <li>
-                            <a asp-controller="Reports" asp-action="Reports" title="Zobacz raporty i statystyki">Raporty</a>
+                            <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                         </li>
                     }
 
                     @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
                     {
                         <li>
-                            <a asp-controller="Reservation" asp-action="ReceptionPanel"
-                                title="Główny widok pracy recepcji">Widok Recepcji</a>
-                        </li>
-                        <li>
-                            <a asp-controller="Reservation" asp-action="List" title="Zarządzaj listą rezerwacji">Panel
-                                Obsługi</a>
-                        </li>
-                        <li>
-                            <a asp-controller="Guest" asp-action="List" title="Lista zarejestrowanych gości">Lista Gości</a>
-                        </li>
-                        <li>
-                            <a asp-controller="Payment" asp-action="Transactions" title="Historia i statusy płatności">Historia wpłat</a>
+                            <a asp-controller="Reservation" asp-action="ReceptionPanel">Recepcja</a>
                         </li>
                     }
                 }
-
-                <li>
-                    <a asp-controller="Home" asp-action="Privacy" title="Informacje o naszym hotelu">O nas</a>
-                </li>
             </ul>
 
             <div class="nav-user">
                 @if (!User.Identity.IsAuthenticated)
                 {
-                    <div class="auth-links" style="display: flex; align-items: center; gap: 10px;">
-                        <a asp-controller="Account" asp-action="Login" title="Zaloguj się"
-                            style="display: flex; align-items: center; text-decoration: none; color: inherit; gap: 5px;">
-                            <div style="width: 24px; height: 24px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24"
-                                    fill="currentColor">
-                                    <path
-                                        d="M16.043,14H7.957A4.963,4.963,0,0,0,3,18.957V24H21V18.957A4.963,4.963,0,0,0,16.043,14Z" />
-                                    <circle cx="12" cy="6" r="6" />
-                                </svg>
-                            </div>
-                            <span>Logowanie</span>
-                        </a>
-                        <span style="color: #ccc;">|</span>
-                        <a asp-controller="Account" asp-action="Register" title="Zarejestruj się"
-                            style="text-decoration: none; color: inherit;">
-                            <span>Rejestracja</span>
-                        </a>
+                    <div class="auth-links">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Logowanie</a>
+                        <span class="divider">|</span>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Rejestracja</a>
                     </div>
                 }
                 else
                 {
-                    <div class="user-logged-in" style="display: flex; align-items: center; gap: 10px;">
-                        <span class="user-name" style="font-size: 0.9em;">@User.Identity.Name</span>
-                        <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-                            <button type="submit" title="Wyloguj się"
-                                style="background: none; border: none; padding: 0; color: inherit; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor"
-                                    style="width: 100%; height: 100%;">
-                                    <path
-                                        d="M224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160zM566.6 342.6C579.1 330.1 579.1 309.8 566.6 297.3L438.6 169.3C426.1 156.8 405.8 156.8 393.3 169.3C380.8 181.8 380.8 202.1 393.3 214.6L466.7 288L256 288C238.3 288 224 302.3 224 320C224 337.7 238.3 352 256 352L466.7 352L393.3 425.4C380.8 437.9 380.8 458.2 393.3 470.7C405.8 483.2 426.1 483.2 438.6 470.7L566.6 342.7z" />
-                                </svg>
-                            </button>
+                    <div class="user-logged-in">
+                        <span class="user-name">@User.Identity.Name</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="logout-btn">Wyloguj</button>
                         </form>
                     </div>
                 }
@@ -236,7 +208,7 @@
                             <a asp-controller="Room" asp-action="Index">Pokoje</a>
                         </li>
                         <li>
-                            <a asp-controller="Home" asp-action="Privacy">O nas</a>
+                            <a asp-controller="Home" asp-action="About">O nas</a>
                         </li>
 
                         @if (User.Identity.IsAuthenticated)
@@ -276,10 +248,13 @@
             </div>
         </div>
     </footer>
+    @await Html.PartialAsync("_LoginModal")
+    @await Html.PartialAsync("_RegisterModal")
+    @await Html.PartialAsync("_CreateSingleModal", new HotelReservationSystem.Web.ViewModels.ReservationViewModel())
+    @await Html.PartialAsync("_CreateDoubleModal", new HotelReservationSystem.Web.ViewModels.ReservationViewModel())
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/Scripts/datePicker.js"></script>
+    <script src="~/js/datePicker.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>

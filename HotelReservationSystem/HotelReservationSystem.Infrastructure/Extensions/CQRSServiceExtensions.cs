@@ -1,5 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Abstractions.Commands;
+using HotelReservationSystem.Application.CQRS.Abstractions.Queries;
+using System.Linq;
+using System.Reflection;
 using HotelReservationSystem.Infrastructure.CQRS;
 using HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 using HotelReservationSystem.Infrastructure.CQRS.Guests.CommandHandlers;
@@ -24,35 +28,25 @@ public static class CQRSServiceExtensions
     {
         services.AddScoped<ICQRSMediator, CQRSMediator>();
 
-        services.AddScoped<GetAllGuestsQueryHandler>();
-        services.AddScoped<GetGuestByIdQueryHandler>();
-        services.AddScoped<GetGuestByEmailQueryHandler>();
-        services.AddScoped<CreateGuestCommandHandler>();
-        services.AddScoped<UpdateGuestCommandHandler>();
-        services.AddScoped<DeleteGuestCommandHandler>();
+        Assembly handlersAssembly = typeof(GetAllGuestsQueryHandler).Assembly;
 
-        services.AddScoped<GetAvailableRoomsQueryHandler>();
-        services.AddScoped<GetAllRoomsQueryHandler>();
-        services.AddScoped<GetRoomByIdQueryHandler>();
-        services.AddScoped<GetAvailableRoomsSelectListQueryHandler>();
-        services.AddScoped<CreateRoomCommandHandler>();
-        services.AddScoped<UpdateRoomCommandHandler>();
-        services.AddScoped<DeleteRoomCommandHandler>();
-        services.AddScoped<ToggleRoomAvailabilityCommandHandler>();
+        IEnumerable<Type> handlerTypes = handlersAssembly.GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract);
 
-        services.AddScoped<GenerateReportQueryHandler>();
+        foreach (Type implType in handlerTypes)
+        {
+            IEnumerable<Type> interfaces = implType.GetInterfaces().Where(i => i.IsGenericType);
 
-        services.AddScoped<ConfirmPaymentCommandHandler>();
+            foreach (Type iface in interfaces)
+            {
+                Type def = iface.GetGenericTypeDefinition();
 
-        services.AddScoped<GetAllReservationsQueryHandler>();
-        services.AddScoped<GetReservationByIdQueryHandler>();
-        services.AddScoped<GetReservationsByGuestEmailQueryHandler>();
-        services.AddScoped<GetReservationsByDateRangeQueryHandler>();
-        services.AddScoped<CreateReservationCommandHandler>();
-        services.AddScoped<ConfirmReservationCommandHandler>();
-        services.AddScoped<CancelReservationCommandHandler>();
-        services.AddScoped<MarkReservationAsPaidCommandHandler>();
-        services.AddScoped<UpdateReservationCommandHandler>();
+                if (def == typeof(IQueryHandler<,>) || def == typeof(ICommandHandler<>) || def == typeof(ICommandHandler<,>))
+                {
+                    services.AddScoped(iface, implType);
+                }
+            }
+        }
 
         return services;
     }

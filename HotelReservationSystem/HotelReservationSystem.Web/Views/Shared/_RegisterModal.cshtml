@@ -1,0 +1,19 @@
+@using HotelReservationSystem.Web.ViewModels
+
+@{
+    var model = new RegisterViewModel();
+}
+
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerModalLabel">Rejestracja</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @await Html.PartialAsync("_RegisterForm", model)
+      </div>
+    </div>
+  </div>
+</div>

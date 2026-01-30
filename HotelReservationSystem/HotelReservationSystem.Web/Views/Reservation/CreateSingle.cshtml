@@ -2,20 +2,17 @@
 @model ReservationViewModel
 
 @{
-    ViewData["Title"] = "Nowa rezerwacja - Pokój jednoosobowy";
+        ViewData["Title"] = "Nowa rezerwacja - Pokój jednoosobowy";
 }
 
-<div class="container mt-5">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Zarezerwuj pokój jednoosobowy</h5>
-                <a asp-controller="Room" asp-action="Index" class="btn-close btn-close-white"></a>
-            </div>
-            <div class="modal-body p-0">
+<div class="container py-4">
+    <h2 class="mb-4 text-center border-bottom pb-3">Nowa rezerwacja - Pokój jednoosobowy</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
                 <div class="row g-0">
                     <div class="col-lg-5 bg-light border-end">
-                        <img src="/images/rooms/single.jpg" class="img-fluid" alt="Pokój jednoosobowy" style="height: 100%; object-fit: cover; min-height: 400px;" />
+                        <img src="@Url.Content("~/images/rooms/single-room.jpg")" class="img-fluid" alt="Pokój jednoosobowy" style="height: 100%; object-fit: cover; min-height: 300px;" />
                         <div class="p-4">
                             <h4>Wyposażenie</h4>
                             <ul class="text-muted">
@@ -27,54 +24,7 @@
                         </div>
                     </div>
                     <div class="col-lg-7 p-4">
-                        <form asp-action="Create" method="post" class="row g-3">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" name="RoomType" value="Single" />
-
-                            <div class="col-md-6">
-                                <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>
-                                <input asp-for="ArrivalDate" class="form-control" type="date" />
-                                <span asp-validation-for="ArrivalDate" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="DepartureDate" class="form-label font-weight-bold">Data wyjazdu</label>
-                                <input asp-for="DepartureDate" class="form-control" type="date" />
-                                <span asp-validation-for="DepartureDate" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label asp-for="GuestFirstName" class="form-label font-weight-bold">Imię</label>
-                                <input asp-for="GuestFirstName" class="form-control" placeholder="np. Jan" />
-                                <span asp-validation-for="GuestFirstName" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="GuestLastName" class="form-label font-weight-bold">Nazwisko</label>
-                                <input asp-for="GuestLastName" class="form-control" placeholder="np. Kowalski" />
-                                <span asp-validation-for="GuestLastName" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label asp-for="GuestEmail" class="form-label font-weight-bold">Email</label>
-                                <input asp-for="GuestEmail" class="form-control" type="email" placeholder="jan@example.com" />
-                                <span asp-validation-for="GuestEmail" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="GuestPhoneNumber" class="form-label font-weight-bold">Telefon</label>
-                                <input asp-for="GuestPhoneNumber" class="form-control" placeholder="+48 ..." />
-                                <span asp-validation-for="GuestPhoneNumber" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-12 mt-3">
-                                <label asp-for="RoomId" class="form-label font-weight-bold">Wybierz dostępny numer pokoju</label>
-                                <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-select border-primary shadow-sm"></select>
-                                <span asp-validation-for="RoomId" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-12 mt-4 text-end">
-                                <a asp-controller="Room" asp-action="Index" class="btn btn-outline-secondary me-2">Anuluj</a>
-                                <button type="submit" class="btn btn-primary btn-lg px-5">Zarezerwuj teraz</button>
-                            </div>
-                        </form>
+                        @await Html.PartialAsync("_CreateSingleForm", Model)
                     </div>
                 </div>
             </div>

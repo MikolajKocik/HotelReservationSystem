@@ -3,6 +3,8 @@ using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.Dtos.Room;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Core.Domain.Enums;
+using System;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
 
@@ -34,9 +36,9 @@ public class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQueryabl
             roomsQuery = await roomRepository.GetAllAsync();
         }
 
-        if (!string.IsNullOrEmpty(query.RoomType))
+        if (!string.IsNullOrEmpty(query.RoomType) && Enum.TryParse<RoomType>(query.RoomType, out var parsedType))
         {
-            roomsQuery = roomsQuery.Where(r => r.Type.ToString() == query.RoomType);
+            roomsQuery = roomsQuery.Where(r => r.Type == parsedType);
         }
 
         if (!string.IsNullOrEmpty(query.SearchPhrase))
