@@ -398,3 +398,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Ignore ASP.NET Core appsettings files containing secrets
+*.appsettings.json
+*.appsettings.*.json
