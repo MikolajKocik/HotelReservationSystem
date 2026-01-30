@@ -1,162 +1,64 @@
-# Hotel Reservation System - ASP.NET Core MVC
-(project done during studies)
+# HotelReservationSystem
 
-A web application supporting a hotel reservation system, created in the MVC architecture. It allows you to make room reservations, manage them by receptionists and generate reports by the manager.
+`HotelReservationSystem` to aplikacja ASP.NET Core (net8.0) do zarządzania rezerwacjami hotelowymi. Projekt stosuje CQRS, EF Core oraz wydzielone warstwy: domenę, logikę aplikacyjną, infrastrukturę i warstwę webową.
 
----
+Główne moduły:
 
-## Features
+- `HotelReservationSystem.Core` — model domenowy i interfejsy
+- `HotelReservationSystem.Application` — logika aplikacyjna, komendy/handlery, serwisy (Stripe, export)
+- `HotelReservationSystem.Infrastructure` — repozytoria, migracje EF, integracje z zewnętrznymi serwisami
+- `HotelReservationSystem.Web` — interfejs użytkownika (MVC/Razor), API i webhooki
+- `HotelReservationSystem.Workers` — zadania tła (kolejki, przetwarzanie asynchroniczne)
 
-- Creating and canceling reservations
-- Confirming reservations by the receptionist / manager
-- List of reservations, managing room availability
-- Handling online payments (Stripe)
-- Authorization roles: Guest, Receptionist, Manager
-- Generating reports and transactions
+## Funkcjonalności 
 
----
+- Obsługa rezerwacji: formularze, kody rabatowe, uwagi, zgoda na przetwarzanie danych
+- Zarządzanie gośćmi i pokojami
+- Integracja z Stripe (sesje/PaymentIntent, webhooki)
+- Generowanie raportów: CSV, Excel (EPPlus), PDF (QuestPDF) i wysyłka do Power Automate / SharePoint
+- Mechanizm CQRS + background processing dla operacji długotrwałych
 
-## Technology
+## Wymagania
 
-- ASP.NET Core MVC (.NET 8)
-- Entity Framework Core (code-first)
-- Microsoft SQL Server
-- Identity (authentication, authorization)
-- Stripe API (test payments)
-- FluentValidation (.NET)
-- Bootstrap 5
+- .NET 8 SDK
+- SQL Server (lub inny provider ustawiony w `appsettings.json`)
+- Konto Stripe (klucze API)
 
----
+## Konfiguracja
 
-## Stripe - configuration
+Konfiguracja znajduje się w `appsettings.json` / `appsettings.Development.json` lub w zmiennych środowiskowych. Wrażliwe wartości nie powinny być śledzone w repozytorium.
 
-### 1. Create a test account at: https://dashboard.stripe.com/register
+Najważniejsze klucze:
 
-### 2. Get keys:
-- `STRIPE_API_KEY` (secret key, starts with `sk_test_...`)
-- `STRIPE_PUBLISHABLE_KEY` (public key, starts with `pk_test_...`)
+- `ConnectionStrings:Default`
+- `Stripe:SecretKey`, `Stripe:PublishableKey`, `Stripe:WebhookSecret`
+- `Export:EnableSharePoint`, `Export:PowerAutomate:WebhookUrl`
 
-### 3. Set them as environment variables:
-#### Windows (CMD or PowerShell):
+Użyj `.env.example` jako wzorca do lokalnego przygotowania środowiska.
+
+## Szybkie uruchomienie 
+
+1. Przywróć zależności i zbuduj rozwiązanie:
+
 ```bash
-setx STRIPE_API_KEY "sk_test_..."
-setx STRIPE_PUBLISHABLE_KEY "pk_test_..."
+dotnet restore "HotelReservationSystem/HotelReservationSystem.sln"
+dotnet build "HotelReservationSystem/HotelReservationSystem.sln" -clp:Summary
 ```
 
-#### Linux / macOS:
+2. Zastosuj migracje EF:
+
 ```bash
-export STRIPE_API_KEY="sk_test_..."
-export STRIPE_PUBLISHABLE_KEY="pk_test_..."
+dotnet ef database update --project HotelReservationSystem/HotelReservationSystem.Infrastructure --startup-project HotelReservationSystem/HotelReservationSystem.Web
 ```
 
-**Note:** These keys are required for the payment view to work properly.
+3. Uruchom aplikację Web:
 
----
-
-## Local configuration
-
-### 1. Requirements:
-- .NET SDK 8+
-- SQL Server
-- Stripe test account
-
-### 2. Startup:
 ```bash
-dotnet ef database update
+dotnet run --project HotelReservationSystem/HotelReservationSystem.Web
 ```
+
+4. Uruchom testy:
+
 ```bash
-dotnet run
-```
-
----
-
-## Form validation
-
-The project uses FluentValidation to validate data in forms. Validators are automatically registered by:
-```csharp
-builder.Services.AddValidatorsFromAssemblyContaining<ReservationValidator>();
-```
-
----
-
-## Role and user seeding
-
-When the application starts, test users are created:
-
-- **Receptionist**
-- login: `recepcja@hotel.pl`
-- password: `Test123!`
-
-- **Manager**
-- login: `manager@hotel.pl`
-- password: `Test123!`
-
----
-
-## Roles and permissions
-
-| Role | Capabilities |
-|--------------|-----------------|
-| Guest | Creating reservations |
-| Receptionist | Confirmation, cancellation, panel, guest list |
-| Manager | Everything + reports + availability management |
-
----
-
-## Reports and Transactions
-
-- Occupancy and Revenue Report: available only for `Manager` role
-- Payment Transaction List (Stripe)
-
----
-
-## Directory Structure
-
-```
-HotelReservationSystem/
-├── Controllers/
-├── Data/
-│ ├── Configuration/
-│ └── Extensions/
-├── Migrations/
-├── Models/
-│ ├── Domain/
-│ ├── Dtos/
-│ └── ViewModels/
-├── Repositories/
-│ ├── EF/
-│ └── Interfaces/
-├── Services/
-│ ├── Interfaces/
-│ ├── GuestService.cs
-│ ├── ReportService.cs
-│ ├── ReservationService.cs
-│ └── StripeService.cs
-├── Validators/
-├── Views/
-│ ├── Account/
-│ ├── Guest/
-│ ├── Home/
-│ ├── Payment/
-│ ├── Reports/
-│ ├── Reservation/
-│ └── Shared/
-├── wwwroot/
-├── appsettings.json
-└── Program.cs
-```
-
----
-
-## Warning
-
-- Do not include real Stripe keys in your code!
-
----
-
-## Sample test Stripe card number:
-```
-Number: 4242 4242 4242 4242
-Date: anytime in the future
-CVV: 123
+dotnet test HotelReservationSystem/HotelReservationSystem.Tests/HotelReservationSystem.Tests.csproj
 ```
