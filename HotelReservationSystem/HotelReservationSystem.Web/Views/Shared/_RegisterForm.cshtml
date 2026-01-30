@@ -1,7 +1,7 @@
 @using HotelReservationSystem.Web.ViewModels
 @model RegisterViewModel
 
-<form asp-action="Register" method="post">
+<form asp-controller="Account" asp-action="Register" method="post">
     <div class="mb-3">
         <input asp-for="Email" class="form-control" placeholder="Email" />
     </div>

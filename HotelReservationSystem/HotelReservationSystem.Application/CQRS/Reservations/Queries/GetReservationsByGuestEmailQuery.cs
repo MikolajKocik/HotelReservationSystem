@@ -6,4 +6,4 @@ namespace HotelReservationSystem.Application.CQRS.Reservations.Queries;
 /// <summary>
 /// Query to retrieve reservations for a specific guest
 /// </summary>
-public record GetReservationsByGuestEmailQuery(string Email) : IQuery<IQueryable<ReservationDto>>;
+public record GetReservationsByGuestEmailQuery(string Email) : IQuery<IEnumerable<ReservationDto>>;

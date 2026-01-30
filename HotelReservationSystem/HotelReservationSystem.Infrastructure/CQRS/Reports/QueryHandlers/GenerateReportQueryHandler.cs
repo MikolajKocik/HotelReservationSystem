@@ -29,16 +29,15 @@ public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQue
     /// </summary>
     public async Task<ReportDto> HandleAsync(GenerateReportQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
-        List<Reservation> reservationsList = await reservations.ToListAsync();
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
 
-        int totalReservations = reservationsList.Count;
-        int confirmedReservations = reservationsList.Count(r => r.Status == ReservationStatus.Confirmed);
-        int canceledReservations = reservationsList.Count(r => r.Status == ReservationStatus.Cancelled);
-        decimal totalPayments = reservationsList.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice);
+        int totalReservations = reservations.Count();
+        int confirmedReservations = reservations.Count(r => r.Status == ReservationStatus.Confirmed);
+        int canceledReservations = reservations.Count(r => r.Status == ReservationStatus.Cancelled);
+        decimal totalPayments = reservations.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice);
 
-        IQueryable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
-        int availableRoomsCount = await availableRooms.CountAsync();
+        IEnumerable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
+        int availableRoomsCount = availableRooms.Count();
 
         return new ReportDto
         {

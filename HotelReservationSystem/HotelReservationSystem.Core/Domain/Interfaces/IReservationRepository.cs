@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// <summary>
         /// Gets all reservations with related entities
         /// </summary>
-        Task<IQueryable<Reservation>> GetAllAsync();
+        Task<IEnumerable<Reservation>> GetAllAsync();
         
         /// <summary>
         /// Gets a reservation by its unique identifier
@@ -19,12 +19,12 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// <summary>
         /// Gets reservations within a specific date range
         /// </summary>
-        Task<IQueryable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to);
+        Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to);
         
         /// <summary>
         /// Gets reservations for a specific guest by email
         /// </summary>
-        Task<IQueryable<Reservation>> GetByGuestEmailAsync(string email);
+        Task<IEnumerable<Reservation>> GetByGuestEmailAsync(string email);
         
         /// <summary>
         /// Creates a new reservation
@@ -44,7 +44,7 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// <summary>
         /// Gets reservations for a specific room within a date range
         /// </summary>
-        Task<IQueryable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to);
+        Task<IEnumerable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to);
         
         /// <summary>
         /// Gets all guests for lookup purposes

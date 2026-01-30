@@ -20,17 +20,16 @@ public sealed class ReportService : IReportService
     public async Task<ReportDto> GenerateReportAsync(DateTime from, DateTime to)
     {
         var reservations = await this.reservationRepository.GetByDateRangeAsync(from, to);
-        var reservationsList = await reservations.ToListAsync();
 
         var availableRooms = await this.roomRepository.GetAvailableRoomsAsync(from, to);
         int availableRoomsCount = await availableRooms.CountAsync();
 
         return new ReportDto
         {
-            TotalReservations = reservationsList.Count,
-            ConfirmedReservations = reservationsList.Count(r => r.Status == ReservationStatus.Confirmed),
-            CanceledReservations = reservationsList.Count(r => r.Status == ReservationStatus.Cancelled),
-            TotalPayments = reservationsList.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice),
+            TotalReservations = reservations.Count(),
+            ConfirmedReservations = reservations.Count(r => r.Status == ReservationStatus.Confirmed),
+            CanceledReservations = reservations.Count(r => r.Status == ReservationStatus.Cancelled),
+            TotalPayments = reservations.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice),
             AvailableRooms = availableRoomsCount
         };
     }

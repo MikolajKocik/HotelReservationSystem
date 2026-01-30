@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 /// <summary>
 /// Handler for retrieving reservations by date range
 /// </summary>
-public sealed class GetReservationsByDateRangeQueryHandler : IQueryHandler<GetReservationsByDateRangeQuery, IQueryable<ReservationDto>>
+public sealed class GetReservationsByDateRangeQueryHandler : IQueryHandler<GetReservationsByDateRangeQuery, IEnumerable<ReservationDto>>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -21,9 +21,9 @@ public sealed class GetReservationsByDateRangeQueryHandler : IQueryHandler<GetRe
     /// <summary>
     /// Handles the query to get reservations by date range
     /// </summary>
-    public async Task<IQueryable<ReservationDto>> HandleAsync(GetReservationsByDateRangeQuery query, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ReservationDto>> HandleAsync(GetReservationsByDateRangeQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
 
         return reservations.Select(r => new ReservationDto
         {
@@ -46,6 +46,6 @@ public sealed class GetReservationsByDateRangeQueryHandler : IQueryHandler<GetRe
             GuestEmail = r.Guest.Email,
             PaymentId = r.PaymentId,
             PaymentStatus = r.Payment != null ? r.Payment.Status : null
-        });
+        }).ToList();
     }
 }

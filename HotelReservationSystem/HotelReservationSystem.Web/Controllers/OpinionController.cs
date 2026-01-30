@@ -40,8 +40,14 @@ public sealed class OpinionController : Controller
         return Ok(opinion);
     }
 
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
     [HttpPost]
-    public async Task<IActionResult> Create(CreateOpinionDto viewModel)
+    public async Task<IActionResult> Create(CreateOpinionDto dto)
     {
         string? userEmail = User.Identity?.Name;
         if (string.IsNullOrEmpty(userEmail))
@@ -49,13 +55,13 @@ public sealed class OpinionController : Controller
             return Unauthorized();
         }
 
-        var command = new CreateOpinionCommand(userEmail, viewModel);
+        var command = new CreateOpinionCommand(userEmail, dto);
         string opinionId = await mediator.SendAsync(command);
         return Ok(new { opinionId });
     }
 
     [HttpPut]
-    public async Task<IActionResult> Edit(UpdateOpinionDto viewModel)
+    public async Task<IActionResult> Edit(UpdateOpinionDto dto)
     {
         string? userEmail = User.Identity?.Name;
         if (string.IsNullOrEmpty(userEmail))
@@ -63,7 +69,7 @@ public sealed class OpinionController : Controller
             return Unauthorized();
         }
 
-        var command = new UpdateOpinionCommand(userEmail, viewModel);
+        var command = new UpdateOpinionCommand(userEmail, dto);
         await mediator.SendAsync(command);
         return Ok();
     }

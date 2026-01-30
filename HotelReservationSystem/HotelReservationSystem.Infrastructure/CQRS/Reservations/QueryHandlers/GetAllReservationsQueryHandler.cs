@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 /// <summary>
 /// Handler for retrieving all reservations
 /// </summary>
-public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReservationsQuery, IQueryable<ReservationDto>>
+public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReservationsQuery, IEnumerable<ReservationDto>>
 {
     private readonly IReservationRepository reservationRepository;
 
@@ -21,9 +21,9 @@ public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReserva
     /// <summary>
     /// Handles the query to get all reservations
     /// </summary>
-    public async Task<IQueryable<ReservationDto>> HandleAsync(GetAllReservationsQuery query, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ReservationDto>> HandleAsync(GetAllReservationsQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Reservation> reservations = await this.reservationRepository.GetAllAsync();
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetAllAsync();
 
         return reservations.Select(r => new ReservationDto
         {
@@ -46,6 +46,6 @@ public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReserva
             GuestEmail = r.Guest.Email,
             PaymentId = r.PaymentId,
             PaymentStatus = r.Payment != null ? r.Payment.Status : null
-        });
+        }).ToList();
     }
 }

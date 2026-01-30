@@ -1,6 +1,4 @@
 using System.Text.Json;
-using System.Linq;
-using System.Collections.Generic;
 using HotelReservationSystem.Application.CQRS.Reservations.Queries;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
 using HotelReservationSystem.Application.CQRS.Rooms.Queries;
@@ -29,10 +27,11 @@ public sealed class ReservationController : Controller
     public async Task<IActionResult> Index()
     {
         var query = new GetAllReservationsQuery();
-        IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
+        IEnumerable<ReservationDto> reservations = await mediator.SendAsync(query) 
+            ?? Enumerable.Empty<ReservationDto>();
 
-        List<ReservationViewModel> viewModels = reservations.Select(
-            ReservationMappingHelper.MapToReservationViewModel)
+        List<ReservationViewModel> viewModels = reservations
+            .Select(ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
         return View(viewModels);
@@ -43,10 +42,11 @@ public sealed class ReservationController : Controller
     public async Task<IActionResult> List()
     {
         var query = new GetAllReservationsQuery();
-        IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
+        IEnumerable<ReservationDto> reservations = await mediator.SendAsync(query)
+            ?? Enumerable.Empty<ReservationDto>();
 
-        List<ReservationViewModel> viewModels = reservations.Select(
-            ReservationMappingHelper.MapToReservationViewModel)
+        List<ReservationViewModel> viewModels = reservations
+            .Select(ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
         return View(viewModels);
@@ -54,7 +54,7 @@ public sealed class ReservationController : Controller
 
     [HttpGet]
     [Authorize(Policy = "RequireStaff")]
-    public async Task<IActionResult> ReceptionPanel()
+    public IActionResult ReceptionPanel()
     {
         return View();
     }
@@ -74,10 +74,11 @@ public sealed class ReservationController : Controller
         }
 
         var query = new GetReservationsByGuestEmailQuery(userEmail);
-        IQueryable<ReservationDto> reservations = await mediator.SendAsync(query);
+        IEnumerable<ReservationDto> reservations = await mediator.SendAsync(query) 
+            ?? Enumerable.Empty<ReservationDto>();
 
-        List<ReservationViewModel> viewModels = reservations.Select(
-            ReservationMappingHelper.MapToReservationViewModel)
+        List<ReservationViewModel> viewModels = reservations
+            .Select(ReservationMappingHelper.MapToReservationViewModel)
             .ToList();
 
         return View(viewModels);

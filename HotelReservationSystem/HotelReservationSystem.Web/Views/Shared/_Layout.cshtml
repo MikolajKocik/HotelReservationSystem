@@ -20,43 +20,57 @@
                 <i><a asp-controller="Home" asp-action="Index" title="Logo">Aurora</a></i>
             </div>
             <ul class="nav-list">
-                <li>
-                    <a asp-controller="Room" asp-action="Index" title="Zobacz nasze pokoje">Pokoje</a>
-                </li>
-                <li>
-                    <a asp-controller="Home" asp-action="Gallery" title="Zobacz zdjęcia naszego hotelu">Galeria</a>
-                </li>
-                <li>
-                    <a asp-controller="Home" asp-action="Contact" title="Skontaktuj się z nami">Kontakt</a>
-                </li>
-                <li>
-                    <a asp-controller="Home" asp-action="About" title="Informacje o naszym hotelu">O nas</a>
-                </li>
-
-                @if (User.Identity.IsAuthenticated)
+                @if (!User.IsInRole("Manager") || !User.IsInRole("Receptionist"))
                 {
-                    <li class="nav-separator">|</li>
+                    <li>
+                        <a asp-controller="Room" asp-action="Index" title="Zobacz nasze pokoje">Pokoje</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Gallery" title="Zobacz zdjęcia naszego hotelu">Galeria</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Contact" title="Skontaktuj się z nami">Kontakt</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="About" title="Informacje o naszym hotelu">O nas</a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Guest"))
+                {
                     <li>
                         <a asp-controller="Reservation" asp-action="MyReservations" title="Twoje rezerwacje">Moje rezerwacje</a>
                     </li>
                     <li>
                         <a asp-controller="Opinion" asp-action="Create" title="Wystaw opinię">Zostaw opinię</a>
                     </li>
-
-                    @if (User.IsInRole("Manager"))
-                    {
-                        <li>
-                            <a asp-controller="Reports" asp-action="Reports">Raporty</a>
-                        </li>
-                    }
-
-                    @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
-                    {
-                        <li>
-                            <a asp-controller="Reservation" asp-action="ReceptionPanel">Recepcja</a>
-                        </li>
-                    }
                 }
+                
+                @if (User.IsInRole("Manager"))
+                {
+                    <li>
+                        <a asp-controller="Reports" asp-action="Reports">Raporty</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="Reports">Raporty</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="Reports">Raporty</a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
+                {
+                    <li>
+                        <a asp-controller="Reservation" asp-action="ReceptionPanel">Recepcja</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Guest" asp-action="List">Lista Gości</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Payment" asp-action="Transactions">Transakcje</a>
+                    </li>
+                }                            
             </ul>
 
             <div class="nav-user">
@@ -173,7 +187,7 @@
                             <a href="https://x.com/?lang=pl">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                                     <path fill="currentColor"
-                                        d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z" />
+                                          d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z" />
                                 </svg>
                             </a>
                         </div>
@@ -201,17 +215,20 @@
                 <div class="footer-content-3">
                     <p><strong>Mapa strony</strong></p>
                     <ul class="footer-nav-list">
-                        <li>
-                            <a asp-controller="Home" asp-action="Index">Strona główna</a>
-                        </li>
-                        <li>
-                            <a asp-controller="Room" asp-action="Index">Pokoje</a>
-                        </li>
-                        <li>
-                            <a asp-controller="Home" asp-action="About">O nas</a>
-                        </li>
+                        @if (!User.IsInRole("Manager") || !User.IsInRole("Receptionist"))
+                        {
+                            <li>
+                                <a asp-controller="Home" asp-action="Index">Strona główna</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Room" asp-action="Index">Pokoje</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="About">O nas</a>
+                            </li>
+                        }
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.IsInRole("Guest"))
                         {
                             <li>
                                 <a asp-controller="Reservation" asp-action="MyReservations">Moje rezerwacje</a>
@@ -219,26 +236,26 @@
                             <li>
                                 <a asp-controller="Opinion" asp-action="Create">Zostaw opinię</a>
                             </li>
+                        }
 
-                            @if (User.IsInRole("Manager"))
-                            {
-                                <li>
-                                    <a asp-controller="Reports" asp-action="Reports">Raporty</a>
-                                </li>
-                            }
+                        @if (User.IsInRole("Manager"))
+                        {
+                            <li>
+                                <a asp-controller="Reports" asp-action="Reports">Raporty</a>
+                            </li>
+                        }
 
-                            @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
-                            {
-                                <li>
-                                    <a asp-controller="Reservation" asp-action="ReceptionPanel">Widok Recepcji</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Guest" asp-action="List">Lista Gości</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Payment" asp-action="Transactions">Historia wpłat</a>
-                                </li>
-                            }
+                        @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
+                        {
+                            <li>
+                                <a asp-controller="Reservation" asp-action="ReceptionPanel">Widok Recepcji</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Guest" asp-action="List">Lista Gości</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Payment" asp-action="Transactions">Historia wpłat</a>
+                            </li>
                         }
                     </ul>
                 </div>
@@ -254,8 +271,10 @@
     @await Html.PartialAsync("_CreateDoubleModal", new HotelReservationSystem.Web.ViewModels.ReservationViewModel())
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/datePicker.js"></script>
-    <script src="~/js/opinions.js"></script>
+    <script src="~/js/Reservation/datePicker.js" asp-append-version="true"></script>
+    <script src="~/js/Reservation/opinions.js" asp-append-version="true"></script>
+    <script src="~/js/Account/loginForm.js" asp-append-version="true"></script>
+    <script src="~/js/Reservation/calculateReservation.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

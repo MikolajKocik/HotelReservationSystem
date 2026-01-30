@@ -47,13 +47,11 @@ public sealed class CreateReservationCommandHandler : ICommandHandler<CreateRese
             throw new InvalidOperationDomainException("Room is not available");
         }
 
-        IQueryable<Reservation> conflictingReservations = await this.reservationRepository.GetByRoomAndDateRangeAsync(
+        IEnumerable<Reservation> conflictingReservations = await this.reservationRepository.GetByRoomAndDateRangeAsync(
             command.RoomId, command.ArrivalDate, command.DepartureDate);
 
-        if (conflictingReservations.Any())
-        {
+        if (conflictingReservations.Any())       
             throw new InvalidOperationDomainException("Room is already reserved for the selected dates");
-        }
 
         if ((command.DepartureDate - command.ArrivalDate).Days <= 0)
             throw new ArgumentException("Invalid reservation dates: departure must be after arrival");
@@ -71,14 +69,14 @@ public sealed class CreateReservationCommandHandler : ICommandHandler<CreateRese
         var reservation = new Reservation(
             command.ArrivalDate,
             command.DepartureDate,
-            1,
+            numberOfGuests: 1,
             totalPrice,
-            "",
+            additionalRequests: string.Empty,
             ReservationStatus.Pending,
-            "",
+            reason: string.Empty,
             command.RoomId,
             guest.Id,
-            null
+            paymentId: null
         );
 
         string reservationId = await this.reservationRepository.CreateAsync(reservation);
