@@ -12,5 +12,8 @@ public record CreateReservationCommand(
     string GuestFirstName,
     string GuestLastName,
     string GuestEmail,
-    string GuestPhoneNumber
+    string GuestPhoneNumber,
+    string? DiscountCode,
+    string? AdditionalRequests,
+    bool AcceptPrivacy
 ) : ICommand<string>;

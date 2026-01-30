@@ -16,8 +16,6 @@ public static class ApplicationServiceExtensions
     /// </summary>
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<IReservationService, ReservationService>();
-        services.AddScoped<IGuestService, GuestService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IStripeService, StripeService>();
 
