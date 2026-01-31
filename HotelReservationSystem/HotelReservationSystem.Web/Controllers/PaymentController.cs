@@ -6,8 +6,6 @@ using HotelReservationSystem.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Application.CQRS.Payments.Queries;
-using HotelReservationSystem.Web.ViewModels;
-using HotelReservationSystem.Web.Utils.ModelMappings;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -27,7 +25,7 @@ public sealed class PaymentController : Controller
     public async Task<IActionResult> Pay(string reservationId)
     {
         var query = new GetPaymentInfoQuery(reservationId);
-        PaymentInfoDto? paymentInfo = await mediator.SendAsync(query);
+        PaymentInfoDto? paymentInfo = await this.mediator.SendAsync(query);
 
         if (paymentInfo == null)
             return NotFound("Reservation not found.");
@@ -52,7 +50,7 @@ public sealed class PaymentController : Controller
         try
         {
             var confirmCommand = new ConfirmPaymentCommand(reservationId, paymentMethodId);
-            await mediator.SendAsync(confirmCommand);
+            await this.mediator.SendAsync(confirmCommand);
             return Json(new { success = true });
         }
         catch (Exception ex)
@@ -66,7 +64,9 @@ public sealed class PaymentController : Controller
     public async Task<IActionResult> Transactions()
     {
         var query = new GetTransactionsQuery();
-        IEnumerable<Payment> transactions = await mediator.SendAsync(query);
+        IEnumerable<Payment> transactions = await this.mediator.SendAsync(query)
+            ?? Enumerable.Empty<Payment>();
+
         return View(transactions);
     }
 }

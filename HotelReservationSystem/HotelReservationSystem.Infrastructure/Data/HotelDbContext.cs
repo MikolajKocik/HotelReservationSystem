@@ -8,7 +8,7 @@ namespace HotelReservationSystem.Infrastructure.Data;
 
 public class HotelDbContext : IdentityDbContext<IdentityUser>
 {
-    public HotelDbContext(DbContextOptions options) : base(options) { }
+    public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options) { }
 
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Room> Rooms { get; set; }

@@ -103,13 +103,13 @@ public sealed class ReservationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> CreateSingle(int? roomId = null)
+    public IActionResult CreateSingle(int? roomId = null)
     {
         return Redirect($"/Room/Index#createSingleModal");
     }
 
     [HttpGet]
-    public async Task<IActionResult> CreateDouble(int? roomId = null)
+    public IActionResult CreateDouble(int? roomId = null)
     {
         return Redirect($"/Room/Index#createDoubleModal");
     }

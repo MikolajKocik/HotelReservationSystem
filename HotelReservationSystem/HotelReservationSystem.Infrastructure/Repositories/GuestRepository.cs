@@ -78,43 +78,10 @@ public sealed class GuestRepository : IGuestRepository
     /// Gets payment transactions for reporting
     /// </summary>
     public async Task<List<Payment>> GetTransactions()
-        {
-            using var conn = this.context.Database.GetDbConnection();
-            string sql = @"
-                SELECT 
-                    p.Id, p.Method, p.Status, p.Amount, p.StripePaymentIntentId, p.CreatedAt, p.CompletedAt, p.ReservationId,
-                    r.Id, r.GuestId,
-                    g.Id, g.FirstName, g.LastName, g.Email
-                FROM Payments p
-                LEFT JOIN Reservations r ON p.ReservationId = r.Id
-                LEFT JOIN Guests g ON r.GuestId = g.Id";
-
-            var lookup = new Dictionary<int, Payment>();
-
-            var result = (await conn.QueryAsync<Payment, Reservation, Guest, Payment>(
-                sql, 
-                (payment, reservation, guest) =>
-                {
-                    if (!lookup.TryGetValue(payment.Id, out var currentPayment))
-                    {
-                        currentPayment = payment;
-                        lookup.Add(currentPayment.Id, currentPayment);
-                    }
-
-                    if (reservation != null)
-                    {
-                        currentPayment.Reservation = reservation;
-                        if (guest != null)
-                        {
-                            currentPayment.Reservation.Guest = guest;
-                        }
-                    }
-
-                    return currentPayment;
-                }, 
-                splitOn: "Id,Id" 
-            )).Distinct().ToList();
-
-            return result;
-        }
+    {
+        return await this.context.Payments
+            .Include(p => p.Reservation)
+            .ThenInclude(r => r.Guest)
+            .ToListAsync();
+    }
 }

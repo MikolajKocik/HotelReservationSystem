@@ -33,7 +33,6 @@ public static class WebServiceExtensions
         });
 
         services.AddScoped<IFileService, FileService>();
-        services.AddScoped<IExportService, ExportService>();
         services.AddHttpClient();
 
         return services;
@@ -93,13 +92,13 @@ public static class WebServiceExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("RequireManager", policy => policy.RequireRole("Manager"));
-            options.AddPolicy("RequireReceptionist", policy => policy.RequireRole("Receptionist"));
+            options.AddPolicy("RequireReceptionist", policy => policy.RequireRole("Recepcionist"));
             options.AddPolicy("RequireGuest", policy => policy.RequireRole("Guest"));
 
             options.AddPolicy("RequireStaff", policy =>
-                policy.RequireRole("Manager", "Receptionist"));
+                policy.RequireRole("Manager", "Recepcionist"));
             options.AddPolicy("RequireAnyUser", policy =>
-                policy.RequireRole("Manager", "Receptionist", "Guest"));
+                policy.RequireRole("Manager", "Recepcionist", "Guest"));
         });
 
         return services;

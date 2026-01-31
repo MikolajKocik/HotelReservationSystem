@@ -9,18 +9,6 @@ using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ensure a DB connection string exists; if missing add a sensible local default for development
-var config = builder.Configuration;
-var conn = config.GetConnectionString("Default") ?? config.GetConnectionString("ConnectionString") ?? config["ConnectionString"];
-if (string.IsNullOrWhiteSpace(conn))
-{
-    var defaults = new Dictionary<string, string>
-    {
-        ["ConnectionStrings:Default"] = "Server=(localdb)\\mssqllocaldb;Database=HotelReservationSystem;Trusted_Connection=True;MultipleActiveResultSets=true"
-    };
-    builder.Configuration.AddInMemoryCollection(defaults);
-}
-
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddWebServices();
@@ -36,14 +24,30 @@ if (!app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
-    context.Database.Migrate();
-    context.Seed(); 
+    try
+    {
+        context.Database.Migrate();
+        context.Seed();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during database migration/seeding: {ex.Message}");
+        throw;
+    }
 }
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await DbInitializer.SeedRolesAsync(services);
+    try
+    {
+        await DbInitializer.SeedRolesAsync(services);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during role seeding: {ex.Message}");
+        throw;
+    }
 }
 
 app.UseHttpsRedirection();

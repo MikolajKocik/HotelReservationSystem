@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/fonts.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HotelReservationSystem.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
 </head>
 
@@ -20,7 +19,7 @@
                 <i><a asp-controller="Home" asp-action="Index" title="Logo">Aurora</a></i>
             </div>
             <ul class="nav-list">
-                @if (!User.IsInRole("Manager") || !User.IsInRole("Receptionist"))
+                @if (!User.IsInRole("Manager") && !User.IsInRole("Recepcionist"))
                 {
                     <li>
                         <a asp-controller="Room" asp-action="Index" title="Zobacz nasze pokoje">Pokoje</a>
@@ -53,7 +52,7 @@
                     </li>
                 }
 
-                @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
+                @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
                 {
                     <li>
                         <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
@@ -209,7 +208,7 @@
                 <div class="footer-content-3">
                     <p><strong>Mapa strony</strong></p>
                     <ul class="footer-nav-list">
-                        @if (!User.IsInRole("Manager") || !User.IsInRole("Receptionist"))
+                        @if (!User.IsInRole("Manager") && !User.IsInRole("Recepcionist"))
                         {
                             <li>
                                 <a asp-controller="Home" asp-action="Index">Strona główna</a>
@@ -239,7 +238,7 @@
                             </li>
                         }
 
-                        @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
+                        @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
                         {
                             <li>
                                 <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
@@ -265,6 +264,7 @@
     @await Component.InvokeAsync("ReservationModal", new { roomType = "Double" })
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/Layout/datePicker.js"></script>
     <script src="~/js/Reservation/form-validation.js" asp-append-version="true"></script>
     <script src="~/js/Auth/loginForm.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

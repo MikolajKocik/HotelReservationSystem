@@ -66,4 +66,10 @@ public sealed class AccountController : Controller
         await signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public IActionResult AccessDenied(string returnUrl)
+    {
+        return View();
+    }
 }

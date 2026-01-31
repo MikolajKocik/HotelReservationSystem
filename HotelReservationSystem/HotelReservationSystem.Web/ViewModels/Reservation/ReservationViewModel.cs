@@ -26,13 +26,13 @@ public record ReservationViewModel
     public int RoomId { get; init; }
     [Required(ErrorMessage = "Imię gościa jest wymagane.")]
     [StringLength(50, ErrorMessage = "Imię nie może być dłuższe niż 50 znaków.")]
-    [RegularExpression(@"^[\p{L} '\-]+$", ErrorMessage = "Imię może zawierać tylko litery, spacje, apostrofy i myślniki.")]
+    [RegularExpression(@"^[A-Za-zĄĆĘŁŃÓŚŻŹąćęłńóśżź' \-]+$", ErrorMessage = "Imię może zawierać tylko litery, spacje, apostrofy i myślniki.")]
     [Display(Name = "Imię")]
     public string GuestFirstName { get; init; } = string.Empty;
 
     [Required(ErrorMessage = "Nazwisko gościa jest wymagane.")]
     [StringLength(50, ErrorMessage = "Nazwisko nie może być dłuższe niż 50 znaków.")]
-    [RegularExpression(@"^[\p{L} '\-]+$", ErrorMessage = "Nazwisko może zawierać tylko litery, spacje, apostrofy i myślniki.")]
+    [RegularExpression(@"^[A-Za-zĄĆĘŁŃÓŚŻŹąćęłńóśżź' \-]+$", ErrorMessage = "Nazwisko może zawierać tylko litery, spacje, apostrofy i myślniki.")]
     [Display(Name = "Nazwisko")]
     public string GuestLastName { get; init; } = string.Empty;
 
