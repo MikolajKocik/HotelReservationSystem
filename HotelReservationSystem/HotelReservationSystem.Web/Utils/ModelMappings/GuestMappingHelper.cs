@@ -9,7 +9,7 @@ public static class GuestMappingHelper
     {
         return new GuestViewModel
         {
-            Id = int.TryParse(dto.Id, out var id) ? id : 0,
+            Id = dto.Id,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,

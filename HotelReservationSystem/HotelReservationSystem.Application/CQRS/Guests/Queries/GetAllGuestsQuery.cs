@@ -6,4 +6,4 @@ namespace HotelReservationSystem.Application.CQRS.Guests.Queries;
 /// <summary>
 /// Query to retrieve all guests with their basic information
 /// </summary>
-public record GetAllGuestsQuery : IQuery<IQueryable<GuestDto>>;
+public record GetAllGuestsQuery : IQuery<IEnumerable<GuestDto>>;

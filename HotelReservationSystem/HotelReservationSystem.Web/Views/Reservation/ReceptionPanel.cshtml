@@ -1,10 +1,10 @@
 ﻿@using HotelReservationSystem.Core.Domain.Enums
-@model IEnumerable<HotelReservationSystem.Core.Domain.Entities.Guest>
+@model IEnumerable<HotelReservationSystem.Web.ViewModels.GuestViewModel>
 
 @{
     ViewData["Title"] = "Panel recepcjonisty";
 
-    int totalReservations = Model.Sum(guest => guest.Reservations.Count);
+    int totalReservations = Model.Sum(guest => guest.Reservations.Count());
 
     int pendingReservations = Model
         .SelectMany(guest => guest.Reservations)

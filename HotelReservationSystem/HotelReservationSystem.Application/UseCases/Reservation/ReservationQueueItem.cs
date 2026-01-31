@@ -4,6 +4,6 @@ namespace HotelReservationSystem.Application.Reservation.UseCases;
 
 public record ReservationQueueItem
 {
-    public CreateReservationCommand Command { get; init; }
-    public TaskCompletionSource<string> Tcs { get; init; } 
+    public CreateReservationCommand Command { get; init; } = default!;
+    public TaskCompletionSource<string> Tcs { get; init; } = new();
 }

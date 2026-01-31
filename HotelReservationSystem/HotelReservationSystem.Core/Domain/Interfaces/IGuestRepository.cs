@@ -10,7 +10,7 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// <summary>
         /// Gets all guests with pagination and filtering support
         /// </summary>
-        Task<IQueryable<Guest>> GetAllAsync();
+        Task<IEnumerable<Guest>> GetAllAsync();
         
         /// <summary>
         /// Gets a guest by their unique identifier

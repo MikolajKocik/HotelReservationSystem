@@ -12,7 +12,7 @@ public interface IAuthorizationService
     /// <param name="resource"></param>
     /// <param name="requirements"></param>
     /// <returns></returns>
-    Task<AuthorizationResult> AuthorizeAsync (ClaimsPrincipal user, object resource, 
+    Task<AuthorizationResult> AuthorizeAsync (ClaimsPrincipal user, object? resource, 
         IEnumerable<IAuthorizationRequirement> requirements);
 
     /// <summary>
@@ -22,5 +22,5 @@ public interface IAuthorizationService
     /// <param name="resource"></param>
     /// <param name="policyName"></param>
     /// <returns></returns>
-    Task<AuthorizationResult> AuthorizeAsync (ClaimsPrincipal user, object resource, string policyName);
+    Task<AuthorizationResult> AuthorizeAsync (ClaimsPrincipal user, object? resource, string policyName);
 }

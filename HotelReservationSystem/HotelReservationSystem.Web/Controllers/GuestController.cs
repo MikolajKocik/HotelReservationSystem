@@ -18,8 +18,8 @@ public sealed class GuestController : Controller
     [HttpGet]
     public async Task<IActionResult> List()
     {
-        var query = new GetAllGuestsQuery();
-        IQueryable<GuestDto> guests = await mediator.SendAsync(query);
+        IEnumerable<GuestDto> guests = await mediator.SendAsync(new GetAllGuestsQuery())
+            ?? Enumerable.Empty<GuestDto>();
 
         var viewModels = guests.Select(
             GuestMappingHelper.MapToGuestViewModel).

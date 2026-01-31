@@ -6,4 +6,4 @@ namespace HotelReservationSystem.Application.CQRS.Reservations.Queries;
 /// <summary>
 /// Query to retrieve all reservations with related data
 /// </summary>
-public record GetAllReservationsQuery : IQuery<IQueryable<ReservationDto>>;
+public record GetAllReservationsQuery : IQuery<IEnumerable<ReservationDto>>;

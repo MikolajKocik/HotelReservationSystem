@@ -31,9 +31,7 @@ public sealed class GetGuestByIdQueryHandler : IQueryHandler<GetGuestByIdQuery, 
             FirstName = guest.FirstName,
             LastName = guest.LastName,
             Email = guest.Email,
-            PhoneNumber = guest.PhoneNumber,
-            CreatedAt = guest.CreatedAt,
-            ReservationsCount = guest.Reservations.Count
+            PhoneNumber = guest.PhoneNumber
         };
     }
 }

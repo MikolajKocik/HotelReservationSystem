@@ -4,6 +4,7 @@
 <form id="doubleReservationForm" asp-action="Create" method="post" class="row g-3 needs-validation" novalidate>
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <input type="hidden" name="RoomType" value="Double" />
+  <input type="hidden" name="FormType" value="double" />
 
   <div class="col-md-6">
     <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>

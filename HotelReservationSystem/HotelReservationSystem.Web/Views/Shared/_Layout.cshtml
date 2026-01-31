@@ -51,18 +51,12 @@
                     <li>
                         <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                     </li>
-                    <li>
-                        <a asp-controller="Reports" asp-action="Reports">Raporty</a>
-                    </li>
-                    <li>
-                        <a asp-controller="Reports" asp-action="Reports">Raporty</a>
-                    </li>
                 }
 
                 @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
                 {
                     <li>
-                        <a asp-controller="Reservation" asp-action="ReceptionPanel">Recepcja</a>
+                        <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
                     </li>
                     <li>
                         <a asp-controller="Guest" asp-action="List">Lista Gości</a>
@@ -74,7 +68,7 @@
             </ul>
 
             <div class="nav-user">
-                @if (!User.Identity.IsAuthenticated)
+                @if (!User.Identity!.IsAuthenticated)
                 {
                     <div class="auth-links">
                         <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Logowanie</a>
@@ -248,13 +242,13 @@
                         @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
                         {
                             <li>
-                                <a asp-controller="Reservation" asp-action="ReceptionPanel">Widok Recepcji</a>
+                                <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
                             </li>
                             <li>
                                 <a asp-controller="Guest" asp-action="List">Lista Gości</a>
                             </li>
                             <li>
-                                <a asp-controller="Payment" asp-action="Transactions">Historia wpłat</a>
+                                <a asp-controller="Payment" asp-action="Transactions">Transakcje</a>
                             </li>
                         }
                     </ul>

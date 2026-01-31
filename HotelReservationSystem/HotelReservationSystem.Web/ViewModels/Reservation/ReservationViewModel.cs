@@ -50,6 +50,9 @@ public record ReservationViewModel
         public decimal TotalSum => 
             (DepartureDate - ArrivalDate).Days * GetRoomPrice(RoomId) * GetDiscountMultiplier(DiscountCode);
     
+        [Display(Name = "Form Type")]
+        public string FormType { get; init; } = "single";
+
         private decimal GetRoomPrice(int roomId)
         {
             return roomId switch

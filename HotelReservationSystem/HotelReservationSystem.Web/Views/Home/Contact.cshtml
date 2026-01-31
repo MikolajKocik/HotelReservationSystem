@@ -16,15 +16,16 @@
 
             <h2 class="text-center mt-4">Formularz kontaktowy</h2>
 
-            <form method="post" action="#">
+            <!-- the email is fake  -->
+            <form method="get" action="mailto:recepcja@hotel.pl">
                 <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Imię i nazwisko" />
+                    <input type="text" class="form-control" name="name" placeholder="Imię i nazwisko" />
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Email" />
+                    <input type="email" class="form-control" name="email" placeholder="Email" />
                 </div>
                 <div class="mb-3">
-                    <textarea class="form-control" rows="4" placeholder="Wiadomość"></textarea>
+                    <textarea class="form-control" name="message" rows="4" placeholder="Wiadomość"></textarea>
                 </div>
                 <div class="text-center">
                     <button class="btn btn-primary px-5">Wyślij</button>

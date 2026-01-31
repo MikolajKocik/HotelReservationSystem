@@ -10,7 +10,7 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 /// <summary>
 /// Handler for retrieving all guests
 /// </summary>
-public sealed class GetAllGuestsQueryHandler : IQueryHandler<GetAllGuestsQuery, IQueryable<GuestDto>>
+public sealed class GetAllGuestsQueryHandler : IQueryHandler<GetAllGuestsQuery, IEnumerable<GuestDto>>
 {
     private readonly IGuestRepository guestRepository;
 
@@ -22,9 +22,9 @@ public sealed class GetAllGuestsQueryHandler : IQueryHandler<GetAllGuestsQuery, 
     /// <summary>
     /// Handles the query to get all guests
     /// </summary>
-    public async Task<IQueryable<GuestDto>> HandleAsync(GetAllGuestsQuery query, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<GuestDto>> HandleAsync(GetAllGuestsQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Guest> guests = await this.guestRepository.GetAllAsync();
+        IEnumerable<Guest> guests = await this.guestRepository.GetAllAsync();
         
         return guests.Select(g => new GuestDto
         {
@@ -32,9 +32,7 @@ public sealed class GetAllGuestsQueryHandler : IQueryHandler<GetAllGuestsQuery, 
             FirstName = g.FirstName,
             LastName = g.LastName,
             Email = g.Email,
-            PhoneNumber = g.PhoneNumber,
-            CreatedAt = g.CreatedAt,
-            ReservationsCount = g.Reservations.Count()
+            PhoneNumber = g.PhoneNumber
         });
     }
 }

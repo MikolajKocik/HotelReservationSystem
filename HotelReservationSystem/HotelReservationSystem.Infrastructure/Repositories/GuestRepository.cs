@@ -21,7 +21,7 @@ public sealed class GuestRepository : IGuestRepository
     /// <summary>
     /// Gets all guests with pagination and filtering support
     /// </summary>
-    public async Task<IQueryable<Guest>> GetAllAsync()
+    public async Task<IEnumerable<Guest>> GetAllAsync()
         => await Task.FromResult(this.context.Guests
                 .AsNoTracking()
                 .Include(g => g.Reservations));

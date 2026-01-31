@@ -4,6 +4,7 @@
 <form id="singleReservationForm" asp-action="Create" method="post" class="row g-3 needs-validation" novalidate>
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <input type="hidden" name="RoomType" value="Single" />
+  <input type="hidden" name="FormType" value="single" />
 
   <div class="col-md-6">
     <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>
@@ -21,6 +22,7 @@
     <input asp-for="GuestFirstName" class="form-control" placeholder="np. Jan" required maxlength="50" />
     <div class="invalid-feedback">Imię jest wymagane i nie może być dłuższe niż 50 znaków.</div>
   </div>
+  
   <div class="col-md-6">
     <label asp-for="GuestLastName" class="form-label font-weight-bold">Nazwisko</label>
     <input asp-for="GuestLastName" class="form-control" placeholder="np. Kowalski" required maxlength="50" />
