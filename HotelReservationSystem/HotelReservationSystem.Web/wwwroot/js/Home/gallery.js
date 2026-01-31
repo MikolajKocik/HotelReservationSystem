@@ -15,5 +15,8 @@
         galleryBtn.textContent = "";
         galleryBtn.appendChild(newSvg);
     });
+    galleryBtn.addEventListener('mouseleave', (e) => {
+        galleryBtn.innerHTML = "Galeria";
+    });
 })();
 //# sourceMappingURL=gallery.js.map

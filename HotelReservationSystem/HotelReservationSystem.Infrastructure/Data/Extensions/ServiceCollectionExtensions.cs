@@ -36,8 +36,15 @@ public static class ServiceCollectionExtensions
 
     public static void AddDbContextBasedServices(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("Default")
+            ?? configuration.GetConnectionString("ConnectionString")
+            ?? configuration["ConnectionString"];
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException("Database connection string is not configured. Set 'ConnectionStrings:Default' or 'ConnectionString' in configuration.");
+        }
         services.AddDbContext<HotelDbContext>(options =>
-            options.UseSqlServer(configuration["ConnectionString"]));
+            options.UseSqlServer(connectionString));
 
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IGuestRepository, GuestRepository>();

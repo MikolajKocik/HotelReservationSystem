@@ -2,11 +2,14 @@
 (() => {
     const reviews = document.getElementById('reviews-container');
     const dotsContainer = document.getElementById('bottom-nav-dots');
-    if (!reviews || !dotsContainer)
+    const leftBtn = document.getElementById('bottom-nav-left');
+    const rightBtn = document.getElementById('bottom-nav-right');
+    if (!reviews || !dotsContainer || !leftBtn || !rightBtn)
         return;
     const reviewsEl = reviews;
     const dotsEl = dotsContainer;
     const items = Array.from(reviewsEl.querySelectorAll('.review-item'));
+    let currentIndex = 0;
     dotsEl.innerHTML = '';
     items.forEach((_, i) => {
         const btn = document.createElement('button');
@@ -17,6 +20,9 @@
         btn.addEventListener('click', (_ev) => scrollToIndex(i));
     });
     function scrollToIndex(index) {
+        if (index < 0 || index >= items.length)
+            return;
+        currentIndex = index;
         const item = items[index];
         if (!item)
             return;
@@ -26,6 +32,8 @@
         if (dots[index])
             dots[index].classList.add('active');
     }
+    leftBtn.addEventListener('click', () => scrollToIndex(currentIndex - 1));
+    rightBtn.addEventListener('click', () => scrollToIndex(currentIndex + 1));
     reviewsEl.addEventListener('scroll', () => {
         const rects = items.map((it) => it.getBoundingClientRect());
         const containerRect = reviewsEl.getBoundingClientRect();
@@ -40,6 +48,7 @@
                 closestIndex = i;
             }
         });
+        currentIndex = closestIndex;
         const dots = Array.from(dotsEl.querySelectorAll('.dot'));
         dots.forEach((d) => d.classList.remove('active'));
         if (dots[closestIndex])

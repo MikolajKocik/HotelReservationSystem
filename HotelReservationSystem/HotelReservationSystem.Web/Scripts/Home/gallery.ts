@@ -18,5 +18,9 @@
         galleryBtn.textContent = "";
         galleryBtn.appendChild(newSvg);
     });
+
+    galleryBtn.addEventListener('mouseleave', (e: MouseEvent): void => {
+        galleryBtn.innerHTML = "Galeria";
+    });
 })();
 

@@ -1,19 +1,19 @@
 @using HotelReservationSystem.Web.ViewModels
 @model ReservationViewModel
 
-<form id="singleReservationForm" asp-action="Create" method="post" class="row g-3 needs-validation" novalidate>
+<form id="singleReservationForm" asp-controller="Reservation" asp-action="Create" method="post" class="row g-3 needs-validation" novalidate>
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-  <input type="hidden" name="RoomType" value="Single" />
-  <input type="hidden" name="FormType" value="single" />
+    <input type="hidden" name="RoomType" value="Single" />
+    <input type="hidden" name="FormType" value="single" />
 
-  <div class="col-md-6">
+    <div class="col-md-6">
     <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>
-    <input asp-for="ArrivalDate" class="form-control" type="date" required />
+    <input asp-for="ArrivalDate" class="form-control date" type="date" required />
     <div class="invalid-feedback">Data przyjazdu jest wymagana.</div>
   </div>
   <div class="col-md-6">
     <label asp-for="DepartureDate" class="form-label font-weight-bold">Data wyjazdu</label>
-    <input asp-for="DepartureDate" class="form-control" type="date" required />
+    <input asp-for="DepartureDate" class="form-control date" type="date" required />
     <div class="invalid-feedback">Data wyjazdu jest wymagana.</div>
   </div>
 
@@ -38,6 +38,7 @@
     <label asp-for="GuestPhoneNumber" class="form-label font-weight-bold">Telefon</label>
     <input asp-for="GuestPhoneNumber" class="form-control" placeholder="+48 ..." required />
     <div class="invalid-feedback">Wprowadź poprawny numer telefonu.</div>
+    <span asp-validation-for="GuestPhoneNumber" class="text-danger"></span>
   </div>
 
   <div class="col-12 mt-3">
@@ -65,18 +66,14 @@
 
   <div class="col-12 mt-2">
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" name="AcceptPrivacy" id="single-accept-privacy" required />
-      <label class="form-check-label" for="single-accept-privacy">*  Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką prywatności w celu realizacji rezerwacji</label>
+      <input asp-for="AcceptPrivacy" class="form-check-input" id="single-accept-privacy" required />
+      <label asp-for="AcceptPrivacy" class="form-check-label">*  Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką prywatności w celu realizacji rezerwacji</label>
       <div class="invalid-feedback">Musisz zaakceptować politykę prywatności, aby kontynuować.</div>
     </div>
   </div>
 
   <div class="col-12 mt-4 text-end">
-    <a asp-controller="Room" asp-action="Index" class="btn btn-outline-secondary me-2">Anuluj</a>
+    <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='@Url.Action("Index", "Room")'">Anuluj</button>
     <button type="submit" class="btn btn-primary btn-lg px-5">Zarezerwuj teraz</button>
   </div>
 </form>
-
-@section Scripts {
-  <script src="~/js/calculateReservation.js"></script>
-}

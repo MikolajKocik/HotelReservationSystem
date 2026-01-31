@@ -105,15 +105,13 @@ public sealed class ReservationController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateSingle(int? roomId = null)
     {
-        await PopulateAvailableRoomsSelectList(roomId);
-        return View("CreateSingle");
+        return Redirect($"/Room/Index#createSingleModal");
     }
 
     [HttpGet]
     public async Task<IActionResult> CreateDouble(int? roomId = null)
     {
-        await PopulateAvailableRoomsSelectList(roomId);
-        return View("CreateDouble");
+        return Redirect($"/Room/Index#createDoubleModal");
     }
 
     [HttpGet]

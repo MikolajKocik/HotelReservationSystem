@@ -58,3 +58,15 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            if (window.location.hash === '#createSingleModal') {
+                $('#createSingleModal').modal('show');
+            } else if (window.location.hash === '#createDoubleModal') {
+                $('#createDoubleModal').modal('show');
+            }
+        });
+    </script>
+}

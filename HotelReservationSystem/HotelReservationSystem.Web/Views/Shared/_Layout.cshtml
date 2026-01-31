@@ -261,14 +261,12 @@
     </footer>
     @await Html.PartialAsync("_LoginModal")
     @await Html.PartialAsync("_RegisterModal")
-    @await Html.PartialAsync("_CreateSingleModal", new HotelReservationSystem.Web.ViewModels.ReservationViewModel())
-    @await Html.PartialAsync("_CreateDoubleModal", new HotelReservationSystem.Web.ViewModels.ReservationViewModel())
+    @await Component.InvokeAsync("ReservationModal", new { roomType = "Single" })
+    @await Component.InvokeAsync("ReservationModal", new { roomType = "Double" })
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/Reservation/datePicker.js" asp-append-version="true"></script>
-    <script src="~/js/Reservation/opinions.js" asp-append-version="true"></script>
-    <script src="~/js/Account/loginForm.js" asp-append-version="true"></script>
-    <script src="~/js/Reservation/calculateReservation.js" asp-append-version="true"></script>
+    <script src="~/js/Reservation/form-validation.js" asp-append-version="true"></script>
+    <script src="~/js/Auth/loginForm.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

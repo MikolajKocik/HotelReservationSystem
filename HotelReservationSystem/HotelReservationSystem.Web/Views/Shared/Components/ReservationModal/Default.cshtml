@@ -1,0 +1,18 @@
+@using HotelReservationSystem.Web.ViewModels.Reservation
+@model ReservationModalModel
+
+@{
+    var viewDataForPartial = new ViewDataDictionary(ViewData)
+    {
+        ["Rooms"] = Model.Rooms
+    };
+}
+
+@if (string.Equals(Model.Reservation.FormType, "double", StringComparison.OrdinalIgnoreCase))
+{
+    @await Html.PartialAsync("_CreateDoubleModal", Model.Reservation, viewDataForPartial)
+}
+else
+{
+    @await Html.PartialAsync("_CreateSingleModal", Model.Reservation, viewDataForPartial)
+}

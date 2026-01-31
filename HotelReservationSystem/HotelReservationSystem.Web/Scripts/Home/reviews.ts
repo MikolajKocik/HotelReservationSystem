@@ -1,11 +1,15 @@
 ((): void => {
     const reviews : HTMLElement | null = document.getElementById('reviews-container');
     const dotsContainer : HTMLElement | null = document.getElementById('bottom-nav-dots');
-    if (!reviews || !dotsContainer) return;
+    const leftBtn : HTMLElement | null = document.getElementById('bottom-nav-left');
+    const rightBtn : HTMLElement | null = document.getElementById('bottom-nav-right');
+    if (!reviews || !dotsContainer || !leftBtn || !rightBtn) return;
 
     const reviewsEl: HTMLElement = reviews;
     const dotsEl: HTMLElement = dotsContainer;
     const items: HTMLElement[] = Array.from(reviewsEl.querySelectorAll<HTMLElement>('.review-item'));
+
+    let currentIndex: number = 0;
 
     dotsEl.innerHTML = '';
     items.forEach((_, i: number) => {
@@ -18,6 +22,8 @@
     });
 
     function scrollToIndex(index: number): void {
+        if (index < 0 || index >= items.length) return;
+        currentIndex = index;
         const item: HTMLElement | undefined = items[index];
         if (!item) return;
         item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
@@ -25,6 +31,9 @@
         dots.forEach((d: HTMLButtonElement) => d.classList.remove('active'));
         if (dots[index]) dots[index].classList.add('active');
     }
+
+    leftBtn.addEventListener('click', () => scrollToIndex(currentIndex - 1));
+    rightBtn.addEventListener('click', () => scrollToIndex(currentIndex + 1));
 
     reviewsEl.addEventListener('scroll', () => {
         const rects: DOMRect[] = items.map((it: HTMLElement) => it.getBoundingClientRect());
@@ -40,6 +49,7 @@
                 closestIndex = i;
             }
         });
+        currentIndex = closestIndex;
         const dots: HTMLButtonElement[] = Array.from(dotsEl.querySelectorAll('.dot')) as HTMLButtonElement[];
         dots.forEach((d: HTMLButtonElement) => d.classList.remove('active'));
         if (dots[closestIndex]) dots[closestIndex].classList.add('active');
