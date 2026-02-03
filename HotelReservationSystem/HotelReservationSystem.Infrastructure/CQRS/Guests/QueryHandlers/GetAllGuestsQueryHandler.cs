@@ -4,6 +4,7 @@ using HotelReservationSystem.Application.Dtos.Guest;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 
@@ -24,15 +25,8 @@ public sealed class GetAllGuestsQueryHandler : IQueryHandler<GetAllGuestsQuery, 
     /// </summary>
     public async Task<IEnumerable<GuestDto>> HandleAsync(GetAllGuestsQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Guest> guests = await this.guestRepository.GetAllAsync();
+        IEnumerable<Guest> guests = await this.guestRepository.GetAllAsync(cancellationToken);
         
-        return guests.Select(g => new GuestDto
-        {
-            Id = g.Id,
-            FirstName = g.FirstName,
-            LastName = g.LastName,
-            Email = g.Email,
-            PhoneNumber = g.PhoneNumber
-        });
+        return guests.Select(g => g.ToDto());
     }
 }

@@ -27,13 +27,18 @@ public sealed class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkRe
     /// </summary>
     public async Task HandleAsync(MarkReservationAsPaidCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.ReservationId);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.ReservationId, cancellationToken);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
         }
 
-        Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
+        if (reservation.Status == ReservationStatus.Confirmed && reservation.Payment != null)
+        {
+            return;
+        }
+
+        Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId, cancellationToken);
         if (payment == null)
         {
             payment = new Payment(
@@ -41,20 +46,18 @@ public sealed class MarkReservationAsPaidCommandHandler : ICommandHandler<MarkRe
                 amount: reservation.TotalPrice,
                 stripePaymentIntentId: command.PaymentIntentId,
                 reservationId: reservation.Id);
-
-            await this.paymentRepository.CreateAsync(payment);
+            
+            payment.MarkAsPaid(); 
+            await this.paymentRepository.CreateAsync(payment, cancellationToken);
         }
-        else
+        else if (payment.IsPending)
         {
-            if (payment.IsPending)
-            {
-                payment.MarkAsPaid();
-                await this.paymentRepository.UpdateAsync(payment);
-            }
+            payment.MarkAsPaid();
+            await this.paymentRepository.UpdateAsync(payment, cancellationToken);
         }
 
-        reservation.Payment = payment;
+        reservation.SetPayment(payment);
         reservation.UpdateStatus(ReservationStatus.Confirmed); 
-        await this.reservationRepository.UpdateAsync(reservation);
+        await this.reservationRepository.UpdateAsync(reservation, cancellationToken);
     }
 }

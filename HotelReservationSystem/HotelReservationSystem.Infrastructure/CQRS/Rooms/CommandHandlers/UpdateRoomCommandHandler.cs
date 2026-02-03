@@ -22,14 +22,14 @@ public sealed class UpdateRoomCommandHandler : ICommandHandler<UpdateRoomCommand
     /// </summary>
     public async Task HandleAsync(UpdateRoomCommand command, CancellationToken cancellationToken = default)
     {
-        Room? room = await this.roomRepository.GetByIdAsync(command.Id);
+        Room? room = await this.roomRepository.GetByIdAsync(command.Id, cancellationToken);
         if (room != null)
         {
             room.UpdatePrice(command.PricePerNight);
             room.SetAvailability(command.IsAvailable);
             room.UpdateImage(command.ImagePath);
 
-            await roomRepository.UpdateAsync(room);
+            await roomRepository.UpdateAsync(room, cancellationToken);
         }
     }
 }

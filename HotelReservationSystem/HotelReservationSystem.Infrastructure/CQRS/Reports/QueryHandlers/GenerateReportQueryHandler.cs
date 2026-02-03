@@ -29,14 +29,14 @@ public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQue
     /// </summary>
     public async Task<ReportDto> HandleAsync(GenerateReportQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate);
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByDateRangeAsync(query.FromDate, query.ToDate, cancellationToken);
 
         int totalReservations = reservations.Count();
         int confirmedReservations = reservations.Count(r => r.Status == ReservationStatus.Confirmed);
         int canceledReservations = reservations.Count(r => r.Status == ReservationStatus.Cancelled);
         decimal totalPayments = reservations.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice);
 
-        IEnumerable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
+        IEnumerable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate, cancellationToken);
         int availableRoomsCount = availableRooms.Count();
 
         return new ReportDto

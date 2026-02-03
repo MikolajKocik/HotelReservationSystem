@@ -18,15 +18,15 @@ public sealed class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionC
         this.guestRepository = guestRepository;
     }
 
-    public async Task HandleAsync(UpdateOpinionCommand request, CancellationToken cancellationToken)
+    public async Task HandleAsync(UpdateOpinionCommand request, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail, cancellationToken);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionDto.OpinionId);
+        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionDto.OpinionId, cancellationToken);
         if (opinion == null)
         {
             throw new Exception("Opinion not found");
@@ -40,6 +40,6 @@ public sealed class UpdateOpinionCommandHandler : ICommandHandler<UpdateOpinionC
         opinion.UpdateRating(request.OpinionDto.Rating);
         opinion.UpdateComment(request.OpinionDto.Comment);
 
-        await this.opinionRepository.UpdateAsync(opinion);
+        await this.opinionRepository.UpdateAsync(opinion, cancellationToken);
     }
 }

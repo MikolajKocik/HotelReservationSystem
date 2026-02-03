@@ -3,6 +3,7 @@ using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.Dtos.Room;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
 
@@ -23,20 +24,11 @@ public sealed class GetRoomByIdQueryHandler : IQueryHandler<GetRoomByIdQuery, Ro
     /// </summary>
     public async Task<RoomDto?> HandleAsync(GetRoomByIdQuery query, CancellationToken cancellationToken = default)
     {
-        Room? room = await this.roomRepository.GetByIdAsync(query.Id);
+        Room? room = await this.roomRepository.GetByIdAsync(query.Id, cancellationToken);
 
         if (room == null)
             return null;
 
-        return new RoomDto
-        {
-            Id = room.Id,
-            Number = room.Number,
-            Type = room.Type,
-            PricePerNight = room.PricePerNight,
-            IsAvailable = room.IsAvailable,
-            ImagePath = room.ImagePath,
-            CreatedAt = room.CreatedAt
-        };
+        return room.ToDto();
     }
 }

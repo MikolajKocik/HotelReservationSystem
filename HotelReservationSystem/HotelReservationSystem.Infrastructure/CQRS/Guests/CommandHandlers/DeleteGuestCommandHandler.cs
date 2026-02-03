@@ -21,6 +21,6 @@ public sealed class DeleteGuestCommandHandler : ICommandHandler<DeleteGuestComma
     /// </summary>
     public async Task HandleAsync(DeleteGuestCommand command, CancellationToken cancellationToken = default)
     {
-        await this.guestRepository.DeleteAsync(command.Id);
+        await this.guestRepository.DeleteAsync(command.Id, cancellationToken);
     }
 }

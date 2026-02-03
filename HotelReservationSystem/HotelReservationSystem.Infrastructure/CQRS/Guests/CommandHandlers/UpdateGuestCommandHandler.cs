@@ -22,13 +22,13 @@ public sealed class UpdateGuestCommandHandler : ICommandHandler<UpdateGuestComma
     /// </summary>
     public async Task HandleAsync(UpdateGuestCommand command, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.guestRepository.GetByIdAsync(command.Id);
+        Guest? guest = await this.guestRepository.GetByIdAsync(command.Id, cancellationToken);
         
         if (guest == null)
             throw new InvalidOperationException($"Guest with ID {command.Id} not found");
 
         guest.UpdateContactInfo(command.Email, command.PhoneNumber);
         
-        await this.guestRepository.UpdateAsync(guest);
+        await this.guestRepository.UpdateAsync(guest, cancellationToken);
     }
 }

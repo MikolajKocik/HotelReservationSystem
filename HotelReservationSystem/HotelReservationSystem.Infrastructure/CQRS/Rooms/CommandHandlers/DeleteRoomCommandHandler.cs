@@ -21,6 +21,6 @@ public sealed class DeleteRoomCommandHandler : ICommandHandler<DeleteRoomCommand
     /// </summary>
     public async Task HandleAsync(DeleteRoomCommand command, CancellationToken cancellationToken = default)
     {
-        await this.roomRepository.DeleteAsync(command.Id);
+        await this.roomRepository.DeleteAsync(command.Id, cancellationToken);
     }
 }

@@ -21,7 +21,7 @@ public sealed class GetPaymentInfoQueryHandler : IQueryHandler<GetPaymentInfoQue
 
     public async Task<PaymentInfoDto?> HandleAsync(GetPaymentInfoQuery query, CancellationToken cancellationToken = default)
     {
-        ReservationDto? reservation = await this.mediator.SendAsync(new GetReservationByIdQuery(query.ReservationId));
+        ReservationDto? reservation = await this.mediator.SendAsync(new GetReservationByIdQuery(query.ReservationId), cancellationToken);
         if (reservation == null)
             return null;
 

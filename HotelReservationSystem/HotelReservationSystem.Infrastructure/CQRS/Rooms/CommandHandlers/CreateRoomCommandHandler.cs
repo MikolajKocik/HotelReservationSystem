@@ -30,6 +30,6 @@ public sealed class CreateRoomCommandHandler : ICommandHandler<CreateRoomCommand
             command.ImagePath
         );
 
-        return await this.roomRepository.CreateAsync(room);
+        return await this.roomRepository.CreateAsync(room, cancellationToken);
     }
 }

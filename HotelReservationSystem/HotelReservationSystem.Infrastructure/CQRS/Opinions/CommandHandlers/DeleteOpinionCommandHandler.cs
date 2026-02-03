@@ -18,15 +18,15 @@ public sealed class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionC
         this.guestRepository = guestRepository;
     }
 
-    public async Task HandleAsync(DeleteOpinionCommand request, CancellationToken cancellationToken)
+    public async Task HandleAsync(DeleteOpinionCommand request, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail, cancellationToken);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionId);
+        Opinion? opinion = await this.opinionRepository.GetByIdAsync(request.OpinionId, cancellationToken);
         if (opinion == null)
         {
             throw new Exception("Opinion not found");
@@ -37,6 +37,6 @@ public sealed class DeleteOpinionCommandHandler : ICommandHandler<DeleteOpinionC
             throw new Exception("Opinion does not belong to the user");
         }
 
-        await this.opinionRepository.DeleteAsync(request.OpinionId);
+        await this.opinionRepository.DeleteAsync(request.OpinionId, cancellationToken);
     }
 }

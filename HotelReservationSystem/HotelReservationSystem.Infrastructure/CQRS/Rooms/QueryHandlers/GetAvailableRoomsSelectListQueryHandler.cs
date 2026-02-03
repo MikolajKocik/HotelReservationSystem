@@ -23,7 +23,7 @@ public sealed class GetAvailableRoomsSelectListQueryHandler : IQueryHandler<GetA
     /// </summary>
     public async Task<List<RoomSelectDto>> HandleAsync(GetAvailableRoomsSelectListQuery query, CancellationToken cancellationToken = default)
     {
-        IQueryable<Room> rooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate);
+        IQueryable<Room> rooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate, cancellationToken);
 
         return rooms.Select(r => new RoomSelectDto
         {

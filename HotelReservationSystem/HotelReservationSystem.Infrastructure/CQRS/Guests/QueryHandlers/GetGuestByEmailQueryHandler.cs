@@ -3,6 +3,7 @@ using HotelReservationSystem.Application.CQRS.Guests.Queries;
 using HotelReservationSystem.Application.Dtos.Guest;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Guests.QueryHandlers;
 
@@ -23,15 +24,8 @@ public sealed class GetGuestByEmailQueryHandler : IQueryHandler<GetGuestByEmailQ
     /// </summary>
     public async Task<GuestDto?> HandleAsync(GetGuestByEmailQuery query, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.guestRepository.GetByEmailAsync(query.Email);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(query.Email, cancellationToken);
         
-        return guest == null ? null : new GuestDto
-        {
-            Id = guest.Id,
-            FirstName = guest.FirstName,
-            LastName = guest.LastName,
-            Email = guest.Email,
-            PhoneNumber = guest.PhoneNumber
-        };
+        return guest?.ToDto();
     }
 }

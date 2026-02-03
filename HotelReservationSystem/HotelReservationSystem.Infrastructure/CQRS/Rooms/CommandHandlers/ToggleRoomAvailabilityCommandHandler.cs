@@ -21,6 +21,6 @@ public sealed class ToggleRoomAvailabilityCommandHandler : ICommandHandler<Toggl
     /// </summary>
     public async Task HandleAsync(ToggleRoomAvailabilityCommand command, CancellationToken cancellationToken = default)
     {
-        await this.roomRepository.ToggleAvailabilityAsync(command.RoomId);
+        await this.roomRepository.ToggleAvailabilityAsync(command.RoomId, cancellationToken);
     }
 }

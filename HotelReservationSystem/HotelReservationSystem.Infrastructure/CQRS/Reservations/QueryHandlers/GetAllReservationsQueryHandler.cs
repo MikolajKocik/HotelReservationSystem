@@ -3,6 +3,7 @@ using HotelReservationSystem.Application.CQRS.Reservations.Queries;
 using HotelReservationSystem.Application.Dtos.Reservation;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 
@@ -23,30 +24,10 @@ public sealed class GetAllReservationsQueryHandler : IQueryHandler<GetAllReserva
     /// </summary>
     public async Task<IEnumerable<ReservationDto>> HandleAsync(GetAllReservationsQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Reservation> reservations = await this.reservationRepository.GetAllAsync();
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetAllAsync(cancellationToken);
 
-        return reservations.Select(r => new ReservationDto
-        {
-            Id = r.Id,
-            ArrivalDate = r.ArrivalDate,
-            DepartureDate = r.DepartureDate,
-            NumberOfGuests = r.NumberOfGuests,
-            TotalPrice = r.TotalPrice,
-            AdditionalRequests = r.AdditionalRequests ?? string.Empty,
-            Status = r.Status,
-            Reason = r.Reason ?? string.Empty,
-            CreatedAt = r.CreatedAt,
-            RoomId = r.RoomId,
-            RoomNumber = r.Room != null ? r.Room.Number : string.Empty,
-            RoomType = r.Room != null ? r.Room.Type : default,
-            RoomPricePerNight = r.Room != null ? r.Room.PricePerNight : 0m,
-            GuestId = r.GuestId,
-            GuestFirstName = r.Guest != null ? r.Guest.FirstName : string.Empty,
-            GuestLastName = r.Guest != null ? r.Guest.LastName : string.Empty,
-            GuestEmail = r.Guest != null ? r.Guest.Email : string.Empty,
-            GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : string.Empty,
-            PaymentId = r.PaymentId,
-            PaymentStatus = r.Payment != null ? r.Payment.Status : null
-        }).ToList();
+        return reservations
+            .Select(r => r.ToDto())
+            .ToList();
     }
 }

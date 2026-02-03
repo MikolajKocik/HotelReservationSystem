@@ -6,6 +6,7 @@ using HotelReservationSystem.Core.Domain.Exceptions;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Enums;
 using HotelReservationSystem.Infrastructure.Repositories; 
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.CommandHandlers;
 
@@ -36,51 +37,45 @@ public sealed class CreateReservationCommandHandler : ICommandHandler<CreateRese
     /// </summary>
     public async Task<string> HandleAsync(CreateReservationCommand command, CancellationToken cancellationToken = default)
     {
-        Room? room = await this.roomRepository.GetByIdAsync(command.RoomId);
-        if (room == null)
+        Room? room = await roomRepository.GetByIdAsync(command.RoomId, cancellationToken);
+        if (room == null || !room.IsAvailable) throw new NotFoundException("Room not found or unavailable");
+
+        int nights = (command.DepartureDate - command.ArrivalDate).Days;
+        decimal basePrice = nights * room.PricePerNight;
+
+        decimal multiplier = command.DiscountCode?.ToUpper() switch
         {
-            throw new NotFoundException("Room does not exist");
-        }
+            "SUMMER10" => 0.9m,
+            "WINTER15" => 0.85m,
+            _ => 1.0M
+        };
+        decimal finalPrice = basePrice * multiplier;
 
-        if (!room.IsAvailable)
-        {
-            throw new InvalidOperationDomainException("Room is not available");
-        }
-
-        IEnumerable<Reservation> conflictingReservations = await this.reservationRepository.GetByRoomAndDateRangeAsync(
-            command.RoomId, command.ArrivalDate, command.DepartureDate);
-
-        if (conflictingReservations.Any())       
-            throw new InvalidOperationDomainException("Room is already reserved for the selected dates");
-
-        if ((command.DepartureDate - command.ArrivalDate).Days <= 0)
-            throw new ArgumentException("Invalid reservation dates: departure must be after arrival");
-
-        Guest? guest = await this.guestRepository.GetByEmailAsync(command.GuestEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(command.GuestEmail, cancellationToken);
         if (guest == null)
         {
-            guest = new Guest(command.GuestFirstName, command.GuestLastName, command.GuestEmail, command.GuestPhoneNumber);
-            await this.guestRepository.CreateAsync(guest);
+            guest = new Guest(
+                command.GuestFirstName, 
+                command.GuestLastName, 
+                command.GuestEmail, 
+                command.GuestPhoneNumber
+            );
+            await this.guestRepository.CreateAsync(guest, cancellationToken); 
         }
-
-        int numberOfNights = (command.DepartureDate - command.ArrivalDate).Days;
-        decimal totalPrice = numberOfNights * room.PricePerNight;
 
         var reservation = new Reservation(
             command.ArrivalDate,
             command.DepartureDate,
-            numberOfGuests: 1,
-            totalPrice,
-            additionalRequests: string.Empty,
+            command.NumberOfGuests,
+            finalPrice,
+            command.AdditionalRequests ?? string.Empty,
             ReservationStatus.Pending,
-            reason: string.Empty,
+            string.Empty,
             command.RoomId,
-            guest.Id,
-            paymentId: null
+            guest.Id
         );
 
-        string reservationId = await this.reservationRepository.CreateAsync(reservation);
-        return reservationId;
+        return await reservationRepository.CreateAsync(reservation, cancellationToken);
     }
 }
 

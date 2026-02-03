@@ -2,6 +2,7 @@ using HotelReservationSystem.Application.CQRS.Abstractions.Queries;
 using HotelReservationSystem.Application.CQRS.Opinions.Queries;
 using HotelReservationSystem.Application.Dtos.Opinion;
 using HotelReservationSystem.Core.Domain.Interfaces;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Opinions.QueryHandlers;
 
@@ -14,26 +15,14 @@ public sealed class GetOpinionByReservationIdQueryHandler : IQueryHandler<GetOpi
         this.opinionRepository = opinionRepository;
     }
 
-    public async Task<OpinionDto?> HandleAsync(GetOpinionByReservationIdQuery request, CancellationToken cancellationToken)
+    public async Task<OpinionDto?> HandleAsync(GetOpinionByReservationIdQuery request, CancellationToken cancellationToken = default)
     {
-        var opinion = await this.opinionRepository.GetByReservationIdAsync(request.ReservationId);
+        var opinion = await this.opinionRepository.GetByReservationIdAsync(request.ReservationId, cancellationToken);
         if (opinion == null)
         {
             return null;
         }
 
-        return new OpinionDto
-        {
-            Id = opinion.Id,
-            Rating = opinion.Rating,
-            Comment = opinion.Comment,
-            CreatedAt = opinion.CreatedAt,
-            ReservationId = opinion.ReservationId,
-            GuestId = opinion.GuestId,
-            GuestFirstName = opinion.Guest.FirstName,
-            GuestLastName = opinion.Guest.LastName,
-            RoomId = opinion.Reservation.RoomId,
-            RoomNumber = opinion.Reservation.Room.Number
-        };
+        return opinion.ToDto();
     }
 }

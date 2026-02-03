@@ -4,6 +4,7 @@ using HotelReservationSystem.Application.Dtos.Room;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Enums;
+using HotelReservationSystem.Application.ModelMappings;
 using System;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Rooms.QueryHandlers;
@@ -29,11 +30,11 @@ public sealed class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQ
 
         if (query.ArrivalDate.HasValue && query.DepartureDate.HasValue)
         {
-            roomsQuery = await this.roomRepository.GetAvailableRoomsAsync(query.ArrivalDate.Value, query.DepartureDate.Value);
+            roomsQuery = await this.roomRepository.GetAvailableRoomsAsync(query.ArrivalDate.Value, query.DepartureDate.Value, cancellationToken);
         }
         else
         {
-            roomsQuery = await this.roomRepository.GetAllAsync();
+            roomsQuery = await this.roomRepository.GetAllAsync(cancellationToken);
         }
 
         if (!string.IsNullOrEmpty(query.RoomType) && Enum.TryParse<RoomType>(query.RoomType, out var parsedType))
@@ -46,15 +47,6 @@ public sealed class GetAllRoomsQueryHandler : IQueryHandler<GetAllRoomsQuery, IQ
             roomsQuery = roomsQuery.Where(r => r.Number.Contains(query.SearchPhrase));
         }
 
-        return roomsQuery.Select(r => new RoomDto
-        {
-            Id = r.Id,
-            Number = r.Number,
-            Type = r.Type,
-            PricePerNight = r.PricePerNight,
-            IsAvailable = r.IsAvailable,
-            ImagePath = r.ImagePath,
-            Currency = r.Currency
-        });
+        return roomsQuery.Select(r => r.ToDto());
     }
 }

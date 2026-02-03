@@ -29,6 +29,6 @@ public sealed class CreateGuestCommandHandler : ICommandHandler<CreateGuestComma
             command.PhoneNumber
         );
 
-        return await this.guestRepository.CreateAsync(guest);
+        return await this.guestRepository.CreateAsync(guest, cancellationToken);
     }
 }

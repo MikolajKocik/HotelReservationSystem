@@ -3,6 +3,7 @@ using HotelReservationSystem.Application.CQRS.Reservations.Queries;
 using HotelReservationSystem.Application.Dtos.Reservation;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
+using HotelReservationSystem.Application.ModelMappings;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Reservations.QueryHandlers;
 
@@ -23,29 +24,8 @@ public sealed class GetReservationsByGuestEmailQueryHandler : IQueryHandler<GetR
     /// </summary>
     public async Task<IEnumerable<ReservationDto>> HandleAsync(GetReservationsByGuestEmailQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByGuestEmailAsync(query.Email);
+        IEnumerable<Reservation> reservations = await this.reservationRepository.GetByGuestEmailAsync(query.Email, cancellationToken);
 
-        return reservations.Select(r => new ReservationDto
-        {
-            Id = r.Id,
-            ArrivalDate = r.ArrivalDate,
-            DepartureDate = r.DepartureDate,
-            NumberOfGuests = r.NumberOfGuests,
-            TotalPrice = r.TotalPrice,
-            AdditionalRequests = r.AdditionalRequests,
-            Status = r.Status,
-            Reason = r.Reason,
-            CreatedAt = r.CreatedAt,
-            RoomId = r.RoomId,
-            RoomNumber = r.Room.Number,
-            RoomType = r.Room.Type,
-            RoomPricePerNight = r.Room.PricePerNight,
-            GuestId = r.GuestId,
-            GuestFirstName = r.Guest.FirstName,
-            GuestLastName = r.Guest.LastName,
-            GuestEmail = r.Guest.Email,
-            PaymentId = r.PaymentId,
-            PaymentStatus = r.Payment != null ? r.Payment.Status : null
-        }).ToList();
+        return reservations.Select(r => r.ToDto()).ToList();
     }
 }

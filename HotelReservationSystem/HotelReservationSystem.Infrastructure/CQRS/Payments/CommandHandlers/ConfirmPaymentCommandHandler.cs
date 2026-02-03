@@ -22,13 +22,13 @@ public sealed class ConfirmPaymentCommandHandler : ICommandHandler<ConfirmPaymen
     /// </summary>
     public async Task HandleAsync(ConfirmPaymentCommand command, CancellationToken cancellationToken = default)
     {
-        Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId);
+        Payment? payment = await this.paymentRepository.GetByStripePaymentIntentIdAsync(command.PaymentIntentId, cancellationToken);
         if (payment == null)
         {
             throw new Exception("Payment not found");
         }
 
         payment.MarkAsPaid();
-        await this.paymentRepository.UpdateAsync(payment);
+        await this.paymentRepository.UpdateAsync(payment, cancellationToken);
     }
 }

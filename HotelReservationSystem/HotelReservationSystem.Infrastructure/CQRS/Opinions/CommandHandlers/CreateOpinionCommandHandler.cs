@@ -22,15 +22,15 @@ public sealed class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionC
         this.guestRepository = guestRepository;
     }
 
-    public async Task<string> HandleAsync(CreateOpinionCommand request, CancellationToken cancellationToken)
+    public async Task<string> HandleAsync(CreateOpinionCommand request, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail);
+        Guest? guest = await this.guestRepository.GetByEmailAsync(request.UserEmail, cancellationToken);
         if (guest == null)
         {
             throw new Exception("Guest not found");
         }
 
-        Reservation? reservation = await this.reservationRepository.GetByIdAsync(request.OpinionDto.ReservationId);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(request.OpinionDto.ReservationId, cancellationToken);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
@@ -41,7 +41,7 @@ public sealed class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionC
             throw new Exception("Can only add opinion to confirmed or completed reservations");
         }
 
-        Opinion? existingOpinion = await this.opinionRepository.GetByReservationIdAsync(request.OpinionDto.ReservationId);
+        Opinion? existingOpinion = await this.opinionRepository.GetByReservationIdAsync(request.OpinionDto.ReservationId, cancellationToken);
         if (existingOpinion != null)
         {
             throw new Exception("Opinion already exists for this reservation");
@@ -54,7 +54,7 @@ public sealed class CreateOpinionCommandHandler : ICommandHandler<CreateOpinionC
             guest.Id
         );
 
-        await this.opinionRepository.AddAsync(opinion);
+        await this.opinionRepository.AddAsync(opinion, cancellationToken);
         return opinion.Id;
     }
 }

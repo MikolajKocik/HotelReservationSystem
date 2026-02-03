@@ -23,13 +23,13 @@ public sealed class CancelReservationCommandHandler : ICommandHandler<CancelRese
     /// </summary>
     public async Task HandleAsync(CancelReservationCommand command, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.Id);
+        Reservation? reservation = await this.reservationRepository.GetByIdAsync(command.Id, cancellationToken);
         if (reservation == null)
         {
             throw new Exception("Reservation not found");
         }
 
         reservation.UpdateStatus(ReservationStatus.Cancelled, command.Reason);
-        await this.reservationRepository.UpdateAsync(reservation);
+        await this.reservationRepository.UpdateAsync(reservation, cancellationToken);
     }
 }
