@@ -6,6 +6,7 @@ using HotelReservationSystem.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Application.CQRS.Payments.Queries;
+using HotelReservationSystem.Application.CQRS.Reservations.Commands;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -21,7 +22,7 @@ public sealed class PaymentController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "Guest")]
+    [Authorize(Policy = "RequireAnyUser")]
     public async Task<IActionResult> Pay(string reservationId)
     {
         var query = new GetPaymentInfoQuery(reservationId);
@@ -35,12 +36,39 @@ public sealed class PaymentController : Controller
             return BadRequest("Stripe Publishable Key is not configured.");
         }
 
-        string successUrl = Url.Action("MyReservations", "Reservation", null, Request.Scheme) ?? "/";
-        string cancelUrl = Url.Action("MyReservations", "Reservation", null, Request.Scheme) ?? "/";
+        string successBase = Url.Action("Success", "Payment", new { reservationId = paymentInfo.ReservationId }, Request.Scheme) ?? "/";
+        string cancelUrl = Url.Action("Cancel", "Payment", new { reservationId = paymentInfo.ReservationId }, Request.Scheme) ?? "/";
+        string successUrl = $"{successBase}?session_id={{CHECKOUT_SESSION_ID}}";
 
         string sessionUrl = await stripeService.CreateCheckoutSessionAsync(paymentInfo.ReservationId, paymentInfo.TotalAmount, paymentInfo.Currency, successUrl, cancelUrl);
 
         return Redirect(sessionUrl);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "RequireAnyUser")]
+    public async Task<IActionResult> Success(string reservationId, string? session_id)
+    {
+        if (string.IsNullOrWhiteSpace(reservationId) || string.IsNullOrWhiteSpace(session_id))
+        {
+            return RedirectToAction("MyReservations", "Reservation");
+        }
+
+        string? paymentIntentId = await stripeService.GetCheckoutSessionPaymentIntentIdAsync(session_id);
+        if (!string.IsNullOrWhiteSpace(paymentIntentId))
+        {
+            var markCommand = new MarkReservationAsPaidCommand(reservationId, paymentIntentId);
+            await this.mediator.SendAsync(markCommand);
+        }
+
+        return RedirectToAction("MyReservations", "Reservation");
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "RequireAnyUser")]
+    public IActionResult Cancel(string reservationId)
+    {
+        return RedirectToAction("MyReservations", "Reservation");
     }
 
     [HttpPost]

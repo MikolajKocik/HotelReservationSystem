@@ -4,5 +4,5 @@
 <h2>Logowanie</h2>
 
 <div class="privacy-container">
-    @await Html.PartialAsync("~/Views/Shared/_LoginForm.cshtml", new LoginViewModel())
+    @await Html.PartialAsync("~/Views/Shared/_LoginForm.cshtml", Model ?? new LoginViewModel())
 </div>

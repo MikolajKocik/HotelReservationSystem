@@ -43,6 +43,8 @@ public sealed class ReservationModalViewComponent : ViewComponent
             Text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
         }).ToList();
 
+        ViewBag.RoomPrices = rooms.ToDictionary(r => r.Id, r => r.PricePerNight);
+
         var modalModel = new HotelReservationSystem.Web.ViewModels.Reservation.ReservationModalModel
         {
             Reservation = new ReservationViewModel

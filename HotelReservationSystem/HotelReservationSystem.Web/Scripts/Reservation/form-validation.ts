@@ -2,15 +2,10 @@
     'use strict'
 
     const rules: Record<string, RegExp> = {
-        GuestFirstName: /^[A-Za-z¥ÆÊ£ÑÓŒ¯¹æê³ñóœ¿Ÿ' \-]+$/,
-        GuestLastName: /^[A-Za-z¥ÆÊ£ÑÓŒ¯¹æê³ñóœ¿Ÿ' \-]+$/,
+        GuestFirstName: /^[A-Za-zï¿½ï¿½Ê£ï¿½ÓŒï¿½ï¿½ï¿½ï¿½ï¿½ï¿½óœ¿Ÿ' \-]+$/,
+        GuestLastName: /^[A-Za-zï¿½ï¿½Ê£ï¿½ÓŒï¿½ï¿½ï¿½ï¿½ï¿½ï¿½óœ¿Ÿ' \-]+$/,
         GuestEmail: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
         GuestPhoneNumber: /^\+?\d{9,}$/
-    }
-
-    const prices: Record<number, number> = {
-        1: 550,
-        2: 700
     }
 
     const discounts: Record<string, number> = {
@@ -32,17 +27,26 @@
             const roomId = Number(roomSelect?.value)
             const code = discountInput?.value.trim().toUpperCase() || ''
 
-            const days = Math.max(0, Math.round((departure.getTime() - arrival.getTime()) / (1000 * 60 * 60 * 24)))
-            const roomPrice = prices[roomId] ?? 0
+            const arrivalTime = arrival.getTime()
+            const departureTime = departure.getTime()
+            const days = (!Number.isFinite(arrivalTime) || !Number.isFinite(departureTime))
+                ? 0
+                : Math.max(0, Math.ceil((departureTime - arrivalTime) / (1000 * 60 * 60 * 24)))
+            const selectedOption = roomSelect?.selectedOptions?.[0]
+            const roomPrice = Number(selectedOption?.dataset.price ?? 0) || 0
             const multiplier = discounts[code] ?? 1.0
             const total = days * roomPrice * multiplier
 
-            if (totalDisplay) totalDisplay.textContent = total.toFixed(2) + ' z³'
-            if (totalHidden) totalHidden.value = total.toFixed(2)
+            const formatted = Number.isFinite(total) ? total.toFixed(2) : '0.00'
+
+            if (totalDisplay) totalDisplay.textContent = `${formatted} zÅ‚`
+            if (totalHidden) totalHidden.value = formatted
         }
 
         arrivalInput?.addEventListener('change', calculate)
+        arrivalInput?.addEventListener('input', calculate)
         departureInput?.addEventListener('change', calculate)
+        departureInput?.addEventListener('input', calculate)
         roomSelect?.addEventListener('change', calculate)
         discountInput?.addEventListener('input', calculate)
 
@@ -91,7 +95,7 @@
 
     document.querySelectorAll<HTMLFormElement>('.needs-validation').forEach(initForm)
 
-    document.addEventListener('bs:modal:shown.bs.modal', (event: Event) => {
+    document.addEventListener('shown.bs.modal', (event: Event) => {
         const modal = (event.target as HTMLElement)
         modal.querySelectorAll<HTMLFormElement>('.needs-validation').forEach(form => {
             if (!form.dataset.validationInit) {

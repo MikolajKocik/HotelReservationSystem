@@ -32,10 +32,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     if (nameEl)
                         nameEl.textContent = op.guestFirstName ? `${op.guestFirstName} ${(_c = op.guestLastName) !== null && _c !== void 0 ? _c : ''}` : '';
                 });
-                const avg = opinions.length ? Math.round(opinions.reduce((s, o) => s + o.rating, 0) / opinions.length) : 0;
-                const hotelStars = document.getElementById('hotel-stars');
-                if (hotelStars)
-                    hotelStars.textContent = renderStars(avg);
             }
             catch (e) {
                 console.error(e);

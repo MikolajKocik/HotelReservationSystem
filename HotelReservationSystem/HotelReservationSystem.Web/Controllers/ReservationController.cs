@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Guests.Queries;
 using HotelReservationSystem.Application.Dtos.Guest;
+using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -95,29 +96,89 @@ public sealed class ReservationController : Controller
         IEnumerable<ReservationDto> reservations = await this.mediator.SendAsync(query) 
             ?? Enumerable.Empty<ReservationDto>();
 
-        List<ReservationViewModel> viewModels = reservations
-            .Select(ReservationMappingHelper.MapToReservationViewModel)
+        List<ReservationListViewModel> viewModels = reservations
+            .Select(r => new ReservationListViewModel
+            {
+                Id = r.Id,
+                ArrivalDate = r.ArrivalDate,
+                DepartureDate = r.DepartureDate,
+                RoomNumber = r.RoomNumber,
+                GuestFullName = $"{r.GuestFirstName} {r.GuestLastName}",
+                TotalPrice = r.TotalPrice,
+                Status = r.Status.ToString()
+            })
             .ToList();
 
         return View(viewModels);
     }
 
     [HttpGet]
-    public IActionResult CreateSingle(int? roomId = null)
-    {
-        return Redirect($"/Room/Index#createSingleModal");
-    }
-
-    [HttpGet]
-    public IActionResult CreateDouble(int? roomId = null)
-    {
-        return Redirect($"/Room/Index#createDoubleModal");
-    }
-
-    [HttpGet]
     public IActionResult Create()
     {
-        return RedirectToAction("CreateSingle");
+        return Redirect("/Room/Index#createSingleModal");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAvailableRoomsByDate(string roomType, DateTime? arrivalDate, DateTime? departureDate)
+    {
+        RoomType? requestedType = null;
+        if (!string.IsNullOrEmpty(roomType) && Enum.TryParse<RoomType>(roomType, ignoreCase: true, out var parsed))
+        {
+            requestedType = parsed;
+        }
+
+        var allRoomsQuery = new GetAllRoomsQuery(requestedType?.ToString());
+        List<RoomDto> allRooms = (await this.mediator.SendAsync(allRoomsQuery))
+            ?.ToList() ?? new List<RoomDto>();
+
+        HashSet<int> availableIds = new();
+        bool hasValidDates = arrivalDate.HasValue && departureDate.HasValue && arrivalDate < departureDate;
+
+        if (hasValidDates)
+        {
+            var availableQuery = new GetAvailableRoomsSelectListQuery(arrivalDate!.Value, departureDate!.Value);
+            List<RoomSelectDto> availableRooms = await this.mediator.SendAsync(availableQuery) ?? new List<RoomSelectDto>();
+            availableIds = availableRooms.Select(r => r.Id).ToHashSet();
+        }
+
+        var result = allRooms
+            .Where(r => !requestedType.HasValue || r.Type == requestedType.Value)
+            .Select(r =>
+            {
+                string statusLabel = !hasValidDates
+                    ? "[Wybierz daty]"
+                    : (r.IsAvailable && availableIds.Contains(r.Id)) ? "[Wolny]" : "[Zajęty]";
+
+                return new
+                {
+                    id = r.Id,
+                    number = r.Number,
+                    type = r.Type.ToString(),
+                    pricePerNight = r.PricePerNight,
+                    currency = r.Currency,
+                    statusLabel,
+                    text = $"{r.Number} ({r.Type}) - {r.PricePerNight} {r.Currency}"
+                };
+            });
+
+        return Json(new { rooms = result });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CheckRoomAvailability(int roomId, DateTime? arrivalDate, DateTime? departureDate)
+    {
+        if (!arrivalDate.HasValue || !departureDate.HasValue || arrivalDate >= departureDate)
+        {
+            return Json(new { available = false, message = "[Nieprawidłowe daty]" });
+        }
+
+        var query = new GetAvailableRoomsSelectListQuery(arrivalDate.Value, departureDate.Value);
+        List<RoomSelectDto> rooms = await this.mediator.SendAsync(query) ?? new List<RoomSelectDto>();
+
+        bool isAvailable = rooms.Any(r => r.Id == roomId);
+        string message = isAvailable ? "[Wolny]" : "[Zajęty]";
+
+        return Json(new { available = isAvailable, message });
     }
 
     [HttpPost]
@@ -127,10 +188,8 @@ public sealed class ReservationController : Controller
         {    
             if (!ModelState.IsValid)
             {
-                await PopulateAvailableRoomsSelectList(model.RoomId);
-                return model.FormType == "double"
-                    ? View("CreateDouble", model)
-                    : View("CreateSingle", model);
+                Response.StatusCode = StatusCodes.Status400BadRequest;
+                return Json(new { error = "Nieprawidłowe dane formularza", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
             }
 
             var command = new CreateReservationCommand(
@@ -147,15 +206,13 @@ public sealed class ReservationController : Controller
             );
 
             string result = await this.mediator.SendAsync(command);
-            return RedirectToAction("Pay", "Payment", new { reservationId = result } );
+            string redirectUrl = Url.Action("Pay", "Payment", new { reservationId = result }) ?? "/";
+            return Json(new { redirectUrl });
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, $"An error occurred while creating the reservation: {ex.Message}");
-            await PopulateAvailableRoomsSelectList(model.RoomId);
-            return model.FormType == "double"
-                ? View("CreateDouble", model)
-                : View("CreateSingle", model);
+            Response.StatusCode = StatusCodes.Status500InternalServerError;
+            return Json(new { error = $"Błąd podczas tworzenia rezerwacji: {ex.Message}" });
         }
     }
 

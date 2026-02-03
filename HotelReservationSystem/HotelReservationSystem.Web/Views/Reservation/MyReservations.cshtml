@@ -44,11 +44,15 @@
                                 <button class="btn btn-danger btn-sm">Anuluj</button>
                             </form>
                         }
-                        @if (Enum.TryParse<ReservationStatus>(r.Status, out var statusParsed2) && statusParsed2 == ReservationStatus.Pending && !(User.IsInRole("Recepcionist") || User.IsInRole("Manager")))
+                        @if (Enum.TryParse<ReservationStatus>(r.Status, out var statusParsed2) && statusParsed2 == ReservationStatus.Pending)
                         {
                             <a href="@Url.Action("Pay", "Payment", new { reservationId = r.Id })" class="btn btn-warning btn-sm mt-1">
                                 Dokończ płatność
                             </a>
+                        }
+                        @if (Enum.TryParse<ReservationStatus>(r.Status, out var statusParsed3) && statusParsed3 == ReservationStatus.Confirmed)
+                        {
+                            <span class="badge bg-success">Opłacone</span>
                         }
                     </td>
 

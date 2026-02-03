@@ -1,7 +1,22 @@
 @using HotelReservationSystem.Web.ViewModels
 @model LoginViewModel
 
+@{
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    if (string.IsNullOrWhiteSpace(returnUrl))
+    {
+        returnUrl = Context.Request.Query["ReturnUrl"].ToString();
+    }
+
+    if (string.IsNullOrWhiteSpace(returnUrl))
+    {
+        returnUrl = ViewData["ReturnUrl"]?.ToString() ?? string.Empty;
+    }
+}
+
 <form asp-controller="Account" asp-action="Login" method="post" novalidate class="needs-validation" id="loginForm">
+    <input type="hidden" name="returnUrl" id="loginReturnUrl" value="@returnUrl" />
+    <div asp-validation-summary="All" class="text-danger mb-2"></div>
     <div class="mb-3">
         <label asp-for="Email" class="form-label visually-hidden"></label>
         <input asp-for="Email" class="form-control" placeholder="Email" aria-describedby="emailHelp" required />

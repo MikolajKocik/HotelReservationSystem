@@ -28,17 +28,24 @@
             const departure = new Date((departureInput === null || departureInput === void 0 ? void 0 : departureInput.value) || '');
             const roomId = Number(roomSelect === null || roomSelect === void 0 ? void 0 : roomSelect.value);
             const code = (discountInput === null || discountInput === void 0 ? void 0 : discountInput.value.trim().toUpperCase()) || '';
-            const days = Math.max(0, Math.round((departure.getTime() - arrival.getTime()) / (1000 * 60 * 60 * 24)));
+            const arrivalTime = arrival.getTime();
+            const departureTime = departure.getTime();
+            const days = (!Number.isFinite(arrivalTime) || !Number.isFinite(departureTime))
+                ? 0
+                : Math.max(0, Math.ceil((departureTime - arrivalTime) / (1000 * 60 * 60 * 24)));
             const roomPrice = (_a = prices[roomId]) !== null && _a !== void 0 ? _a : 0;
             const multiplier = (_b = discounts[code]) !== null && _b !== void 0 ? _b : 1.0;
             const total = days * roomPrice * multiplier;
+            const formatted = Number.isFinite(total) ? total.toFixed(2) : '0.00';
             if (totalDisplay)
-                totalDisplay.textContent = total.toFixed(2) + ' z�';
+                totalDisplay.textContent = `${formatted} zł`;
             if (totalHidden)
-                totalHidden.value = total.toFixed(2);
+                totalHidden.value = formatted;
         }
         arrivalInput === null || arrivalInput === void 0 ? void 0 : arrivalInput.addEventListener('change', calculate);
+        arrivalInput === null || arrivalInput === void 0 ? void 0 : arrivalInput.addEventListener('input', calculate);
         departureInput === null || departureInput === void 0 ? void 0 : departureInput.addEventListener('change', calculate);
+        departureInput === null || departureInput === void 0 ? void 0 : departureInput.addEventListener('input', calculate);
         roomSelect === null || roomSelect === void 0 ? void 0 : roomSelect.addEventListener('change', calculate);
         discountInput === null || discountInput === void 0 ? void 0 : discountInput.addEventListener('input', calculate);
         calculate();
@@ -80,7 +87,7 @@
         initTotalSum(form, formType);
     }
     document.querySelectorAll('.needs-validation').forEach(initForm);
-    document.addEventListener('bs:modal:shown.bs.modal', (event) => {
+    document.addEventListener('shown.bs.modal', (event) => {
         const modal = event.target;
         modal.querySelectorAll('.needs-validation').forEach(form => {
             if (!form.dataset.validationInit) {

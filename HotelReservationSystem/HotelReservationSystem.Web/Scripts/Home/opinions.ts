@@ -23,10 +23,6 @@
                 const nameEl = item.querySelector<HTMLElement>('.rating-review p');
                 if (nameEl) nameEl.textContent = op.guestFirstName ? `${op.guestFirstName} ${op.guestLastName ?? ''}` : '';
             });
-
-            const avg = opinions.length ? Math.round(opinions.reduce((s, o) => s + o.rating, 0) / opinions.length) : 0;
-            const hotelStars = document.getElementById('hotel-stars');
-            if (hotelStars) hotelStars.textContent = renderStars(avg);
         } catch (e) {
             console.error(e);
         }

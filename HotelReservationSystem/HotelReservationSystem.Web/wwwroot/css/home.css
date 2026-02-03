@@ -87,7 +87,18 @@
 img {
     position: absolute;
     height: 20rem;
+    width: 100%;
+    object-fit: cover;
     padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    img {
+        position: static;
+        height: auto;
+        max-height: 16rem;
+        width: 100%;
+    }
 }
 
 .text-container {
@@ -284,32 +295,45 @@ h3 {
 }
 
 #bottom-navigation {
+    --nav-height: 48px;
     position: static;
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 0.75rem;
     pointer-events: auto;
+    width: fit-content;
+    margin: 1.5rem auto 2rem;
 }
 
 #bottom-navigation .bottom-nav-side {
-    width: 64px;
+    width: auto;
+    height: var(--nav-height);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .nav-btn {
     background: transparent;
     border: none;
-    font-size: 2rem;
+    font-size: 2.5rem;
+    line-height: 1;
     cursor: pointer;
-    color: #222;
-    width: 44px;
-    height: 44px;
+    color: #23405c;
+    width: var(--nav-height);
+    height: var(--nav-height);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s;
+}
+
+.nav-btn:hover {
+    transform: scale(1.2);
+    color: #4971a6;
 }
 
 .bottom-nav-dots {
@@ -317,12 +341,14 @@ h3 {
     gap: 0.75rem;
     align-items: center;
     justify-content: center;
+    height: var(--nav-height);
     background: rgba(255,255,255,0.95);
-    padding: 0.5rem 1rem;
+    padding: 0 1.2rem;
     border-radius: 999px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     position: static;
-    margin: 0.5rem auto;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .bottom-nav-dots .dot {
@@ -400,17 +426,27 @@ h3 {
         font-size: 1.6rem;
     }
     #bottom-navigation {
+        --nav-height: 40px;
         position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0.6rem;
-    }
-    .bottom-nav-dots {
-        position: fixed; 
         left: 50%;
         transform: translateX(-50%);
         bottom: 1rem;
-        background: rgba(255,255,255,0.98);
+        width: auto;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+    .bottom-nav-dots {
+        position: static;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+    .nav-btn {
+        font-size: 2rem;
     }
 }
 

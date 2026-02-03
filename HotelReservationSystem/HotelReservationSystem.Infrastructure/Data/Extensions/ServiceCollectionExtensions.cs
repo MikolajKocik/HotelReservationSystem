@@ -38,11 +38,11 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("Default");
 
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new InvalidOperationException("Connection string 'Default' is not configured.");
+            throw new InvalidOperationException("Database connection string is not configured. Set 'ConnectionStrings:Default' or 'ConnectionString' in configuration.");
         }
-
+        
         services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(connectionString));
 

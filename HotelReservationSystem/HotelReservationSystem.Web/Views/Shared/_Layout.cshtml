@@ -50,6 +50,9 @@
                     <li>
                         <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                     </li>
+                    <li>
+                        <a asp-controller="Room" asp-action="Create">Dodaj pokój</a>
+                    </li>
                 }
 
                 @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
@@ -236,6 +239,9 @@
                             <li>
                                 <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                             </li>
+                            <li>
+                                <a asp-controller="Room" asp-action="Create">Dodaj pokój</a>
+                            </li>
                         }
 
                         @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
@@ -266,6 +272,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/Layout/datePicker.js"></script>
     <script src="~/js/Reservation/form-validation.js" asp-append-version="true"></script>
+    <script src="~/js/Reservation/reservationForm.js" asp-append-version="true"></script>
     <script src="~/js/Auth/loginForm.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

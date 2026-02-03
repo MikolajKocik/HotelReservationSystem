@@ -1,0 +1,54 @@
+@model HotelReservationSystem.Application.Dtos.Opinion.CreateOpinionDto
+
+@{
+    ViewData["Title"] = "Dodaj opinię";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Dodaj opinię</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="form-group mb-3">
+                            <label asp-for="ReservationId" class="form-label">ID Rezerwacji</label>
+                            <input asp-for="ReservationId" class="form-control" required />
+                            <span asp-validation-for="ReservationId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Rating" class="form-label">Ocena (1-5)</label>
+                            <select asp-for="Rating" class="form-control" required>
+                                <option value="">Wybierz ocenę</option>
+                                <option value="1">1 - Bardzo słabo</option>
+                                <option value="2">2 - Słabo</option>
+                                <option value="3">3 - Średnio</option>
+                                <option value="4">4 - Dobrze</option>
+                                <option value="5">5 - Bardzo dobrze</option>
+                            </select>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Comment" class="form-label">Komentarz</label>
+                            <textarea asp-for="Comment" class="form-control" rows="5" placeholder="Podziel się swoją opinią..."></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Dodaj opinię</button>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Anuluj</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

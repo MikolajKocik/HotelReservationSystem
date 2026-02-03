@@ -22,9 +22,10 @@ public sealed class GuestRepository : IGuestRepository
     /// Gets all guests with pagination and filtering support
     /// </summary>
     public async Task<IEnumerable<Guest>> GetAllAsync()
-        => await Task.FromResult(this.context.Guests
-                .AsNoTracking()
-                .Include(g => g.Reservations));
+        => await this.context.Guests
+            .AsNoTracking()
+            .Include(g => g.Reservations)
+            .ToListAsync();
 
     /// <summary>
     /// Gets a guest by their unique identifier

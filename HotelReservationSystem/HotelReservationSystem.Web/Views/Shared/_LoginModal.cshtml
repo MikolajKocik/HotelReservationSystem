@@ -11,8 +11,8 @@
         <h5 class="modal-title" id="loginModalLabel">Logowanie</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        @await Html.PartialAsync("_LoginForm", model)
+      <div class="modal-body" id="loginModalBody">
+        @await Html.PartialAsync("_LoginForm", model, new ViewDataDictionary(ViewData) { ["IsModalLogin"] = true })
       </div>
     </div>
   </div>

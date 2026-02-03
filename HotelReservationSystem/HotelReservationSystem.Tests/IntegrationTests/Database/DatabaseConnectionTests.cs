@@ -19,7 +19,10 @@ public sealed class DatabaseConnectionTests
     [Fact]
     public async Task Connection_Should_Open_Successfully()
     {
-        string conn = this.configuration.GetConnectionString("ConnectionString")!;
+        string? conn = this.configuration.GetConnectionString("Default")
+            ?? this.configuration.GetConnectionString("ConnectionString");
+
+        conn.Should().NotBeNullOrWhiteSpace("a SQL Server connection string must be configured in ConnectionStrings:Default");
 
         using var connection = new SqlConnection(conn);
         await connection.OpenAsync();

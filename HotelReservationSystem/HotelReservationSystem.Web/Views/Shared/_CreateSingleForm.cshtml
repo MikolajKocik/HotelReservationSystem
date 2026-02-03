@@ -43,7 +43,9 @@
 
   <div class="col-12 mt-3">
     <label asp-for="RoomId" class="form-label font-weight-bold">Wybierz dostępny numer pokoju</label>
-    <select asp-for="RoomId" asp-items="ViewBag.Rooms" class="form-select border-primary shadow-sm" required></select>
+    <select asp-for="RoomId" id="single-room-select" class="form-select border-primary shadow-sm" required>
+        <option value="">Wybierz pokój...</option>
+    </select>
     <div class="invalid-feedback">Wybierz numer pokoju.</div>
   </div>
 
@@ -74,7 +76,16 @@
 
   <div class="col-12 mt-4 text-end">
     <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='@Url.Action("Index", "Room")'">Anuluj</button>
-    <button type="submit" class="btn btn-primary btn-lg px-5">Zarezerwuj teraz</button>
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        <button type="submit" class="btn btn-primary btn-lg px-5">Zarezerwuj teraz</button>
+    }
+    else
+    {
+        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#loginModal">
+            Zaloguj się, aby zarezerwować
+        </button>
+    }
   </div>
 </form>
 

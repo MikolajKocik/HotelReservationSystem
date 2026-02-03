@@ -8,6 +8,13 @@
 <div class="container py-4">
     <h2 class="mb-4 text-center border-bottom pb-3">Dostępne pokoje w naszym hotelu</h2>
 
+    @if (User.IsInRole("Manager"))
+    {
+        <div class="mb-3 text-end">
+            <a asp-controller="Room" asp-action="Create" class="btn btn-outline-primary">Dodaj pokój</a>
+        </div>
+    }
+
     <div class="row">
         @foreach (var room in Model)
         {
@@ -61,12 +68,19 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            if (window.location.hash === '#createSingleModal') {
-                $('#createSingleModal').modal('show');
-            } else if (window.location.hash === '#createDoubleModal') {
-                $('#createDoubleModal').modal('show');
-            }
-        });
+        (function () {
+            const hash = window.location.hash;
+            const id = hash === '#createSingleModal'
+                ? 'createSingleModal'
+                : hash === '#createDoubleModal'
+                    ? 'createDoubleModal'
+                    : null;
+
+            if (!id) return;
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (!window.bootstrap?.Modal) return;
+            window.bootstrap.Modal.getOrCreateInstance(el).show();
+        })();
     </script>
 }

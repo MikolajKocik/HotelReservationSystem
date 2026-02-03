@@ -4,6 +4,7 @@ using HotelReservationSystem.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace HotelReservationSystem.Infrastructure.Repositories;
 
@@ -59,12 +60,13 @@ public sealed class ReservationRepository : IReservationRepository
     /// Gets reservations within a specific date range
     /// </summary>
     public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to)
-        => await Task.FromResult(this.context.Reservations
-                .AsNoTracking()
-                .Include(r => r.Room)
-                .Include(r => r.Guest)
-                .Include(r => r.Payment)
-                .Where(r => r.ArrivalDate >= from && r.DepartureDate <= to));
+        => await this.context.Reservations
+            .AsNoTracking()
+            .Include(r => r.Room)
+            .Include(r => r.Guest)
+            .Include(r => r.Payment)
+            .Where(r => r.ArrivalDate >= from && r.DepartureDate <= to)
+            .ToListAsync();
 
 
     /// <summary>
@@ -80,10 +82,16 @@ public sealed class ReservationRepository : IReservationRepository
             return Enumerable.Empty<Reservation>();
 
         string key = $"Reservations_Guest_{guest.Id}";
-        if (this.cache.TryGetValue(key, out List<Reservation>? cachedList))
+        if (this.cache.TryGetValue(key, out var cached) && cached is List<Reservation> cachedList)
             return cachedList;
 
-        using var conn = this.context.Database.GetDbConnection();
+        string? connectionString = this.context.Database.GetConnectionString();
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException("Database connection string is not configured.");
+        }
+
+        await using var conn = new SqlConnection(connectionString);
 
         string sql = @"
             SELECT r.*, rm.*, g.*, p.*
@@ -157,8 +165,8 @@ public sealed class ReservationRepository : IReservationRepository
     public async Task<IEnumerable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to)
     {
         string key = $"Reservations_Room_{roomId}";
-        if (this.cache.TryGetValue(key, out List<Reservation>? cachedList))
-            return cachedList.Where(r => r.ArrivalDate < to && r.DepartureDate > from); ;
+        if (this.cache.TryGetValue(key, out var cached) && cached is List<Reservation> cachedList)
+            return cachedList.Where(r => r.ArrivalDate < to && r.DepartureDate > from);
 
         List<Reservation> list = await this.context.Reservations
                 .AsNoTracking()

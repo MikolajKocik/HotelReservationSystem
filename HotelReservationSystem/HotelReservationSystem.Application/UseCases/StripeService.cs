@@ -76,6 +76,18 @@ public sealed class StripeService : IStripeService
         return session.Url ?? session.Id;
     }
 
+    public async Task<string?> GetCheckoutSessionPaymentIntentIdAsync(string sessionId)
+    {
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            return null;
+        }
+
+        var service = new SessionService();
+        Session session = await service.GetAsync(sessionId);
+        return session.PaymentIntentId;
+    }
+
     public async Task RefundPaymentAsync(string paymentIntentId)
     {
         var piService = new PaymentIntentService();
