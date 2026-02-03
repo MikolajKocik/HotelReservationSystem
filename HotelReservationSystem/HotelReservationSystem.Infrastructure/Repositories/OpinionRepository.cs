@@ -14,52 +14,52 @@ public sealed class OpinionRepository : IOpinionRepository
         this.context = context;
     }
 
-    public async Task<Opinion?> GetByIdAsync(string id)
+    public async Task<Opinion?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         => await this.context.Opinions
                 .Include(o => o.Reservation)
                 .Include(o => o.Guest)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     
 
-    public async Task<Opinion?> GetByReservationIdAsync(string reservationId)
+    public async Task<Opinion?> GetByReservationIdAsync(string reservationId, CancellationToken cancellationToken = default)
         => await this.context.Opinions
                 .Include(o => o.Reservation)
                 .Include(o => o.Guest)
-                .FirstOrDefaultAsync(o => o.ReservationId == reservationId);
+                .FirstOrDefaultAsync(o => o.ReservationId == reservationId, cancellationToken);
     
 
-    public async Task<IEnumerable<Opinion>> GetAllAsync()
+    public async Task<IEnumerable<Opinion>> GetAllAsync(CancellationToken cancellationToken = default)
         => await this.context.Opinions
                 .Include(o => o.Reservation)
                 .Include(o => o.Guest)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
     
-    public async Task<IEnumerable<Opinion>> GetByGuestIdAsync(string guestId)
+    public async Task<IEnumerable<Opinion>> GetByGuestIdAsync(string guestId, CancellationToken cancellationToken = default)
         => await this.context.Opinions
                 .Where(o => o.GuestId == guestId)
                 .Include(o => o.Reservation)
                 .Include(o => o.Guest)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
     
-    public async Task AddAsync(Opinion opinion)
+    public async Task AddAsync(Opinion opinion, CancellationToken cancellationToken = default)
     {
-        await this.context.Opinions.AddAsync(opinion);
-        await this.context.SaveChangesAsync();
+        await this.context.Opinions.AddAsync(opinion, cancellationToken);
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Opinion opinion)
+    public async Task UpdateAsync(Opinion opinion, CancellationToken cancellationToken = default)
     {
         this.context.Opinions.Update(opinion);
-        await this.context.SaveChangesAsync();
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
     {
-        Opinion? opinion = await GetByIdAsync(id);
+        Opinion? opinion = await GetByIdAsync(id, cancellationToken);
         if (opinion != null)
         {
             this.context.Opinions.Remove(opinion);
-            await this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync(cancellationToken);
         }
     }
 }

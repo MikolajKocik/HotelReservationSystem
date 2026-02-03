@@ -20,26 +20,26 @@ public sealed class PaymentRepository : IPaymentRepository
     /// <summary>
     /// Gets a payment by its Stripe payment intent ID
     /// </summary>
-    public async Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId)
+    public async Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId, CancellationToken cancellationToken = default)
         => await this.context.Payments
-            .FirstOrDefaultAsync(p => p.StripePaymentIntentId == stripePaymentIntentId);
+            .FirstOrDefaultAsync(p => p.StripePaymentIntentId == stripePaymentIntentId, cancellationToken);
 
     /// <summary>
     /// Creates a new payment
     /// </summary>
-    public async Task<int> CreateAsync(Payment payment)
+    public async Task<int> CreateAsync(Payment payment, CancellationToken cancellationToken = default)
     {
         this.context.Payments.Add(payment);
-        await this.context.SaveChangesAsync();
+        await this.context.SaveChangesAsync(cancellationToken);
         return payment.Id;
     }
 
     /// <summary>
     /// Updates an existing payment
     /// </summary>
-    public async Task UpdateAsync(Payment payment)
+    public async Task UpdateAsync(Payment payment, CancellationToken cancellationToken = default)
     {
         this.context.Payments.Update(payment);
-        await this.context.SaveChangesAsync();
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 }

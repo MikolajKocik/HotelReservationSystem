@@ -1,8 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using HotelReservationSystem.Application.Interfaces;
 using HotelReservationSystem.Application.UseCases;
-using HotelReservationSystem.Application.Interfaces.Auth;
-using HotelReservationSystem.Application.UseCases.Auth;
 
 namespace HotelReservationSystem.Application.Extensions;
 
@@ -18,9 +16,6 @@ public static class ApplicationServiceExtensions
     {
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IStripeService, StripeService>();
-
-        services.AddScoped<IAuthorizationService, DefaultAuthorizationService>();
-        services.AddScoped<IAuthorizationHandler, RolesAuthorizationHandler>();
 
         return services;
     }

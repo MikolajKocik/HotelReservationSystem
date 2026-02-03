@@ -25,32 +25,24 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Gets all reservations with related entities
     /// </summary>
-    public async Task<IEnumerable<Reservation>> GetAllAsync()
+    public async Task<IEnumerable<Reservation>> GetAllAsync(CancellationToken cancellationToken = default)
         => await this.context.Reservations
                 .AsNoTracking()
                 .Include(r => r.Room)
                 .Include(r => r.Guest)
                 .Include(r => r.Payment)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
     /// <summary>
     /// Gets a reservation by its unique identifier
     /// </summary>
-    public async Task<Reservation?> GetByIdAsync(string id)
+    public async Task<Reservation?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        string key = $"Reservation_{id}";
-        if (this.cache.TryGetValue(key, out Reservation? cached))
-            return await Task.FromResult(cached);
-
         Reservation? reservation = await this.context.Reservations
                 .Include(r => r.Room)
                 .Include(r => r.Guest)
                 .Include(r => r.Payment)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-        if (reservation != null)   
-            this.cache.Set(key, reservation, TimeSpan.FromSeconds(60));
-        
+                .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
         return reservation;
     }
@@ -59,24 +51,24 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Gets reservations within a specific date range
     /// </summary>
-    public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to)
+    public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
         => await this.context.Reservations
             .AsNoTracking()
             .Include(r => r.Room)
             .Include(r => r.Guest)
             .Include(r => r.Payment)
             .Where(r => r.ArrivalDate >= from && r.DepartureDate <= to)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
 
     /// <summary>
     /// Gets reservations for a specific guest by email
     /// </summary>
-    public async Task<IEnumerable<Reservation>> GetByGuestEmailAsync(string email)
+    public async Task<IEnumerable<Reservation>> GetByGuestEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        Guest? guest = await this.context.Guests
+        Guest? guest = await this.context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(g => g.Email == email);
+            .FirstOrDefaultAsync(g => g.Email == email, cancellationToken);
 
         if (guest == null)
             return Enumerable.Empty<Reservation>();
@@ -97,7 +89,7 @@ public sealed class ReservationRepository : IReservationRepository
             SELECT r.*, rm.*, g.*, p.*
             FROM Reservations r
             INNER JOIN Rooms rm ON r.RoomId = rm.Id
-            INNER JOIN Guests g ON r.GuestId = g.Id
+            INNER JOIN AspNetUsers g ON r.GuestId = g.Id
             LEFT JOIN Payments p ON r.PaymentId = p.Id
             WHERE g.Id = @GuestId";
 
@@ -121,10 +113,10 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Creates a new reservation
     /// </summary>
-    public async Task<string> CreateAsync(Reservation reservation)
+    public async Task<string> CreateAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {
         this.context.Reservations.Add(reservation);
-        await this.context.SaveChangesAsync();
+        await this.context.SaveChangesAsync(cancellationToken);
 
         InvalidateCache(reservation);
 
@@ -134,25 +126,29 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Updates an existing reservation
     /// </summary>
-    public async Task UpdateAsync(Reservation reservation)
+    public async Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {
-        this.context.Reservations.Update(reservation);
-        await this.context.SaveChangesAsync();
 
-        this.cache.Remove($"Reservation_{reservation.Id}");
+        var entry = this.context.Entry(reservation);
+        if (entry.State == EntityState.Detached)
+        {
+            this.context.Reservations.Update(reservation);
+        }
+        
+        await this.context.SaveChangesAsync(cancellationToken);
         InvalidateCache(reservation);
     }
 
     /// <summary>
     /// Deletes a reservation
     /// </summary>
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
     {
-        Reservation? reservation = await this.context.Reservations.FindAsync(id);
+        Reservation? reservation = await this.context.Reservations.FindAsync(new object[] { id }, cancellationToken);
         if (reservation != null)
         {
             this.context.Reservations.Remove(reservation);
-            await this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync(cancellationToken);
 
             this.cache.Remove($"Reservation_{id}");
             InvalidateCache(reservation);
@@ -162,7 +158,7 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Gets reservations for a specific room within a date range
     /// </summary>
-    public async Task<IEnumerable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to)
+    public async Task<IEnumerable<Reservation>> GetByRoomAndDateRangeAsync(int roomId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
         string key = $"Reservations_Room_{roomId}";
         if (this.cache.TryGetValue(key, out var cached) && cached is List<Reservation> cachedList)
@@ -174,7 +170,7 @@ public sealed class ReservationRepository : IReservationRepository
                 .Include(r => r.Guest)
                 .Include(r => r.Payment)
                 .Where(r => r.RoomId == roomId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
         this.cache.Set(key, list, TimeSpan.FromMinutes(2));
         return list.Where(r => r.ArrivalDate < to && r.DepartureDate > from);
@@ -183,10 +179,10 @@ public sealed class ReservationRepository : IReservationRepository
     /// <summary>
     /// Gets all guests for lookup purposes
     /// </summary>
-    public async Task<List<Guest>> GetGuestsAsync()
-        => await this.context.Guests
+    public async Task<List<Guest>> GetGuestsAsync(CancellationToken cancellationToken = default)
+        => await this.context.Users
                 .Include(g => g.Reservations)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
     private void InvalidateCache(Reservation reservation)
     {

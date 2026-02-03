@@ -21,68 +21,68 @@ public sealed class GuestRepository : IGuestRepository
     /// <summary>
     /// Gets all guests with pagination and filtering support
     /// </summary>
-    public async Task<IEnumerable<Guest>> GetAllAsync()
-        => await this.context.Guests
+    public async Task<IEnumerable<Guest>> GetAllAsync(CancellationToken cancellationToken = default)
+        => await this.context.Users
             .AsNoTracking()
             .Include(g => g.Reservations)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
     /// <summary>
     /// Gets a guest by their unique identifier
     /// </summary>
-    public async Task<Guest?> GetByIdAsync(string id)
-        => await this.context.Guests
+    public async Task<Guest?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        => await this.context.Users
                 .Include(g => g.Reservations)
-                .FirstOrDefaultAsync(g => g.Id == id);
+                .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
 
     /// <summary>
     /// Gets a guest by their email address
     /// </summary>
-    public async Task<Guest?> GetByEmailAsync(string email)
-        => await this.context.Guests
+    public async Task<Guest?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+        => await this.context.Users
             .Include(g => g.Reservations)
-            .FirstOrDefaultAsync(g => g.Email == email);
+            .FirstOrDefaultAsync(g => g.Email == email, cancellationToken);
 
     /// <summary>
     /// Creates a new guest
     /// </summary>
-    public async Task<string> CreateAsync(Guest guest)
+    public async Task<string> CreateAsync(Guest guest, CancellationToken cancellationToken = default)
     {
-        this.context.Guests.Add(guest);
-        await this.context.SaveChangesAsync();
+        this.context.Users.Add(guest);
+        await this.context.SaveChangesAsync(cancellationToken);
         return guest.Id;
     }
 
     /// <summary>
     /// Updates an existing guest
     /// </summary>
-    public async Task UpdateAsync(Guest guest)
+    public async Task UpdateAsync(Guest guest, CancellationToken cancellationToken = default)
     {
-        this.context.Guests.Update(guest);
-        await this.context.SaveChangesAsync();
+        this.context.Users.Update(guest);
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 
     /// <summary>
     /// Deletes a guest
     /// </summary>
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
     {
-        var guest = await GetByIdAsync(id);
+        var guest = await GetByIdAsync(id, cancellationToken);
         if (guest != null)
         {
-            this.context.Guests.Remove(guest);
-            await this.context.SaveChangesAsync();
+            this.context.Users.Remove(guest);
+            await this.context.SaveChangesAsync(cancellationToken);
         }
     }
 
     /// <summary>
     /// Gets payment transactions for reporting
     /// </summary>
-    public async Task<List<Payment>> GetTransactions()
+    public async Task<List<Payment>> GetTransactions(CancellationToken cancellationToken = default)
     {
         return await this.context.Payments
             .Include(p => p.Reservation)
             .ThenInclude(r => r.Guest)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }
