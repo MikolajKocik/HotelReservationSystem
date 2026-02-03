@@ -7,6 +7,7 @@ using HotelReservationSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.RateLimiting;
 using HotelReservationSystem.Application.Interfaces;
 using HotelReservationSystem.Application.Services;
+using HotelReservationSystem.Core.Domain.Entities;
 
 
 namespace HotelReservationSystem.Web.Extensions;
@@ -26,7 +27,8 @@ public static class WebServiceExtensions
         services.AddPolicyBasedAuthorization();
         services.AddValidationServices();
         services.AddRateLimitingServices();
-        services.AddCookieAuthentication();
+        services.AddCookieAndSessionAuthentication();
+
         services.AddMvc(options =>
         {
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
@@ -43,7 +45,7 @@ public static class WebServiceExtensions
     /// </summary>
     private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddIdentity<Guest, IdentityRole>()
             .AddEntityFrameworkStores<HotelDbContext>()
             .AddDefaultTokenProviders();
 
@@ -62,7 +64,7 @@ public static class WebServiceExtensions
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
             options.Lockout.MaxFailedAccessAttempts = 5;
             
-            options.SignIn.RequireConfirmedEmail = true;
+            options.SignIn.RequireConfirmedEmail = false;
             options.User.RequireUniqueEmail = true;
 
             options.User.AllowedUserNameCharacters = AllowedUserNameCharacters;
@@ -74,14 +76,18 @@ public static class WebServiceExtensions
     /// <summary>
     /// Configures cookie authentication
     /// </summary>
-    private static IServiceCollection AddCookieAuthentication(this IServiceCollection services)
+    /// 
+    private static IServiceCollection AddCookieAndSessionAuthentication(this IServiceCollection services)
     {
         services.ConfigureApplicationCookie(options =>
         {
-            options.Cookie.HttpOnly = true;
-            options.ExpireTimeSpan = TimeSpan.FromHours(1);
-
             options.SlidingExpiration = false;
+        });
+
+        services.AddSession(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.Cookie.Expiration = TimeSpan.FromHours(1);
         });
 
         return services;
@@ -92,7 +98,7 @@ public static class WebServiceExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("RequireManager", policy => policy.RequireRole("Manager"));
-            options.AddPolicy("RequireReceptionist", policy => policy.RequireRole("Recepcionist"));
+            options.AddPolicy("RequireRecepcionist", policy => policy.RequireRole("Recepcionist"));
             options.AddPolicy("RequireGuest", policy => policy.RequireRole("Guest"));
 
             options.AddPolicy("RequireStaff", policy =>

@@ -4,10 +4,13 @@ using HotelReservationSystem.Infrastructure.Data.Extensions;
 using HotelReservationSystem.Infrastructure.Extensions;
 using HotelReservationSystem.Application.Extensions;
 using HotelReservationSystem.Web.Extensions;
+using HotelReservationSystem.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<StaffSettings>(builder.Configuration.GetSection("StaffSettings"));
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();

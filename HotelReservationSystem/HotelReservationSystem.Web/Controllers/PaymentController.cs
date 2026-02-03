@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationSystem.Application.CQRS.Payments.Queries;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
+using System.Diagnostics;
 
 namespace HotelReservationSystem.Controllers;
 
@@ -38,7 +39,7 @@ public sealed class PaymentController : Controller
 
         string successBase = Url.Action("Success", "Payment", new { reservationId = paymentInfo.ReservationId }, Request.Scheme) ?? "/";
         string cancelUrl = Url.Action("Cancel", "Payment", new { reservationId = paymentInfo.ReservationId }, Request.Scheme) ?? "/";
-        string successUrl = $"{successBase}?session_id={{CHECKOUT_SESSION_ID}}";
+        string successUrl = $"{successBase}&session_id={{CHECKOUT_SESSION_ID}}";
 
         string sessionUrl = await stripeService.CreateCheckoutSessionAsync(paymentInfo.ReservationId, paymentInfo.TotalAmount, paymentInfo.Currency, successUrl, cancelUrl);
 
@@ -49,16 +50,34 @@ public sealed class PaymentController : Controller
     [Authorize(Policy = "RequireAnyUser")]
     public async Task<IActionResult> Success(string reservationId, string? session_id)
     {
+        Debug.WriteLine($"[Payment.Success] Called with reservationId={reservationId}, session_id={session_id}");
+        
         if (string.IsNullOrWhiteSpace(reservationId) || string.IsNullOrWhiteSpace(session_id))
         {
+            Debug.WriteLine("[Payment.Success] Missing parameters, redirecting...");
             return RedirectToAction("MyReservations", "Reservation");
         }
 
-        string? paymentIntentId = await stripeService.GetCheckoutSessionPaymentIntentIdAsync(session_id);
-        if (!string.IsNullOrWhiteSpace(paymentIntentId))
+        try
         {
-            var markCommand = new MarkReservationAsPaidCommand(reservationId, paymentIntentId);
-            await this.mediator.SendAsync(markCommand);
+            string? paymentIntentId = await stripeService.GetCheckoutSessionPaymentIntentIdAsync(session_id);
+            Debug.WriteLine($"[Payment.Success] PaymentIntentId from Stripe: {paymentIntentId}");
+            
+            if (!string.IsNullOrWhiteSpace(paymentIntentId))
+            {
+                var markCommand = new MarkReservationAsPaidCommand(reservationId, paymentIntentId);
+                await this.mediator.SendAsync(markCommand);
+                Debug.WriteLine("[Payment.Success] MarkReservationAsPaidCommand executed successfully");
+            }
+            else
+            {
+                Debug.WriteLine("[Payment.Success] PaymentIntentId is null or empty!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Payment.Success] ERROR: {ex.Message}");
+            Debug.WriteLine($"[Payment.Success] Stack: {ex.StackTrace}");
         }
 
         return RedirectToAction("MyReservations", "Reservation");

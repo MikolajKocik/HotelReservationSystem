@@ -24,7 +24,7 @@ public sealed class ReportsController : Controller
         var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
         ReportDto reportData = await mediator.SendAsync(query);
 
-        var model = ReportMappingHelper.MapToReportViewModel(reportData);
+        var model = reportData.ToViewModel();
 
         return View(model);
     }

@@ -2,13 +2,17 @@
 using Microsoft.AspNetCore.Identity;
 using HotelReservationSystem.Web.ViewModels;
 using Microsoft.AspNetCore.RateLimiting;
+using HotelReservationSystem.Core.Domain.Entities;
 
 public sealed class AccountController : Controller
 {
-    private readonly UserManager<IdentityUser> userManager;
-    private readonly SignInManager<IdentityUser> signInManager;
+    private readonly UserManager<Guest> userManager;
+    private readonly SignInManager<Guest> signInManager;
 
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public AccountController(
+        UserManager<Guest> userManager, 
+        SignInManager<Guest> signInManager
+        )
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
@@ -17,72 +21,64 @@ public sealed class AccountController : Controller
     [HttpGet]
     public IActionResult Register()
     {
-        return RedirectToAction("Index", "Home");
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
+    public async Task<IActionResult> Register([FromForm] RegisterViewModel model, string? returnUrl = null)
     {
-        if (!ModelState.IsValid)
+        returnUrl ??= Url.Content("~/");
+
+        if (ModelState.IsValid)
         {
-            Response.StatusCode = StatusCodes.Status400BadRequest;
-            return PartialView("~/Views/Shared/_RegisterForm.cshtml", model);
+
+            var user = new Guest(model.Email, model.PhoneNumber);
+
+            IdentityResult? result = await this.userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "Guest");
+                await signInManager.SignInAsync(user, isPersistent: false);
+
+                return Json(new { redirectUrl = returnUrl });
+            }
+            
+            foreach (var error in result.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
         }
-
-        var user = new IdentityUser();
-        user.UserName = model.Email;
-        user.Email = model.Email;
-
-        IdentityResult? result = await userManager.CreateAsync(user, model.Password);
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(user, "Guest");
-            await signInManager.SignInAsync(user, isPersistent: false);
-            return Json(new { redirectUrl = Url.Action("Index", "Home") ?? "/" });
-        }
-
-        foreach (var error in result.Errors)
-            ModelState.AddModelError(string.Empty, error.Description);
 
         Response.StatusCode = StatusCodes.Status400BadRequest;
         return PartialView("~/Views/Shared/_RegisterForm.cshtml", model);
+
     }
 
     [HttpPost]
     [EnableRateLimiting("LoginPolicy")]
     public async Task<IActionResult> Login([FromForm] LoginViewModel model, [FromForm] string? returnUrl = null)
     {
-        ViewData["IsModalLogin"] = true;
+        returnUrl ??= Url.Content("~/");
 
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            Response.StatusCode = StatusCodes.Status400BadRequest;
-            return PartialView("~/Views/Shared/_LoginForm.cshtml", model);
+            var result = await signInManager.PasswordSignInAsync(
+                model.Email,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: false
+            );
+
+            if (result.Succeeded)
+                return Json(new { redirectUrl = returnUrl });
+
+            ModelState.AddModelError(string.Empty, "Invalid password or email");
         }
 
-        Microsoft.AspNetCore.Identity.SignInResult? result = await signInManager.PasswordSignInAsync(
-            model.Email,
-            model.Password,
-            model.RememberMe,
-            lockoutOnFailure: false
-        );
-
-        if (result.Succeeded)
-        {
-            string redirectUrl;
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                redirectUrl = returnUrl;
-            }
-            else
-            {
-                redirectUrl = Url.Action("Index", "Home") ?? "/";
-            }
-
-            return Json(new { redirectUrl });
-        }
-
-        ModelState.AddModelError(string.Empty, "Nieprawidłowy email lub hasło.");
         Response.StatusCode = StatusCodes.Status400BadRequest;
         return PartialView("~/Views/Shared/_LoginForm.cshtml", model);
     }

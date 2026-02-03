@@ -36,7 +36,7 @@ public sealed class RoomController : Controller
         IQueryable<RoomDto> rooms = await mediator.SendAsync(query);
 
         List<RoomViewModel> roomViewModels = rooms.Select(
-            RoomMappingHelper.MapToRoomViewModel)
+            r => r.ToViewModel())
             .ToList();
 
         return View(roomViewModels);
@@ -54,7 +54,7 @@ public sealed class RoomController : Controller
             return NotFound();
         }
 
-        RoomViewModel viewModel = RoomMappingHelper.MapToRoomViewModel(room);
+        RoomViewModel viewModel = room.ToViewModel();
         return View(viewModel);
     }
 
@@ -106,7 +106,7 @@ public sealed class RoomController : Controller
             return NotFound();
         }
 
-        EditRoomViewModel viewModel = RoomMappingHelper.MapToEditRoomViewModel(room);
+        EditRoomViewModel viewModel = room.ToEditViewModel();
         return View(viewModel);
     }
 
