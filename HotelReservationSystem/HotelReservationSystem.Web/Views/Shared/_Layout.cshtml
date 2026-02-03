@@ -19,8 +19,7 @@
                 <i><a asp-controller="Home" asp-action="Index" title="Logo">Aurora</a></i>
             </div>
             <ul class="nav-list">
-                @if (!User.IsInRole("Manager") && !User.IsInRole("Recepcionist"))
-                {
+                <conditional-group hide-for-role="Manager, Recepcionist">
                     <li>
                         <a asp-controller="Room" asp-action="Index" title="Zobacz nasze pokoje">Pokoje</a>
                     </li>
@@ -33,30 +32,27 @@
                     <li>
                         <a asp-controller="Home" asp-action="About" title="Informacje o naszym hotelu">O nas</a>
                     </li>
-                }
+                </conditional-group>
 
-                @if (User.IsInRole("Guest"))
-                {
+                <conditional-group show-for-role="Guest">
                     <li>
                         <a asp-controller="Reservation" asp-action="MyReservations" title="Twoje rezerwacje">Moje rezerwacje</a>
                     </li>
                     <li>
                         <a asp-controller="Opinion" asp-action="Create" title="Wystaw opinię">Zostaw opinię</a>
                     </li>
-                }
+                </conditional-group>
                 
-                @if (User.IsInRole("Manager"))
-                {
+                <conditional-group show-for-role="Manager">
                     <li>
                         <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                     </li>
                     <li>
                         <a asp-controller="Room" asp-action="Create">Dodaj pokój</a>
                     </li>
-                }
+                </conditional-group>
 
-                @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
-                {
+                <conditional-group show-for-role="Manager, Recepcionist">
                     <li>
                         <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
                     </li>
@@ -66,7 +62,7 @@
                     <li>
                         <a asp-controller="Payment" asp-action="Transactions">Transakcje</a>
                     </li>
-                }                            
+                </conditional-group>                            
             </ul>
 
             <div class="nav-user">
@@ -211,8 +207,7 @@
                 <div class="footer-content-3">
                     <p><strong>Mapa strony</strong></p>
                     <ul class="footer-nav-list">
-                        @if (!User.IsInRole("Manager") && !User.IsInRole("Recepcionist"))
-                        {
+                        <conditional-group hide-for-role="Manager, Recepcionist">
                             <li>
                                 <a asp-controller="Home" asp-action="Index">Strona główna</a>
                             </li>
@@ -222,30 +217,27 @@
                             <li>
                                 <a asp-controller="Home" asp-action="About">O nas</a>
                             </li>
-                        }
+                        </conditional-group>
 
-                        @if (User.IsInRole("Guest"))
-                        {
+                        <conditional-group show-for-role="Guest">
                             <li>
                                 <a asp-controller="Reservation" asp-action="MyReservations">Moje rezerwacje</a>
                             </li>
                             <li>
                                 <a asp-controller="Opinion" asp-action="Create">Zostaw opinię</a>
                             </li>
-                        }
+                        </conditional-group>
 
-                        @if (User.IsInRole("Manager"))
-                        {
+                        <conditional-group show-for-role="Manager">
                             <li>
                                 <a asp-controller="Reports" asp-action="Reports">Raporty</a>
                             </li>
                             <li>
                                 <a asp-controller="Room" asp-action="Create">Dodaj pokój</a>
                             </li>
-                        }
+                        </conditional-group>
 
-                        @if (User.IsInRole("Manager") || User.IsInRole("Recepcionist"))
-                        {
+                        <conditional-group show-for-role="Manager, Recepcionist">
                             <li>
                                 <a asp-controller="Reservation" asp-action="ReceptionPanel">Panel</a>
                             </li>
@@ -255,7 +247,7 @@
                             <li>
                                 <a asp-controller="Payment" asp-action="Transactions">Transakcje</a>
                             </li>
-                        }
+                        </conditional-group>
                     </ul>
                 </div>
                 <div id="copyright" class="footer-content-4">
@@ -271,9 +263,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/Layout/datePicker.js"></script>
-    <script src="~/js/Reservation/form-validation.js" asp-append-version="true"></script>
-    <script src="~/js/Reservation/reservationForm.js" asp-append-version="true"></script>
-    <script src="~/js/Auth/loginForm.js" asp-append-version="true"></script>
+    <script src="~/js/Reservation/reservation.js" asp-append-version="true"></script>
+    <script src="~/js/Auth/auth.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

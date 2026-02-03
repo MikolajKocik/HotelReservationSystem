@@ -109,7 +109,7 @@ header {
 .auth-links {
     display: flex;
     align-items: center;
-    gap: 10px; /* Odstęp między Logowanie | Rejestracja */
+    gap: 10px; 
 }
 
 .auth-links .divider {
@@ -257,6 +257,51 @@ img {
     max-height: 380px;
     object-fit: cover;
     min-height: 220px;
+}
+
+.reservation-form-container {
+    padding: 1rem;
+}
+
+@media (max-width: 576px) {
+    .modal-dialog.modal-xl {
+        margin: 0.5rem;
+    }
+    
+    .modal-body .row.g-0 {
+        flex-direction: column;
+    }
+    
+    .modal-body .col-lg-5,
+    .modal-body .col-lg-7 {
+        width: 100%;
+    }
+    
+    .modal-body .col-lg-7 {
+        padding: 1rem !important;
+    }
+    
+    #singleReservationForm .col-md-6,
+    #doubleReservationForm .col-md-6 {
+        width: 100%;
+    }
+    
+    #singleReservationForm .btn-lg,
+    #doubleReservationForm .btn-lg {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    #singleReservationForm .text-end,
+    #doubleReservationForm .text-end {
+        text-align: center !important;
+    }
+    
+    #singleReservationForm .btn-outline-secondary,
+    #doubleReservationForm .btn-outline-secondary {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
 }
 
 .container-fluid {

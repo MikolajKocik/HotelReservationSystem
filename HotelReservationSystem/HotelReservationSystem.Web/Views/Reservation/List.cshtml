@@ -1,6 +1,6 @@
 ﻿@using HotelReservationSystem.Core.Domain.Entities
 @using HotelReservationSystem.Core.Domain.Enums
-@model IEnumerable<HotelReservationSystem.Web.ViewModels.ReservationListViewModel>
+@model HotelReservationSystem.Web.ViewModels.Reservation.ReservationListPageViewModel
 
 @{
     ViewData["Title"] = "Lista rezerwacji";
@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model == null || !Model.Any())
+                    @if (Model.Reservations == null || !Model.Reservations.Any())
                     {
                         <tr>
                             <td colspan="6" class="text-center text-muted">Brak rezerwacji</td>
@@ -31,7 +31,7 @@
                     }
                     else
                     {
-                        @foreach (var r in Model)
+                        @foreach (var r in Model.Reservations)
                         {
                             <tr>
                                 <td>@(r.RoomNumber ?? "Brak")</td>
@@ -40,19 +40,16 @@
                                 <td>@r.GuestFullName</td>
                                 <td>@r.Status</td>
                                 <td>
-                                    @if (User.IsInRole("Recepcionist") || User.IsInRole("Manager"))
-                                    {
+                                    <conditional-group show-for-role="Recepcionist, Manager"> 
                                         <form asp-action="Confirm" asp-route-id="@r.Id" method="post" style="display:inline;">
                                             <button class="btn btn-success btn-sm">Potwierdź</button>
                                         </form>
-                                    }
-                                    @if (User.IsInRole("Recepcionist") || User.IsInRole("Manager") || User.Identity!.IsAuthenticated)
-                                    {
+                                    
                                         <form asp-action="Cancel" asp-route-id="@r.Id" method="post" style="display:inline;">
                                             <input type="hidden" name="reason" value="recepcionist" />
                                             <button class="btn btn-danger btn-sm">Anuluj</button>
                                         </form>
-                                    }
+                                    </conditional-group>
                                     @if (Enum.TryParse<ReservationStatus>(r.Status, out var parsedStatus) 
                                             && parsedStatus == ReservationStatus.Pending 
                                             && !(User.IsInRole("Recepcionist") || User.IsInRole("Manager")))
@@ -71,48 +68,52 @@
     </div>
 </div>
 
-@if (User.IsInRole("Recepcionist") || User.IsInRole("Manager"))
-{
+<conditional-group show-for-role="Recepcionist, Manager"> 
     <h3 class="mt-5 text-center pb-3">Dostępność pokoi</h3>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <table class="table table-bordered table-sm">
-        <thead class="table-light">
-            <tr>
-                <th>Numer pokoju</th>
-                <th>Typ</th>
-                <th>Cena</th>
-                <th>Dostępny</th>
-                <th>Akcja</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ var rooms = ViewBag.Rooms as List<HotelReservationSystem.Application.Dtos.Room.RoomSelectDto> ?? new List<HotelReservationSystem.Application.Dtos.Room.RoomSelectDto>(); }
-            @foreach (var room in rooms)
-            {
-                <tr>
-                    <td>@room.Number</td>
-                    <td>@room.Type</td>
-                    <td>@room.PricePerNight zł</td>
-                    <td>
-                        <span class="text-muted">—</span>
-                    </td>
-                    <td>
-                        <form asp-action="ToggleRoomAvailability" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@room.Id" />
-                            <button class="btn btn-outline-secondary btn-sm">
-                                Zmień
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    <thead class="table-light">
+                        <tr>
+                            <th>Numer pokoju</th>
+                            <th>Typ</th>
+                            <th>Cena</th>
+                            <th>Dostępny</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var room in Model.Rooms)
+                        {
+                            <tr>
+                                <td>@room.Number</td>
+                                <td>@room.Type</td>
+                                <td>@room.PricePerNight zł</td>
+                                <td>
+                                    @if (room.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Dostępny</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Niedostępny</span>
+                                    }
+                                </td>
+                                <td>
+                                    <form asp-action="ToggleRoomAvailability" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@room.Id" />
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            Zmień
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-}
-
+</conditional-group>

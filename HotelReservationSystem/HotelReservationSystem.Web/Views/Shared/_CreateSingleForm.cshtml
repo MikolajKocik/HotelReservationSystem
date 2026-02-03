@@ -5,90 +5,84 @@
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" name="RoomType" value="Single" />
     <input type="hidden" name="FormType" value="single" />
+    <input type="hidden" name="NumberOfGuests" value="1" />
 
     <div class="col-md-6">
-    <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>
-    <input asp-for="ArrivalDate" class="form-control date" type="date" required />
-    <div class="invalid-feedback">Data przyjazdu jest wymagana.</div>
-  </div>
-  <div class="col-md-6">
-    <label asp-for="DepartureDate" class="form-label font-weight-bold">Data wyjazdu</label>
-    <input asp-for="DepartureDate" class="form-control date" type="date" required />
-    <div class="invalid-feedback">Data wyjazdu jest wymagana.</div>
-  </div>
+      <label asp-for="ArrivalDate" class="form-label font-weight-bold">Data przyjazdu</label>
+      <input asp-for="ArrivalDate" class="form-control date" type="date" required />
+      <div class="invalid-feedback">Data przyjazdu jest wymagana.</div>
+    </div>
 
-  <div class="col-md-6">
-    <label asp-for="GuestFirstName" class="form-label font-weight-bold">Imię</label>
-    <input asp-for="GuestFirstName" class="form-control" placeholder="np. Jan" required maxlength="50" />
-    <div class="invalid-feedback">Imię jest wymagane i nie może być dłuższe niż 50 znaków.</div>
-  </div>
-  
-  <div class="col-md-6">
-    <label asp-for="GuestLastName" class="form-label font-weight-bold">Nazwisko</label>
-    <input asp-for="GuestLastName" class="form-control" placeholder="np. Kowalski" required maxlength="50" />
-    <div class="invalid-feedback">Nazwisko jest wymagane i nie może być dłuższe niż 50 znaków.</div>
-  </div>
-
-  <div class="col-md-6">
-    <label asp-for="GuestEmail" class="form-label font-weight-bold">Email</label>
-    <input asp-for="GuestEmail" class="form-control" type="email" placeholder="jan@example.com" required />
-    <div class="invalid-feedback">Wprowadź poprawny adres email.</div>
-  </div>
-  <div class="col-md-6">
-    <label asp-for="GuestPhoneNumber" class="form-label font-weight-bold">Telefon</label>
-    <input asp-for="GuestPhoneNumber" class="form-control" placeholder="+48 ..." required />
-    <div class="invalid-feedback">Wprowadź poprawny numer telefonu.</div>
-    <span asp-validation-for="GuestPhoneNumber" class="text-danger"></span>
-  </div>
-
-  <div class="col-12 mt-3">
-    <label asp-for="RoomId" class="form-label font-weight-bold">Wybierz dostępny numer pokoju</label>
-    <select asp-for="RoomId" id="single-room-select" class="form-select border-primary shadow-sm" required>
-        <option value="">Wybierz pokój...</option>
-    </select>
-    <div class="invalid-feedback">Wybierz numer pokoju.</div>
-  </div>
-
-  <div class="row g-3 align-items-center mt-3">
     <div class="col-md-6">
+      <label asp-for="DepartureDate" class="form-label font-weight-bold">Data wyjazdu</label>
+      <input asp-for="DepartureDate" class="form-control date" type="date" required />
+      <div class="invalid-feedback">Data wyjazdu jest wymagana.</div>
+    </div>
+
+    <div class="col-md-6">
+      <label asp-for="GuestFirstName" class="form-label font-weight-bold">Imię</label>
+      <input asp-for="GuestFirstName" class="form-control" placeholder="np. Jan" required maxlength="50" />
+      <div class="invalid-feedback">Imię jest wymagane i nie może być dłuższe niż 50 znaków.</div>
+    </div>
+    
+    <div class="col-md-6">
+      <label asp-for="GuestLastName" class="form-label font-weight-bold">Nazwisko</label>
+      <input asp-for="GuestLastName" class="form-control" placeholder="np. Kowalski" required maxlength="50" />
+      <div class="invalid-feedback">Nazwisko jest wymagane i nie może być dłuższe niż 50 znaków.</div>
+    </div>
+
+    <div class="col-md-6">
+      <label asp-for="GuestEmail" class="form-label font-weight-bold">Email</label>
+      <input asp-for="GuestEmail" class="form-control" type="email" placeholder="jan@example.com" required />
+      <div class="invalid-feedback">Wprowadź poprawny adres email.</div>
+    </div>
+    <div class="col-md-6">
+      <label asp-for="GuestPhoneNumber" class="form-label font-weight-bold">Telefon</label>
+      <input asp-for="GuestPhoneNumber" class="form-control" placeholder="+48 ..." required />
+      <div class="invalid-feedback">Wprowadź poprawny numer telefonu.</div>
+      <span asp-validation-for="GuestPhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="col-12 mt-3">
+      <label asp-for="RoomId" class="form-label font-weight-bold">Wybierz dostępny numer pokoju</label>
+      <select asp-for="RoomId" id="single-room-select" class="form-select border-primary shadow-sm" required>
+          <option value="">Wybierz pokój...</option>
+      </select>
+      <div class="invalid-feedback">Wybierz numer pokoju.</div>
+    </div>
+
+    <div class="col-md-6 mt-3">
       <label asp-for="DiscountCode" class="form-label">Masz kod rabatowy? Wprowadź go tutaj</label>
       <input asp-for="DiscountCode" class="form-control" placeholder="Kod rabatowy" />
     </div>
-    <div class="col-md-6 d-flex align-items-center">
-      <label asp-for="TotalSum" class="form-label me-3 mb-0">Suma całkowita</label>
-      <div class="fs-5 fw-bold" id="single-total-sum">@Model.TotalSum</div>
-      <input asp-for="TotalSum" type="hidden" id="single-total-input" />
+    <div class="col-md-6 mt-3 d-flex align-items-end">
+      <div class="d-flex align-items-center">
+        <label class="form-label me-3 mb-0">Suma całkowita:</label>
+        <div class="fs-5 fw-bold text-success" id="single-total-sum">0.00 zł</div>
+      </div>
     </div>
-  </div>
 
-  <div class="col-12 mt-3">
-    <label asp-for="AdditionalRequests" class="form-label font-weight-bold">Uwagi do rezerwacji</label>
-    <textarea asp-for="AdditionalRequests" class="form-control" rows="4" placeholder="Uwagi do rezerwacji..."></textarea>
-  </div>
-
-  <div class="col-12 mt-2">
-    <div class="form-check">
-      <input asp-for="AcceptPrivacy" class="form-check-input" id="single-accept-privacy" required />
-      <label asp-for="AcceptPrivacy" class="form-check-label">*  Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką prywatności w celu realizacji rezerwacji</label>
-      <div class="invalid-feedback">Musisz zaakceptować politykę prywatności, aby kontynuować.</div>
+    <div class="col-12 mt-3">
+      <label asp-for="AdditionalRequests" class="form-label font-weight-bold">Uwagi do rezerwacji</label>
+      <textarea asp-for="AdditionalRequests" class="form-control" rows="4" placeholder="Uwagi do rezerwacji..."></textarea>
     </div>
-  </div>
 
-  <div class="col-12 mt-4 text-end">
-    <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='@Url.Action("Index", "Room")'">Anuluj</button>
-    @if (User?.Identity?.IsAuthenticated ?? false)
-    {
-        <button type="submit" class="btn btn-primary btn-lg px-5">Zarezerwuj teraz</button>
-    }
-    else
-    {
-        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#loginModal">
-            Zaloguj się, aby zarezerwować
-        </button>
-    }
-  </div>
+    <div class="col-12 mt-2">
+      <div class="form-check">
+        <input asp-for="AcceptPrivacy" class="form-check-input" id="single-accept-privacy" required />
+        <label asp-for="AcceptPrivacy" class="form-check-label">*  Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką prywatności w celu realizacji rezerwacji</label>
+        <div class="invalid-feedback">Musisz zaakceptować politykę prywatności, aby kontynuować.</div>
+      </div>
+    </div>
+
+    <div class="col-12 mt-4 text-end">
+      <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='@Url.Action("Index", "Room")'">Anuluj</button>
+      <button class="btn btn-primary btn-lg px-5" 
+              auth-required="true" 
+              is-authenticated="@(User?.Identity?.IsAuthenticated ?? false)" 
+              auth-text="Zaloguj się, aby zarezerwować" 
+              submit-text="Zarezerwuj teraz" 
+              modal-target="#loginModal">
+      </button>
+    </div>
 </form>
-
-@section Scripts {
-
-}

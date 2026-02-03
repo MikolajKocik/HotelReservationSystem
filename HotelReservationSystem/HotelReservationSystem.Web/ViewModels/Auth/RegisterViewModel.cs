@@ -14,4 +14,8 @@ public record RegisterViewModel
     [Compare("Password", ErrorMessage = "Hasła się nie zgadzają.")]
     [DataType(DataType.Password)]
     public string ConfirmPassword { get; init; } = string.Empty;
+
+    [Required]
+    [Phone]
+    public string PhoneNumber { get; init; } = string.Empty;
 }

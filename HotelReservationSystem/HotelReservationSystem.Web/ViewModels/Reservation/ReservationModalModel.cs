@@ -9,4 +9,5 @@ public sealed class ReservationModalModel
 
     public ReservationViewModel Reservation { get; init; } = new();
     public List<SelectListItem> Rooms { get; init; } = new();
+    public Dictionary<int, decimal> RoomPrices { get; init; } = new();
 }

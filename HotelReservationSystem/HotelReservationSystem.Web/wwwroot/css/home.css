@@ -70,10 +70,12 @@
 }
 
 .image-container {
+    position: relative;
     background-color: #D9D9D9;
     align-self: center;
     height: 20rem;
     width: 100%;
+    overflow: hidden;
 }
 
 .image-container left {
@@ -87,18 +89,7 @@
 img {
     position: absolute;
     height: 20rem;
-    width: 100%;
-    object-fit: cover;
     padding: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    img {
-        position: static;
-        height: auto;
-        max-height: 16rem;
-        width: 100%;
-    }
 }
 
 .text-container {
@@ -182,9 +173,10 @@ h2 {
 }
 
 #down-wrapper {
-    height: 30rem;
+    min-height: 30rem;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 #down-content {
@@ -193,6 +185,7 @@ h2 {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 h3 {
@@ -210,6 +203,8 @@ h3 {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    padding: 1.25rem 1rem;
+    margin-top: -1.25rem;
 }
 
 .review-item {
@@ -297,13 +292,14 @@ h3 {
 #bottom-navigation {
     --nav-height: 48px;
     position: static;
-    display: grid;
-    grid-auto-flow: column;
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     pointer-events: auto;
-    width: fit-content;
+    width: 100%;
+    max-width: fit-content;
     margin: 1.5rem auto 2rem;
 }
 
@@ -329,6 +325,7 @@ h3 {
     align-items: center;
     justify-content: center;
     transition: transform 0.2s;
+    flex-shrink: 0;
 }
 
 .nav-btn:hover {
@@ -349,6 +346,7 @@ h3 {
     position: static;
     margin: 0;
     flex-shrink: 0;
+    width: auto;
 }
 
 .bottom-nav-dots .dot {
@@ -359,6 +357,7 @@ h3 {
     background: #fff;
     cursor: pointer;
     padding: 0;
+    flex-shrink: 0;
 }
 
 @media (max-width: 992px) {
@@ -475,4 +474,3 @@ h3 {
     background: #23405c;
     border-color: #23405c;
 }
-
