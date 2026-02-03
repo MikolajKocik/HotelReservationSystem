@@ -3,9 +3,9 @@ using HotelReservationSystem.Web.ViewModels;
 
 namespace HotelReservationSystem.Web.Utils.ModelMappings;
 
-public static class PaymentMappingHelper
+public static class PaymentMappings
 {
-    public static PaymentViewModel MapToPaymentViewModel(PaymentInfoDto dto)
+    public static PaymentViewModel ToViewModel(this PaymentInfoDto dto)
     {
         return new PaymentViewModel
         {

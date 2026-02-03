@@ -3,9 +3,9 @@ using HotelReservationSystem.Web.ViewModels;
 
 namespace HotelReservationSystem.Web.Utils.ModelMappings;
 
-public static class ReportMappingHelper
+public static class ReportMappings
 {
-    public static ReportViewModel MapToReportViewModel(ReportDto dto)
+    public static ReportViewModel ToViewModel(this ReportDto dto)
     {
         return new ReportViewModel
         {
