@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using HotelReservationSystem.Core.Domain.Entities;
 
 namespace HotelReservationSystem.Infrastructure.Data.Extensions;
 
@@ -8,7 +10,8 @@ public static class DbInitializer
     public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
     {
         RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        UserManager<IdentityUser> userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        UserManager<Guest> userManager = serviceProvider.GetRequiredService<UserManager<Guest>>();
+        IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         string[] roles = { "Recepcionist", "Manager", "Guest" };
 
@@ -18,17 +21,21 @@ public static class DbInitializer
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        IdentityUser? user = await userManager.FindByEmailAsync("recepcja@hotel.pl");
+        var recepcionistEmail = configuration["StaffSettings:Recepcionist:Email"]!;
+        var recepcionistPhone = configuration["StaffSettings:Recepcionist:PhoneNumber"]!;
+        var recepcionistFirstName = configuration["StaffSettings:Recepcionist:FirstName"]!;
+        var recepcionistLastName = configuration["StaffSettings:Recepcionist:LastName"]!;
+        var recepcionistPassword = configuration["StaffSettings:Recepcionist:Password"]!;
+
+        Guest? user = await userManager.FindByEmailAsync(recepcionistEmail);
         if (user == null)
         {
-            var newUser = new IdentityUser
+            var newUser = new Guest(recepcionistEmail, recepcionistPhone, recepcionistFirstName, recepcionistLastName)
             {
-                UserName = "recepcja@hotel.pl",
-                Email = "recepcja@hotel.pl",
                 EmailConfirmed = true
             };
 
-            IdentityResult result = await userManager.CreateAsync(newUser, "Test123!");
+            IdentityResult result = await userManager.CreateAsync(newUser, recepcionistPassword);
 
             if (result.Succeeded)
             {
@@ -36,17 +43,21 @@ public static class DbInitializer
             }
         }
 
-        IdentityUser? manager = await userManager.FindByEmailAsync("manager@hotel.pl");
+        var managerEmail = configuration["StaffSettings:Manager:Email"] ?? "manager@hotel.pl";
+        var managerPhone = configuration["StaffSettings:Manager:PhoneNumber"] ?? "987654321";
+        var managerFirstName = configuration["StaffSettings:Manager:FirstName"] ?? "Manager";
+        var managerLastName = configuration["StaffSettings:Manager:LastName"] ?? "Hotel";
+        var managerPassword = configuration["StaffSettings:Manager:Password"] ?? "Test123!";
+
+        Guest? manager = await userManager.FindByEmailAsync(managerEmail);
         if (manager == null)
         {
-            var newManager = new IdentityUser
+            var newManager = new Guest(managerEmail, managerPhone, managerFirstName, managerLastName)
             {
-                UserName = "manager@hotel.pl",
-                Email = "manager@hotel.pl",
                 EmailConfirmed = true
             };
 
-            IdentityResult result = await userManager.CreateAsync(newManager, "Test123!");
+            IdentityResult result = await userManager.CreateAsync(newManager, managerPassword);
 
             if (result.Succeeded)
             {

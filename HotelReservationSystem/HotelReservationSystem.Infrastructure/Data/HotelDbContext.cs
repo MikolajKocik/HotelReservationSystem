@@ -1,18 +1,15 @@
-﻿using HotelReservationSystem.Infrastructure.Data.Configuration;
-using HotelReservationSystem.Core.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using HotelReservationSystem.Core.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservationSystem.Infrastructure.Data;
 
-public class HotelDbContext : IdentityDbContext<IdentityUser>
+public sealed class HotelDbContext : IdentityDbContext<Guest>
 {
     public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options) { }
 
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Room> Rooms { get; set; }
-    public DbSet<Guest> Guests { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Opinion> Opinions { get; set; }
 

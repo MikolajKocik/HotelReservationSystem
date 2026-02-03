@@ -64,4 +64,10 @@ public sealed partial class Reservation
     {
         return (DepartureDate - ArrivalDate).Days;
     }
+
+    public void SetPayment(Payment payment)
+    {
+        Payment = payment;
+        PaymentId = payment.Id;
+    }
 }

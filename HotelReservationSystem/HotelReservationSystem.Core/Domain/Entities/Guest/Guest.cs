@@ -1,33 +1,36 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace HotelReservationSystem.Core.Domain.Entities;
 
-public sealed partial class Guest
+public sealed partial class Guest : IdentityUser
 {
-    private Guest() 
+    public Guest() : base()
     {
-        this.Id = string.Empty;
-        _reservations = new List<Reservation>();
+        this.CreatedAt = DateTime.UtcNow;
     }
 
-    public Guest(string firstName, string lastName, string email, string phoneNumber)
+    public Guest(string email, string phoneNumber, string? firstName = null, string? lastName = null) : this()
     {
-        ValidateInput(firstName, lastName, email, phoneNumber);
+        ValidateInput(email, phoneNumber);
         
         this.Id = $"guest_{Guid.NewGuid()}";
-        this.FirstName = firstName;
-        this.LastName = lastName;
-        this.Email = email;
-        this.PhoneNumber = phoneNumber;
-        this.CreatedAt = DateTime.UtcNow;
-        _reservations = new List<Reservation>();
-    }
 
-    public string Id { get; private set; } = default!;
-    public string FirstName { get; private set; } = default!;
-    public string LastName { get; private set; } = default!;
-    public string Email { get; private set; } = default!;
-    public string PhoneNumber { get; private set; } = default!;
+        if (!string.IsNullOrWhiteSpace(firstName))
+            this.FirstName = firstName;
+        if (!string.IsNullOrWhiteSpace(lastName))
+            this.LastName = lastName;   
+            
+        this.Email = email;
+        this.UserName = email;
+        this.PhoneNumber = phoneNumber;
+
+    } 
+
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;    
     public DateTime CreatedAt { get; private set; }
 
+
     private readonly List<Reservation> _reservations = new List<Reservation>();
-    public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
+    public IReadOnlyCollection<Reservation> Reservations => this._reservations.AsReadOnly();
 }

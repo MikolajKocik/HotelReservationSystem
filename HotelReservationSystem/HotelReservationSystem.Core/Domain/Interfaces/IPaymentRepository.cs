@@ -10,15 +10,15 @@ public interface IPaymentRepository
     /// <summary>
     /// Gets a payment by its Stripe payment intent ID
     /// </summary>
-    Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId);
+    Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a new payment
     /// </summary>
-    Task<int> CreateAsync(Payment payment);
+    Task<int> CreateAsync(Payment payment, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing payment
     /// </summary>
-    Task UpdateAsync(Payment payment);
+    Task UpdateAsync(Payment payment, CancellationToken cancellationToken = default);
 }

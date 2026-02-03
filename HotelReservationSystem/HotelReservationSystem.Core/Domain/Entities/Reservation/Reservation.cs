@@ -3,10 +3,13 @@ namespace HotelReservationSystem.Core.Domain.Entities;
 
 public sealed partial class Reservation
 {
+    /// <summary>
+    /// Constructor for Dapper materialization
+    /// </summary>
     private Reservation() 
     {
-        this.Id = string.Empty;
-        this.GuestId = string.Empty;
+        Id = string.Empty;
+        GuestId = string.Empty;
     }
     
     public Reservation(
@@ -22,7 +25,8 @@ public sealed partial class Reservation
         int? paymentId = null
     )
     {
-        
+        ValidateInput(arrivalDate, departureDate, numberOfGuests, totalPrice, additionalRequests);
+
         this.Id = $"res_{Guid.NewGuid()}";
         this.ArrivalDate = arrivalDate;
         this.DepartureDate = departureDate;
@@ -57,4 +61,9 @@ public sealed partial class Reservation
 
     public int? PaymentId { get; private set; } 
     public Payment? Payment { get; set; }
+
+    internal void SetPaymentId(int paymentId)
+    {
+        PaymentId = paymentId;
+    }
 }
