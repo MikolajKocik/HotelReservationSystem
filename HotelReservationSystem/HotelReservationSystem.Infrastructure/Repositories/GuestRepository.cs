@@ -25,6 +25,9 @@ public sealed class GuestRepository : IGuestRepository
         => await this.context.Users
             .AsNoTracking()
             .Include(g => g.Reservations)
+                .ThenInclude(r => r.Room)
+            .Include(g => g.Reservations)
+                .ThenInclude(r => r.Payment)
             .ToListAsync(cancellationToken);
 
     /// <summary>

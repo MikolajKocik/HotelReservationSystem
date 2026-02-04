@@ -13,7 +13,8 @@ public static class GuestMappings
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
-            PhoneNumber = dto.PhoneNumber
+            PhoneNumber = dto.PhoneNumber,
+            Reservations = dto.Reservations
         };
     }
 }

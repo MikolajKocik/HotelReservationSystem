@@ -8,6 +8,11 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
 public interface IPaymentRepository
 {
     /// <summary>
+    /// Gets all payments with related data
+    /// </summary>
+    Task<List<Payment>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Gets a payment by its Stripe payment intent ID
     /// </summary>
     Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId, CancellationToken cancellationToken = default);

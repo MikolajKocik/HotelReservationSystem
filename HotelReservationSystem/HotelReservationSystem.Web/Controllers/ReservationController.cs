@@ -150,7 +150,12 @@ public sealed class ReservationController : Controller
     {
         var command = new CancelReservationCommand(id, reason);
         await this.mediator.SendAsync(command);
-        return RedirectToAction(nameof(List));
+        
+        if (User.IsInRole("Recepcionist") || User.IsInRole("Manager"))
+        {
+            return RedirectToAction(nameof(List));
+        }
+        return RedirectToAction(nameof(MyReservations));
     }
 
     [HttpPost]

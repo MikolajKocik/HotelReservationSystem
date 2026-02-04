@@ -18,6 +18,19 @@ public sealed class PaymentRepository : IPaymentRepository
     }
 
     /// <summary>
+    /// Gets all payments with related data
+    /// </summary>
+    public async Task<List<Payment>> GetAllAsync(CancellationToken cancellationToken = default)
+        => await this.context.Payments
+            .AsNoTracking()
+            .Include(p => p.Reservation)
+                .ThenInclude(r => r!.Guest)
+            .Include(p => p.Reservation)
+                .ThenInclude(r => r!.Room)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+    /// <summary>
     /// Gets a payment by its Stripe payment intent ID
     /// </summary>
     public async Task<Payment?> GetByStripePaymentIntentIdAsync(string stripePaymentIntentId, CancellationToken cancellationToken = default)

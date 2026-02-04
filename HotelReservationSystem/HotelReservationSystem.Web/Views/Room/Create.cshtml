@@ -5,10 +5,11 @@
     ViewData["Title"] = "Dodaj pokój";
 }
 
-<h1>Dodaj nowy pokój</h1>
+<div class="container">
+    <h1 class="text-center mb-4 py-4">Dodaj nowy pokój</h1>
 
-<div class="row">
-    <div class="col-md-6">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -42,5 +43,6 @@
                 <a asp-action="Index" class="btn btn-secondary">Powrót</a>
             </div>
         </form>
+        </div>
     </div>
 </div>

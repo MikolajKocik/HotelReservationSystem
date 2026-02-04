@@ -9,4 +9,5 @@ public record GuestDto
     public string LastName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string PhoneNumber { get; init; } = string.Empty;
+    public ReservationDto[] Reservations { get; init; } = Array.Empty<ReservationDto>();
 }

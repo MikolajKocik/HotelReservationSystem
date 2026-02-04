@@ -7,16 +7,16 @@ namespace HotelReservationSystem.Infrastructure.CQRS.Payments.QueryHandlers;
 
 public sealed class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, IEnumerable<Payment>>
 {
-    private readonly IGuestRepository guestRepository;
+    private readonly IPaymentRepository paymentRepository;
 
-    public GetTransactionsQueryHandler(IGuestRepository guestRepository)
+    public GetTransactionsQueryHandler(IPaymentRepository paymentRepository)
     {
-        this.guestRepository = guestRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public async Task<IEnumerable<Payment>> HandleAsync(GetTransactionsQuery query, CancellationToken cancellationToken = default)
     {
-        List<Payment> list = await this.guestRepository.GetTransactions(cancellationToken);
+        List<Payment> list = await this.paymentRepository.GetAllAsync(cancellationToken);
         return list ?? Enumerable.Empty<Payment>();
     }
 }
