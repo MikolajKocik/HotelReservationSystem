@@ -49,7 +49,7 @@ public sealed class ReservationRepository : IReservationRepository
 
 
     /// <summary>
-    /// Gets reservations within a specific date range
+    /// Gets reservations within a specific date range 
     /// </summary>
     public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
         => await this.context.Reservations
@@ -57,7 +57,7 @@ public sealed class ReservationRepository : IReservationRepository
             .Include(r => r.Room)
             .Include(r => r.Guest)
             .Include(r => r.Payment)
-            .Where(r => r.ArrivalDate >= from && r.DepartureDate <= to)
+            .Where(r => r.ArrivalDate <= to && r.DepartureDate >= from)
             .ToListAsync(cancellationToken);
 
 

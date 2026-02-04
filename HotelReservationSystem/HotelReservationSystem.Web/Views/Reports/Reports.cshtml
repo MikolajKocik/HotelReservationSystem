@@ -36,9 +36,9 @@
             <div class="col-md-6">
                 <div class="bg-light border rounded p-3 shadow-sm">
                     <h5 class="text-info">Suma płatności</h5>
-                    <div class="display-6" id="single-total-sum">
-                        @String.Format(new System.Globalization.CultureInfo("pl-PL"), "{0:C2}", Model.TotalPayments);
-                    </div>
+                    <p class="display-6" id="report-total-payments">
+                        @String.Format(new System.Globalization.CultureInfo("pl-PL"), "{0:C2}", Model.TotalPayments)
+                    </p>
                 </div>
             </div>
             <div class="col-md-6">

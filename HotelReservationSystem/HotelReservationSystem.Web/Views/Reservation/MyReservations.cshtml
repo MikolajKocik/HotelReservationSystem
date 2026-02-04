@@ -12,6 +12,7 @@
             <table class="table table-striped table-bordered mt-3">
     <thead class="table-dark">
         <tr>
+            <th>ID</th>
             <th>Pokój</th>
             <th>Data przyjazdu</th>
             <th>Data wyjazdu</th>
@@ -23,7 +24,7 @@
         @if (Model == null || !Model.Any())
         {
             <tr>
-                <td colspan="5" class="text-center text-muted">Brak rezerwacji</td>
+                <td colspan="6" class="text-center text-muted">Brak rezerwacji</td>
             </tr>
         }
         else
@@ -31,6 +32,7 @@
             @foreach (var r in Model)
             {
                 <tr>
+                    <td><code>@r.Id</code></td>
                     <td>@(r.RoomNumber ?? "Brak")</td>
                     <td>@r.ArrivalDate.ToShortDateString()</td>
                     <td>@r.DepartureDate.ToShortDateString()</td>

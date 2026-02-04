@@ -13,7 +13,6 @@ public sealed partial class Payment
     {
         ValidateInput(method, amount, stripePaymentIntentId);
         
-        this.Id = Random.Shared.Next(1, int.MaxValue);
         this.Method = method;
         this.Amount = amount;
         this.StripePaymentIntentId = stripePaymentIntentId;

@@ -21,7 +21,7 @@ public sealed class ReportsController : Controller
     [HttpGet]
     public async Task<IActionResult> Reports()
     {
-        var query = new GenerateReportQuery(DateTime.Today.AddDays(-30), DateTime.Today);
+        var query = new GenerateReportQuery(DateTime.Today.AddYears(-1), DateTime.Today.AddYears(1));
         ReportDto reportData = await mediator.SendAsync(query);
 
         var model = reportData.ToViewModel();

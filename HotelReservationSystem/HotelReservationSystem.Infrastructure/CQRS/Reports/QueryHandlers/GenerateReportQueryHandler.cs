@@ -3,7 +3,6 @@ using HotelReservationSystem.Application.CQRS.Reports.Queries;
 using HotelReservationSystem.Application.Dtos.Report;
 using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Core.Domain.Enums;
 
 namespace HotelReservationSystem.Infrastructure.CQRS.Reports.QueryHandlers;
@@ -15,13 +14,16 @@ public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQue
 {
     private readonly IReservationRepository reservationRepository;
     private readonly IRoomRepository roomRepository;
+    private readonly IPaymentRepository paymentRepository;
 
     public GenerateReportQueryHandler(
         IReservationRepository reservationRepository,
-        IRoomRepository roomRepository)
+        IRoomRepository roomRepository,
+        IPaymentRepository paymentRepository)
     {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     /// <summary>
@@ -34,7 +36,12 @@ public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQue
         int totalReservations = reservations.Count();
         int confirmedReservations = reservations.Count(r => r.Status == ReservationStatus.Confirmed);
         int canceledReservations = reservations.Count(r => r.Status == ReservationStatus.Cancelled);
-        decimal totalPayments = reservations.Where(r => r.Status == ReservationStatus.Confirmed).Sum(r => r.TotalPrice);
+        
+        List<Payment> allPayments = await this.paymentRepository.GetAllAsync(cancellationToken);
+        // Sumuj płatności - zarówno Paid jak i inne zakończone sukcesem
+        decimal totalPayments = allPayments
+            .Where(p => p.Status == PaymentStatus.Paid || p.Status == PaymentStatus.Pending)
+            .Sum(p => p.Amount);
 
         IEnumerable<Room> availableRooms = await this.roomRepository.GetAvailableRoomsAsync(query.FromDate, query.ToDate, cancellationToken);
         int availableRoomsCount = availableRooms.Count();
