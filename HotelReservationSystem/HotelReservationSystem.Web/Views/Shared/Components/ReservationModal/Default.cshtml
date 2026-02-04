@@ -10,9 +10,9 @@
 
 @if (string.Equals(Model.Reservation.FormType, "double", StringComparison.OrdinalIgnoreCase))
 {
-    @await Html.PartialAsync("_CreateDoubleModal", Model.Reservation, viewDataForPartial)
+    @await Html.PartialAsync("Reservation/_CreateDoubleModal", Model.Reservation, viewDataForPartial)
 }
 else
 {
-    @await Html.PartialAsync("_CreateSingleModal", Model.Reservation, viewDataForPartial)
+    @await Html.PartialAsync("Reservation/_CreateSingleModal", Model.Reservation, viewDataForPartial)
 }

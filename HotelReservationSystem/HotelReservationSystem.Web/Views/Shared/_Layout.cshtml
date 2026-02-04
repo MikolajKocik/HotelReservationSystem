@@ -256,8 +256,8 @@
             </div>
         </div>
     </footer>
-    @await Html.PartialAsync("_LoginModal")
-    @await Html.PartialAsync("_RegisterModal")
+    @await Html.PartialAsync("Auth/_LoginModal")
+    @await Html.PartialAsync("Auth/_RegisterModal")
     @await Component.InvokeAsync("ReservationModal", new { roomType = "Single" })
     @await Component.InvokeAsync("ReservationModal", new { roomType = "Double" })
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

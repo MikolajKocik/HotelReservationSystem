@@ -5,7 +5,7 @@
 Główne moduły:
 
 - `HotelReservationSystem.Core` — model domenowy i interfejsy
-- `HotelReservationSystem.Application` — logika aplikacyjna, komendy/handlery, serwisy (Stripe, export)
+- `HotelReservationSystem.Application` — logika aplikacyjna, komendy/handlery, serwis Stripe
 - `HotelReservationSystem.Infrastructure` — repozytoria, migracje EF, integracje z zewnętrznymi serwisami
 - `HotelReservationSystem.Web` — interfejs użytkownika (MVC/Razor), API i webhooki
 - `HotelReservationSystem.Workers` — zadania tła (kolejki, przetwarzanie asynchroniczne)
@@ -15,7 +15,6 @@ Główne moduły:
 - Obsługa rezerwacji: formularze, kody rabatowe, uwagi, zgoda na przetwarzanie danych
 - Zarządzanie gośćmi i pokojami
 - Integracja z Stripe (sesje/PaymentIntent, webhooki)
-- Generowanie raportów: CSV, Excel (EPPlus), PDF (QuestPDF) i wysyłka do Power Automate / SharePoint
 - Mechanizm CQRS + background processing dla operacji długotrwałych
 
 ## Wymagania
@@ -32,9 +31,6 @@ Najważniejsze klucze:
 
 - `ConnectionStrings:Default`
 - `Stripe:SecretKey`, `Stripe:PublishableKey`, `Stripe:WebhookSecret`
-- `Export:EnableSharePoint`, `Export:PowerAutomate:WebhookUrl`
-
-Użyj `.env.example` jako wzorca do lokalnego przygotowania środowiska.
 
 ## Szybkie uruchomienie 
 

@@ -12,7 +12,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="loginModalBody">
-        @await Html.PartialAsync("_LoginForm", model, new ViewDataDictionary(ViewData) { ["IsModalLogin"] = true })
+        @await Html.PartialAsync("Auth/_LoginForm", model, new ViewDataDictionary(ViewData) { ["IsModalLogin"] = true })
       </div>
     </div>
   </div>

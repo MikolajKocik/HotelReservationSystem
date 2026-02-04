@@ -59,6 +59,22 @@ public sealed class RoomController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> DetailsPartial(int id)
+    {
+        var query = new GetRoomByIdQuery(id);
+        RoomDto? room = await mediator.SendAsync(query);
+
+        if (room == null)
+        {
+            return NotFound();
+        }
+
+        RoomViewModel viewModel = room.ToViewModel();
+        return PartialView("Room/_RoomDetailsModal", viewModel);
+    }
+
+    [HttpGet]
     [Authorize(Policy = "RequireManager")]
     public IActionResult Create()
     {
