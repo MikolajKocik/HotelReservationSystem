@@ -1,23 +1,25 @@
-﻿<section>
-    <div id="up-wrapper">
-        <h1>Witamy w Hotelu Aurora!</h1>
-        <div id="main-text">
-            <p> 
+﻿<section class="bg-light">
+    <div id="up-wrapper" class="container d-flex flex-column align-items-center text-center py-5">
+        <h1 class="display-4 fw-bold">Witamy w Hotelu Aurora!</h1>
+        <div id="main-text" class="col-12 col-md-8 col-lg-6 mb-4">
+            <p class="lead"> 
                 Miejscu, gdzie komfort spotyka się z elegancją. 
                 Oferujemy wyjątkową atmosferę, nowoczesne wnętrza oraz usługi, które sprawią, że każdy pobyt stanie się niezapomnianym doświadczeniem.
                 Zapraszamy do świata relaksu i gościnności na najwyższym poziomie.
             </p>
         </div>
         <p>Zobacz, jak wygląda wypoczynek w Hotelu Aurora</p>
-        <a asp-controller="Home" asp-action="Gallery" id="gallery-button" class="btn">
+        <a asp-controller="Home" asp-action="Gallery" 
+            id="gallery-button" 
+            class="btn btn-lg rounded-pill px-4 shadow-sm">
             Galeria
         </a>
     </div>
 </section>
 
-<section>
-    <div id="main-wrapper">
-        <div id="right-container" class="main-container">
+<section class="bg-grey">
+    <div id="main-wrapper" class="d-flex flex-column">
+        <div id="right-container" class="main-container d-flex flex-row">
             <div class="text-container">
                 <h3 id="stars">- <span id="hotel-stars">★ ★ ★ ★ ★</span> -</h3>
                 <p class="description">
@@ -32,7 +34,7 @@
             </div>
         </div>
 
-        <div id="left-container" class="main-container">
+        <div id="left-container" class="main-container d-flex flex-row">
             <div class="image-container">
                 <img src="~/images/services/restaurant.jpg"/>
             </div>
