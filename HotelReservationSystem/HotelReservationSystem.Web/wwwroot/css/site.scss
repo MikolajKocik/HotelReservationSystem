@@ -1,0 +1,99 @@
+$header-border-color: rgb(27, 29, 98);
+$nav-bg: rgba(64, 64, 64, 0.6);
+$nav-li-bg: rgba(111, 136, 138, 0.7);
+$nav-link-color: rgb(228, 196, 109);
+$nav-hover-color: rgb(117, 156, 160);
+$nav-logo-color: rgb(195, 168, 39);
+$logout-btn-bg: #7d4346;
+$search-container-bg: rgba(217, 217, 217, 0.4);
+$search-border-color: rgb(196, 189, 10, 0.7);
+$form-element-bg: rgb(255, 255, 255, 0.5);
+$form-label-color: rgb(124, 31, 31);
+$footer-bg: #122642;
+$footer-hover-color: rgb(48, 169, 202);
+
+.main-header {
+    background: url("../images/general/home-img.png") center/cover no-repeat;
+    min-height: 22rem;
+    border-bottom-color: $header-border-color !important;
+}
+
+.nav-custom {
+    background-color: $nav-bg;
+    
+    .nav-logo-text {
+        color: $nav-logo-color;
+        font-size: 2.2rem;
+    }
+
+    .custom-nav-li {
+        background-color: $nav-li-bg;
+        border-radius: 0.4rem;
+        transition: 0.3s;
+        
+        &:hover {
+            background-color: $nav-hover-color;
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            color: $nav-link-color !important;
+            font-weight: 600;
+        }
+    }
+}
+
+.btn-logout {
+    background: $logout-btn-bg;
+    color: white;
+    &:hover { background: $nav-hover-color; }
+}
+
+.search-container {
+    background-color: $search-container-bg;
+    border-top: solid 0.2rem $search-border-color !important;
+    
+    .search-date-card {
+        background-color: $form-element-bg;
+        min-width: 9.5rem;
+        
+        .form-label-element { color: $form-label-color; font-weight: 700; }
+    }
+}
+
+.custom-input {
+    border: solid 0.125rem rgb(125, 67, 70);
+    border-radius: 1rem;
+}
+
+.btn-search-custom {
+    background-color: rgb(189, 165, 165);
+    border: solid 0.125rem rgb(125, 67, 70);
+    border-radius: 1rem;
+}
+
+.footer-custom {
+    background-color: $footer-bg;
+    
+    .footer-svg-icon svg {
+        width: 1.5rem;
+        height: auto;
+        fill: white;
+    }
+
+    .footer-social-link {
+        color: white;
+        transition: 0.3s;
+        svg { width: 2rem; }
+        &:hover {
+            color: $footer-hover-color;
+            transform: scale(1.3);
+        }
+    }
+}
+
+.hover-underline:hover { text-decoration: underline !important; }
+
+.auth-links a, .user-name {
+    color: $nav-link-color !important;
+}
