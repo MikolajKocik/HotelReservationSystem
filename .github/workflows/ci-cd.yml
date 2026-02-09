@@ -43,6 +43,21 @@ jobs:
 
     test: 
         runs-on: ubuntu-latest
+        
+        services:
+          sqlserver:
+            image: mcr.microsoft.com/mssql/server:2022-latest
+            env:
+              ACCEPT_EULA: Y
+              SA_PASSWORD: YourStrong@Passw0rd123
+            ports:
+              - 1433:1433
+            options: >-
+              --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd123 -Q 'SELECT 1'"
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+        
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
@@ -55,6 +70,8 @@ jobs:
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Run tests
+              env:
+                ConnectionStrings__Default: "Server=localhost,1433;Database=HotelReservationDB;User Id=sa;Password=YourStrong@Passw0rd123;TrustServerCertificate=true;"
               run: dotnet test HotelReservationSystem/HotelReservationSystem.sln --no-restore --verbosity normal
 
     build:

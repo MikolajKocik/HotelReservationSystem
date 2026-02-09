@@ -10,7 +10,7 @@ public sealed class DatabaseConnectionTests
     public DatabaseConnectionTests()
     {
         var builder = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
 
         this.configuration = builder.Build();
