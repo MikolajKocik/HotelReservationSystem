@@ -101,7 +101,7 @@ jobs:
             - name: Publish artifacts
               run: dotnet publish HotelReservationSystem/HotelReservationSystem.Web/HotelReservationSystem.Web.csproj --configuration Release --output ./publish
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: published-app
                 path: ./publish
@@ -111,7 +111,7 @@ jobs:
         needs: [build]
         steps:
             - name: Download artifact
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
                 name: published-app
                 path: ./publish
