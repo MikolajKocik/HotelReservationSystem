@@ -17,7 +17,9 @@ jobs:
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Run code analysis
@@ -31,7 +33,9 @@ jobs:
           - name: Set up .NET
             uses: actions/setup-dotnet@v3
             with:
-              dotnet-version: 8.0.x
+              dotnet-version: |
+                7.0.x
+                8.0.x
           - name: Install dependencies
             run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
           - name: Run security analysis
@@ -45,7 +49,9 @@ jobs:
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Run tests
@@ -60,7 +66,9 @@ jobs:
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Build solution
