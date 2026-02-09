@@ -1,12 +1,12 @@
+$danger-red: #c82333;
+
 .canceled-icon {
-    color: #c82333; /* bootstrap danger red */
+    color: $danger-red;
     width: 2.25rem;
     height: 2.25rem;
     flex-shrink: 0;
-}
 
-@media (max-width: 992px) {
-    .canceled-icon {
+    @media (max-width: 992px) {
         width: 2rem;
         height: 2rem;
     }

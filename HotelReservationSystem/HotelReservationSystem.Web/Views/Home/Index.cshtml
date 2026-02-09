@@ -1,49 +1,55 @@
-﻿<section>
-    <div id="up-wrapper">
-        <h1>Witamy w Hotelu Aurora!</h1>
-        <div id="main-text">
-            <p> 
+﻿<section class="bg-light">
+    <div id="up-wrapper" class="container d-flex flex-column align-items-center text-center py-5">
+        <h1 class="display-4 fw-bold">Witamy w Hotelu Aurora!</h1>
+        <div id="main-text" class="col-12 col-md-8 col-lg-6 mb-4">
+            <p class="lead"> 
                 Miejscu, gdzie komfort spotyka się z elegancją. 
                 Oferujemy wyjątkową atmosferę, nowoczesne wnętrza oraz usługi, które sprawią, że każdy pobyt stanie się niezapomnianym doświadczeniem.
                 Zapraszamy do świata relaksu i gościnności na najwyższym poziomie.
             </p>
         </div>
         <p>Zobacz, jak wygląda wypoczynek w Hotelu Aurora</p>
-        <a asp-controller="Home" asp-action="Gallery" id="gallery-button" class="btn">
+        <a asp-controller="Home" asp-action="Gallery" 
+            id="gallery-button" 
+            class="btn btn-lg rounded-pill px-4 shadow-sm text-white">
             Galeria
         </a>
     </div>
 </section>
 
-<section>
-    <div id="main-wrapper">
-        <div id="right-container" class="main-container">
-            <div class="text-container">
-                <h3 id="stars">- <span id="hotel-stars">★ ★ ★ ★ ★</span> -</h3>
-                <p class="description">
+<section class="py-5" style="background-color: #EBEBEB;">
+    <div id="main-wrapper" class="container-fluid p-0">
+        <div class="row g-0 rounded-3 overflow-hidden shadow-sm mb-5 ms-auto" style="background-color: #122642; width: 60%;">
+            <div class="col-12 col-md-6 p-4 p-lg-5 order-2 order-md-1 text-white">
+                <h3 id="stars" class="mb-3 text-center pb-3">- ★ ★ ★ ★ ★ -</h3>
+                <p class="description lead">
                     Szukasz idealnego balansu między ceną a luksusem? Nasze pokoje łączą nowoczesny design z funkcjonalnością. Odpocznij w samym sercu miasta.
                 </p>
-                <button id="availability-rooms">
+                <button id="availability-rooms" type="button" class="btn rounded-pill px-4 mt-3 shadow-sm">
                     Dostępne pokoje
                 </button>
             </div>
-            <div class="image-container">
-                <img src="~/images/services/spa.jpg" />
+            <div class="col-12 col-md-6 p-0 order-1 order-md-2">
+                <div class="ratio ratio-16x9 h-100">
+                    <img src="~/images/services/spa.jpg" class="img-fluid object-fit-cover" />
+                </div>
             </div>
         </div>
 
-        <div id="left-container" class="main-container">
-            <div class="image-container">
-                <img src="~/images/services/restaurant.jpg"/>
+        <div class="row g-0 rounded-3 overflow-hidden shadow-sm mt-4 me-auto" style="background-color: #122642; width: 60%;">
+            <div class="col-12 col-md-6 p-0">
+                <div class="ratio ratio-16x9 h-100">
+                    <img src="~/images/services/restaurant.jpg" class="img-fluid object-fit-cover" />
+                </div>
             </div>
-            <div class="text-container">
-                <div class="text-title-section">
-                    <h3 id="restaurant"> Restauracja</h3>
-                    <svg width="100%" height="100%" viewBox="0 0 143 119" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <div class="col-12 col-md-6 p-lg-5 text-white">
+                <div class="d-flex justify-content-start align-items-center mb-3">
+                    <h3 id="restaurant" class="fw-bold m-0">Restauracja</h3>
+                    <svg class="ms-3" width="50" height="50" viewBox="0 0 143 119" fill="currentColor">
                         <path d="M113.208 63.8137V106.604C113.208 110.715 109.21 114.042 104.271 114.042C99.3314 114.042 95.3333 110.715 95.3333 106.604V63.8137C79.371 61.5627 71.5 52.836 71.5 37.1875C71.5 24.4842 73.3233 12.014 73.4007 11.4885C74.0085 7.40774 78.4236 4.51703 83.3631 5.01287C88.2608 5.51366 91.7464 9.22745 91.1446 13.3032C91.1268 13.4222 89.381 25.4214 89.381 37.1875C89.381 44.0201 90.7454 47.238 95.3393 48.6313V12.3958C95.3393 8.28537 99.3373 4.95833 104.277 4.95833C109.216 4.95833 113.214 8.28537 113.214 12.3958V48.6313C117.808 47.238 119.173 44.0151 119.173 37.1875C119.173 25.3619 117.635 13.3131 117.623 13.1892C117.099 9.10845 120.644 5.43928 125.554 5.00295C130.404 4.54183 134.861 7.51683 135.391 11.6025C135.463 12.1231 137.048 24.5388 137.048 37.1925C137.048 52.841 129.177 61.5676 113.214 63.8187L113.208 63.8137ZM41.7083 59.5C41.7083 78.0342 49.2278 84.2917 71.5 84.2917C76.0879 84.2917 80.0204 84.009 83.4167 83.424V71.3554C67.925 66.2037 59.5833 54.5317 59.5833 37.1875C59.5833 36.647 59.5893 36.1115 59.5953 35.5711C46.481 37.8172 41.7083 44.7737 41.7083 59.5ZM83.4167 93.4398C79.7881 93.9356 75.8436 94.2083 71.5 94.2083C42.6557 94.2083 29.7917 83.5033 29.7917 59.5C29.7917 38.9725 39.2356 28.198 60.0004 25.5007C60.5665 17.0765 61.5138 10.6406 61.5734 10.2637C61.8475 8.42916 62.5446 6.73837 63.4384 5.14674C23.2613 7.02595 5.95834 23.5917 5.95834 59.5C5.95834 97.7287 25.5613 114.042 71.5 114.042C76.3501 114.042 80.8486 113.819 85.1208 113.447C84.0304 111.344 83.4167 109.034 83.4167 106.604V93.4398Z" />
                     </svg>
                 </div>
-                <p class="description">
+                <p class="description lead">
                     Nasza restauracja to serce hotelu, gdzie luksus spotyka się z pasją do gotowania.
                 </p>
             </div>
@@ -51,93 +57,50 @@
     </div>
 </section>
 
-<section id="down-wrapper">
-    <h3>Opinie naszych klientów</h3>
-    <hr />
-    <div id="down-content">
-        <div id="reviews-container">
-            <div class="review-item">
-                <div class="rating-review-section">
-                    <div class="rating-review">
-                        <span class="rating-stars">☆ ☆ ☆ ☆ ☆</span>
-                        <p></p>
+<section id="down-wrapper" class="py-5">
+    <div class="container text-center">
+        <h3 class="mb-4">Opinie naszych klientów</h3>
+        <hr class="mx-auto w-25 border-top border-3 mb-5" style="border-color: #23405c !important;" />
+        
+        <div id="reviews-container" class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="review-item card h-100 border-0 shadow-sm rounded-3">
+                    <div class="rating-review-section card-header d-flex align-items-center justify-content-between border-0">
+                        <div class="rating-review">
+                            <span class="rating-stars text-warning">☆ ☆ ☆ ☆ ☆</span>
+                        </div>
+                        <div class="rating-review-icon rounded-circle bg-white d-flex align-items-center justify-content-center shadow-sm">
+                            <svg width="24" height="24" viewBox="0 0 640 640">
+                                <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="rating-review-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100%" height="100%">
-                            <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="review-text-section">
-                    <div class="review-text">
-                        <p></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-item">
-                <div class="rating-review-section">
-                    <div class="rating-review">
-                        <span class="rating-stars">☆ ☆ ☆ ☆ ☆</span>
-                        <p></p>
-                    </div>
-                    <div class="rating-review-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100%" height="100%">
-                            <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="review-text-section">
-                    <div class="review-text">
-                        <p></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-item">
-                <div class="rating-review-section">
-                    <div class="rating-review">
-                        <span class="rating-stars">☆ ☆ ☆ ☆ ☆</span>
-                        <p></p>
-                    </div>
-                    <div class="rating-review-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100%" height="100%">
-                            <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="review-text-section">
-                    <div class="review-text">
-                        <p></p>
+                    <div class="card-body bg-light text-start p-4">
+                        <p class="review-text m-0 text-dark">Brak opinii</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="scroll-up-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100%" height="100%">
+    <div id="scroll-up-button" class="btn btn-white shadow-lg rounded-circle border-2 border-dark position-fixed d-flex align-items-center justify-content-center">
+        <svg width="24" height="24" viewBox="0 0 640 640">
             <path d="M342.6 105.4C330.1 92.9 309.8 92.9 297.3 105.4L137.3 265.4C124.8 277.9 124.8 298.2 137.3 310.7C149.8 323.2 170.1 323.2 182.6 310.7L320 173.3L457.4 310.6C469.9 323.1 490.2 323.1 502.7 310.6C515.2 298.1 515.2 277.8 502.7 265.3L342.7 105.3zM502.6 457.4L342.6 297.4C330.1 284.9 309.8 284.9 297.3 297.4L137.3 457.4C124.8 469.9 124.8 490.2 137.3 502.7C149.8 515.2 170.1 515.2 182.6 502.7L320 365.3L457.4 502.6C469.9 515.1 490.2 515.1 502.7 502.6C515.2 490.1 515.2 469.8 502.7 457.3z"/>
         </svg>
     </div>
 
-    <nav id="bottom-navigation" aria-label="Opinions navigation">
-        <div class="bottom-nav-side">
-            <button id="bottom-nav-left" class="nav-btn" aria-label="Previous reviews">‹</button>
-        </div>
-
-        <div id="bottom-nav-dots" class="bottom-nav-dots" aria-hidden="false">
-            <!-- dots generated dynamically by Scripts/home.ts -->
-        </div>
-
-        <div class="bottom-nav-side">
-            <button id="bottom-nav-right" class="nav-btn" aria-label="Next reviews">›</button>
+    <nav id="bottom-navigation" class="container mt-5" aria-label="Opinions navigation">
+        <div class="hstack gap-3 justify-content-center">
+            <button id="bottom-nav-left" type="button" class="btn border-0 fs-2" aria-label="Previous reviews">‹</button>
+            <div id="bottom-nav-dots" class="bottom-nav-dots hstack gap-2 bg-white px-3 py-2 rounded-pill shadow-sm">
+                </div>
+            <button id="bottom-nav-right" type="button" class="btn border-0 fs-2" aria-label="Next reviews">›</button>
         </div>
     </nav>
 </section>
 
 @section Scripts{
-    <link rel="stylesheet" href="~/css/home.css" />
+    <link rel="stylesheet" href="~/scss/home.css" />
     <script src="~/js/Home/gallery.js"></script>
     <script src="~/js/Home/availRoomsBtn.js"></script>
     <script src="~/js/Home/scrollBtn.js"></script>

@@ -17,7 +17,9 @@ jobs:
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Run code analysis
@@ -31,7 +33,9 @@ jobs:
           - name: Set up .NET
             uses: actions/setup-dotnet@v3
             with:
-              dotnet-version: 8.0.x
+              dotnet-version: |
+                7.0.x
+                8.0.x
           - name: Install dependencies
             run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
           - name: Run security analysis
@@ -39,16 +43,43 @@ jobs:
 
     test: 
         runs-on: ubuntu-latest
+        
+        services:
+          sqlserver:
+            image: mcr.microsoft.com/mssql/server:2022-latest
+            env:
+              ACCEPT_EULA: Y
+              SA_PASSWORD: YourStrong@Passw0rd123
+            ports:
+              - 1433:1433
+            options: >-
+              --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd123 -C -Q 'SELECT 1'"
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 10
+              --health-start-period 30s
+        
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
+            - name: Create database
+              run: |
+                sleep 10
+                docker exec $(docker ps -q --filter ancestor=mcr.microsoft.com/mssql/server:2022-latest) \
+                  /opt/mssql-tools18/bin/sqlcmd \
+                  -S localhost -U sa -P 'YourStrong@Passw0rd123' -C \
+                  -Q "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'HotelReservationDB') CREATE DATABASE HotelReservationDB"
             - name: Run tests
+              env:
+                ConnectionStrings__Default: "Server=localhost,1433;Database=HotelReservationDB;User Id=sa;Password=YourStrong@Passw0rd123;TrustServerCertificate=true;"
               run: dotnet test HotelReservationSystem/HotelReservationSystem.sln --no-restore --verbosity normal
 
     build:
@@ -60,7 +91,9 @@ jobs:
             - name: Set up .NET
               uses: actions/setup-dotnet@v3
               with:
-                dotnet-version: 8.0.x
+                dotnet-version: |
+                  7.0.x
+                  8.0.x
             - name: Install dependencies
               run: dotnet restore HotelReservationSystem/HotelReservationSystem.sln
             - name: Build solution
@@ -68,7 +101,7 @@ jobs:
             - name: Publish artifacts
               run: dotnet publish HotelReservationSystem/HotelReservationSystem.Web/HotelReservationSystem.Web.csproj --configuration Release --output ./publish
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: published-app
                 path: ./publish
@@ -78,9 +111,7 @@ jobs:
         needs: [build]
         steps:
             - name: Download artifact
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
                 name: published-app
                 path: ./publish
-            - name: Display release info
-              run: echo "Release step - tutaj dodaj deployment do serwera lub chmury."

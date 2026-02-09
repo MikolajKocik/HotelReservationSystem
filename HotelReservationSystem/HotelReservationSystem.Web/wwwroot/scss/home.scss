@@ -1,0 +1,82 @@
+﻿$primary-gold: #A88333;
+$hover-red: rgb(137, 28, 28);
+$primary-blue: #3041AE;
+$hover-cyan: rgb(48, 169, 202);
+$star-yellow: #cfa121;
+$rating-bg: #4971a6;
+$rating-text: #d4b32a;
+$icon-border: #23405c;
+$dot-border: #ccc;
+$dot-bg: #fff;
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+#gallery-button {
+    background-color: $primary-gold !important;
+    transition: all 0.5s ease;
+
+    &:hover {
+        transform: scale(1.05);
+        background-color: $hover-red !important;
+    }
+}
+
+#availability-rooms {
+    background-color: $primary-blue !important;
+    color: white !important;
+    transition: all 0.5s ease;
+
+    &:hover {
+        background-color: $hover-cyan !important;
+        transform: scale(1.05);
+    }
+}
+
+#stars {
+    color: $star-yellow !important;
+    font-size: 2.5rem !important;
+
+    @media (min-width: 1552px) {
+        font-size: 3rem !important;
+    }
+}
+
+.review-item {
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-0.3125rem);
+    }
+}
+
+.rating-review-section {
+    background: $rating-bg !important;
+    color: $rating-text !important;
+}
+
+.rating-review-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0.125rem solid $icon-border;
+}
+
+#scroll-up-button {
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    z-index: 1050;
+    background: white !important;
+}
+
+.bottom-nav-dots .dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 0.125rem solid $dot-border !important;
+    background: $dot-bg !important;
+    cursor: pointer;
+    padding: 0;
+}
