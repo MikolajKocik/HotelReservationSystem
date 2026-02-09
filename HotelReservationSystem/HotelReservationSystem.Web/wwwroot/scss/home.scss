@@ -36,6 +36,11 @@ $dot-bg: #fff;
 
 #stars {
     color: $star-yellow !important;
+    font-size: 2.5rem !important;
+
+    @media (min-width: 1552px) {
+        font-size: 3rem !important;
+    }
 }
 
 .review-item {
