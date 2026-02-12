@@ -13,13 +13,66 @@ $dot-bg: #fff;
     object-fit: cover;
 }
 
-#gallery-button {
+#gallery-button, #agent-button {
     background-color: $primary-gold !important;
-    transition: all 0.5s ease;
+    transition: 1s;
+    min-width: 10rem;
 
     &:hover {
         transform: scale(1.05);
         background-color: $hover-red !important;
+    }
+}
+
+#agent-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 5rem;
+    z-index: 9999;
+    min-width: 22rem;
+    min-height: 28rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    border: 1px solid black;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+    &.hidden {
+        display: none !important;
+    }
+
+    .agent-header {
+        background-color: $primary-blue;
+        color: white;
+        padding: 0.5rem 1rem;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .agent-body {
+        .messages-list {
+            overflow-y: auto;
+            background-color: lightgrey;
+            border: 1px solid lightslategray;
+        }
+
+        .send-message {
+            border-top: 1px solid #dee2e6;
+            padding: 0.5rem;
+
+            .text-wrapper input {
+                border: none;
+                width: 100%;
+                outline: none;
+            }
+
+            svg {
+                width: 1.5rem;
+                fill: $primary-blue;
+            }
+        }
     }
 }
 
@@ -69,6 +122,12 @@ $dot-bg: #fff;
     height: 3.5rem;
     z-index: 1050;
     background: white !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
 }
 
 .bottom-nav-dots .dot {
