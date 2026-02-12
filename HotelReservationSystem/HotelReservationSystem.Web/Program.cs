@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using HotelReservationSystem.Infrastructure.Data;
 using HotelReservationSystem.Infrastructure.Data.Extensions;
 using HotelReservationSystem.Infrastructure.Extensions;
@@ -7,6 +6,7 @@ using HotelReservationSystem.Web.Extensions;
 using HotelReservationSystem.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
+using HotelReservationSystem.MCP.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +15,9 @@ builder.Services.Configure<StaffSettings>(builder.Configuration.GetSection("Staf
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddWebServices();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHotelMcpServer(builder.Configuration);
 
 var app = builder.Build();
 

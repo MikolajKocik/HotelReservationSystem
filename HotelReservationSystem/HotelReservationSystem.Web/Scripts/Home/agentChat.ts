@@ -7,7 +7,7 @@
         e.stopPropagation();
 
         agentContainer?.classList.toggle('hidden');
-    })
+    });
 
     closeButton?.addEventListener('click', () => {
         agentContainer?.classList.add('hidden');
@@ -47,5 +47,27 @@
         } catch (error) {
             console.error("Kernel error:", error);
         }
-    }
+    };
+
+    const messageInput = document.querySelector(".send-message .text-wrapper input") as HTMLInputElement;
+    const sendButton = document.querySelector(".send-message .btn-message-wrapper a");
+
+    sendButton?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const text = messageInput?.value.trim();
+        if (text) {
+            sendMessage(text);
+            messageInput.value = '';
+        }
+    });
+
+    messageInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const text = messageInput.value.trim();
+            if (text) {
+                sendMessage(text);
+                messageInput.value = '';
+            }
+        }
+    });
 })();
