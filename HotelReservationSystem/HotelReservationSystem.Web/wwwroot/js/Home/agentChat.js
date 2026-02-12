@@ -51,5 +51,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             console.error("Kernel error:", error);
         }
     });
+    const messageInput = document.querySelector(".send-message .text-wrapper input");
+    const sendButton = document.querySelector(".send-message .btn-message-wrapper a");
+    sendButton === null || sendButton === void 0 ? void 0 : sendButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const text = messageInput === null || messageInput === void 0 ? void 0 : messageInput.value.trim();
+        if (text) {
+            sendMessage(text);
+            messageInput.value = '';
+        }
+    });
+    messageInput === null || messageInput === void 0 ? void 0 : messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const text = messageInput.value.trim();
+            if (text) {
+                sendMessage(text);
+                messageInput.value = '';
+            }
+        }
+    });
 })();
 //# sourceMappingURL=agentChat.js.map

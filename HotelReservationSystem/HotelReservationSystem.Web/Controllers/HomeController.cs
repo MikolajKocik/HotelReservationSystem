@@ -10,7 +10,11 @@ public sealed class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        return View();
+        var model = new HomeViewModel
+        {
+            Messages = new List<MessageViewModel>()
+        };
+        return View(model);
     }
 
     [HttpGet]

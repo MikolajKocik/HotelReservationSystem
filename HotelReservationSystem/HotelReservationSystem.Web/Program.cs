@@ -7,6 +7,7 @@ using HotelReservationSystem.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 using HotelReservationSystem.MCP.Server;
+using HotelReservationSystem.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddWebServices();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHotelMcpServer(builder.Configuration);
+builder.Services.AddScoped<IAgentService, AgentService>();
 
 var app = builder.Build();
 
