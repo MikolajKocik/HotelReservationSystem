@@ -1,4 +1,5 @@
 ﻿using HotelReservationSystem.MCP.Server.Resources;
+using HotelReservationSystem.MCP.Server.Services;
 using HotelReservationSystem.MCP.Server.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,8 @@ public static class McpServerConfiguration
         })
         .AddToolsFromAssembly(typeof(ReceptionTools).Assembly)
         .AddResourcesFromAssembly(typeof(HotelInfoResources).Assembly);
+
+        services.AddScoped<IAgentService, AgentService>();
 
         return services;
     }

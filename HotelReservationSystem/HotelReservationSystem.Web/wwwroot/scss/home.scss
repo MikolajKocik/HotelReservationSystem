@@ -22,20 +22,25 @@ $dot-bg: #fff;
         transform: scale(1.05);
         background-color: $hover-red !important;
     }
+
+    &:active {
+        background-color: $primary-gold !important;
+    }
 }
 
 #agent-container {
     position: fixed;
-    bottom: 1rem;
-    right: 5rem;
+    bottom: 0.3rem;
+    right: 7rem;
     z-index: 9999;
-    min-width: 22rem;
-    min-height: 28rem;
-    max-width: 90vw;
-    max-height: 80vh;
-    border: 1px solid black;
+    min-width: 8rem;
+    max-width: 20rem;
+    min-height: 20rem;
+    border: 1px solid #c4c4c5;
     box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    background-color: white;
+    padding: 0;
 
     &.hidden {
         display: none !important;
@@ -45,32 +50,41 @@ $dot-bg: #fff;
         background-color: $primary-blue;
         color: white;
         padding: 0.5rem 1rem;
+        width: 100%;
 
         p {
             margin: 0;
         }
+
+        button {
+            color: white;
+        }
     }
 
     .agent-body {
-        .messages-list {
+        .text-messages-list {
             overflow-y: auto;
+            max-height: 18rem;
             background-color: lightgrey;
             border: 1px solid lightslategray;
+            scroll-behavior: smooth;
         }
 
         .send-message {
             border-top: 1px solid #dee2e6;
             padding: 0.5rem;
 
-            .text-wrapper input {
+            .text-wrapper textarea {
                 border: none;
-                width: 100%;
+                min-width: 12vw;
                 outline: none;
+                border: 1px solid rgb(157, 155, 155)
             }
 
             svg {
-                width: 1.5rem;
+                width: 1.3rem;
                 fill: $primary-blue;
+                cursor: pointer;
             }
         }
     }

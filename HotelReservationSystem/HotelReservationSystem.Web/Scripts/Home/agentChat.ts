@@ -11,6 +11,10 @@
 
     closeButton?.addEventListener('click', () => {
         agentContainer?.classList.add('hidden');
+        const messagesList = document.querySelector(".text-messages-list");
+        if (messagesList) {
+            messagesList.innerHTML = '';
+        }       
     });
 
     const sendMessage = async (text: string) => {
@@ -18,7 +22,7 @@
         const token = (document.querySelector('input[name="__RequestVerificationToken"]') as HTMLInputElement)?.value;
 
         const userMsgHtml = `
-        <div class="text-message p-2 mb-2 rounded ms-auto bg-primary text-white">
+        <div class="text-message p-2 mb-2 rounded ms-auto bg-primary text-white" style="max-width: 70%;">
             ${text}
         </div>`;
         messagesList?.insertAdjacentHTML('beforeend', userMsgHtml);
@@ -37,7 +41,7 @@
                 const data = await response.json();
 
                 const botMsgHtml = `
-                <div class="text-message p-2 mb-2 rounded me-auto border">
+                <div class="text-message p-2 mb-2 rounded me-auto border" style="max-width: 70%;">
                     ${data.answer}
                 </div>`;
                 messagesList?.insertAdjacentHTML('beforeend', botMsgHtml);
@@ -49,7 +53,7 @@
         }
     };
 
-    const messageInput = document.querySelector(".send-message .text-wrapper input") as HTMLInputElement;
+    const messageInput = document.querySelector(".send-message .text-wrapper textarea") as HTMLTextAreaElement;
     const sendButton = document.querySelector(".send-message .btn-message-wrapper a");
 
     sendButton?.addEventListener('click', (e) => {
@@ -61,8 +65,9 @@
         }
     });
 
-    messageInput?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+    messageInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             const text = messageInput.value.trim();
             if (text) {
                 sendMessage(text);

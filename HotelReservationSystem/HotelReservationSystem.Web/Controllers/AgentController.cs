@@ -1,4 +1,4 @@
-using HotelReservationSystem.Web.Services;
+using HotelReservationSystem.MCP.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Web.Controllers;
@@ -19,7 +19,7 @@ public class AgentController : Controller
     {
         if (string.IsNullOrWhiteSpace(request?.Message))
         {
-            return Json(new { answer = "Proszê podaæ wiadomoœæ." });
+            return Json(new { answer = "ProszÄ™ podaÄ‡ wiadomoÅ›Ä‡." });
         }
 
         string answer = await this.agentService.ProcessMessageAsync(request.Message);
