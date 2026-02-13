@@ -1,106 +1,27 @@
 using HotelReservationSystem.MCP.Server.Tools;
+using HotelReservationSystem.MCP.Server.Utils;
 using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
-using System.Reflection;
 using System.Text.Json;
+using HotelReservationSystem.MCP.Server.Interfaces;
 
 namespace HotelReservationSystem.MCP.Server.Services;
-
-public interface IAgentService
-{
-    Task<string> ProcessMessageAsync(string message);
-}
 
 public class AgentService : IAgentService
 {
     private readonly ReceptionTools receptionTools;
     private readonly ChatClient chatClient;
     private readonly string systemPrompt;
-
-    private static string LoadPromptFromYaml()
-    {
-        Assembly assembly = typeof(ReceptionTools).Assembly;
-        string resourceName = assembly.GetManifestResourceNames()
-            .First(n => n.EndsWith("AuroraBase.yaml", StringComparison.OrdinalIgnoreCase));
-
-        using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-        using StreamReader reader = new(stream);
-        string yaml = reader.ReadToEnd();
-
-        // Parse "instructions: |" block from YAML
-        const string marker = "instructions: |";
-        int idx = yaml.IndexOf(marker, StringComparison.Ordinal);
-        if (idx < 0)
-            throw new InvalidOperationException("YAML prompt file missing 'instructions:' key.");
-
-        string block = yaml[(idx + marker.Length)..];
-
-        // Collect all indented lines that belong to the block scalar
-        var lines = block.Split('\n')
-            .Skip(1) // skip the empty line right after "|"
-            .TakeWhile(l => l.Length == 0 || l.StartsWith("    "))
-            .Select(l => l.Length >= 4 ? l[4..] : l);
-
-        return string.Join('\n', lines).Trim();
-    }
-
-    private static readonly ChatTool NotifyStaffTool = ChatTool.CreateFunctionTool(
-        functionName: "notify_staff",
-        functionDescription: "Wysyła pilne zgłoszenie do personelu hotelowego. Używać w przypadku próśb gości wymagających interwencji (np. brak ręczników, sprzątanie, usterka techniczna).",
-        functionParameters: BinaryData.FromString("""
-        {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "description": "Treść zgłoszenia do personelu"
-                },
-                "category": {
-                    "type": "string",
-                    "enum": ["housekeeping", "reception", "technical"],
-                    "description": "Kategoria zgłoszenia"
-                }
-            },
-            "required": ["message", "category"]
-        }
-        """)
-    );
-
-    private static readonly ChatTool BookRoomTool = ChatTool.CreateFunctionTool(
-        functionName: "book_room",
-        functionDescription: "Tworzy rezerwację pokoju hotelowego dla gościa.",
-        functionParameters: BinaryData.FromString("""
-        {
-            "type": "object",
-            "properties": {
-                "arrival": {
-                    "type": "string",
-                    "description": "Data przyjazdu w formacie YYYY-MM-DD"
-                },
-                "departure": {
-                    "type": "string",
-                    "description": "Data wyjazdu w formacie YYYY-MM-DD"
-                },
-                "roomId": {
-                    "type": "integer",
-                    "description": "ID pokoju do zarezerwowania"
-                },
-                "guests": {
-                    "type": "integer",
-                    "description": "Liczba gości"
-                }
-            },
-            "required": ["arrival", "departure", "roomId", "guests"]
-        }
-        """)
-    );
+    private readonly List<ChatTool> tools;
 
     public AgentService(ReceptionTools receptionTools, IConfiguration configuration)
     {
         this.receptionTools = receptionTools;
-        this.systemPrompt = LoadPromptFromYaml();
+        this.systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
 
-        string apiKey = configuration["OpenAI:ApiKey"]
+        this.tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
+
+        string apiKey = configuration["OpenAI:ApiKey"] 
             ?? throw new InvalidOperationException("OpenAI Key not found");
         string model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
 
@@ -117,9 +38,13 @@ public class AgentService : IAgentService
 
         ChatCompletionOptions options = new()
         {
-            Tools = { NotifyStaffTool, BookRoomTool },
             Temperature = 0.7f,
         };
+
+        foreach (var tool in this.tools)
+        {
+            options.Tools.Add(tool);
+        }
 
         const int maxToolRounds = 5;
 
