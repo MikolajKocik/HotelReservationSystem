@@ -1,4 +1,4 @@
-using HotelReservationSystem.MCP.Server.Services;
+using HotelReservationSystem.MCP.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Web.Controllers;

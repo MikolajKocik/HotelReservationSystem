@@ -4,6 +4,7 @@ using HotelReservationSystem.MCP.Server.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HotelReservationSystem.MCP.Server.Extensions;
+using HotelReservationSystem.MCP.Server.Interfaces;
 
 namespace HotelReservationSystem.MCP.Server;
 
