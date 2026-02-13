@@ -1,4 +1,6 @@
-﻿<section class="bg-light">
+﻿@model HomeViewModel
+
+<section class="bg-light">
     <div id="up-wrapper" class="container d-flex flex-column align-items-center text-center py-5">
         <h1 class="display-4 fw-bold">Witamy w Hotelu Aurora!</h1>
         <div id="main-text" class="col-12 col-md-8 col-lg-6 mb-4">
@@ -8,12 +10,56 @@
                 Zapraszamy do świata relaksu i gościnności na najwyższym poziomie.
             </p>
         </div>
-        <p>Zobacz, jak wygląda wypoczynek w Hotelu Aurora</p>
-        <a asp-controller="Home" asp-action="Gallery" 
-            id="gallery-button" 
-            class="btn btn-lg rounded-pill px-4 shadow-sm text-white">
-            Galeria
-        </a>
+        <div class="container">    
+            <div class="row">
+                <div class="col-12 col-md-3 ms-auto">
+                    <p>Zobacz, jak wygląda wypoczynek w Hotelu Aurora</p>
+                    <a asp-controller="Home" asp-action="Gallery" 
+                        id="gallery-button" 
+                        class="btn btn-lg rounded px-4 shadow-sm text-white">
+                        Galeria
+                    </a>
+                </div>
+                <div class="col-12 col-md-3 me-auto">
+                    <p>Jeśli masz pytania, z chęcią odpowiemy na każde z nich</p>
+                    <button
+                        id="agent-button"
+                        class="btn btn-lg rounded px-4 shadow-sm text-white">
+                        Zadaj pytanie
+                    </button>
+                </div>
+
+                <div id="agent-container" class="d-flex flex-column rounded hidden">
+                    @Html.AntiForgeryToken()
+                    <div class="agent-header d-flex flex-row justify-content-between align-items-center">
+                        <p>Agent Aurora</p>
+                        <button class="btn">&#10005</button>
+                    </div>
+                    <div class="agent-body d-flex flex-column flex-grow-1">
+                        <div class="text-messages-list text-center p-1 rounded flex-grow-1">
+                            @foreach (var msg in Model.Messages)
+                            {
+                                <div class="text-message p-2 mb-2 rounded @(msg.IsUser ? "ms-auto bg-primary text-white" : "me-auto")">
+                                    @msg.Content
+                                </div>
+                            }
+                        </div>
+                        <div class="send-message d-flex d-row justify-content-center gap-2">
+                            <div class="text-wrapper rounded-pill">
+                                <textarea type="text" rows="2" placeholder="Zadaj pytanie..."></textarea>
+                            </div>
+                            <div class="btn-message-wrapper">
+                                <a asp-controller="Agent" asp-action="Ask" id="send-btn" class="btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                                        <path d="M322.5 351.7L523.4 150.9L391 520.3L322.5 351.7zM489.4 117L288.6 317.8L120 249.3L489.4 117zM70.1 280.8L275.9 364.4L359.5 570.2C364.8 583.3 377.6 591.9 391.8 591.9C406.5 591.9 419.6 582.7 424.6 568.8L602.6 72C606.1 62.2 603.6 51.4 596.3 44C589 36.6 578.1 34.2 568.3 37.7L71.4 215.7C57.5 220.7 48.3 233.8 48.3 248.5C48.3 262.7 56.9 275.5 70 280.8z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>                   
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -85,7 +131,7 @@
 
     <div id="scroll-up-button" class="btn btn-white shadow-lg rounded-circle border-2 border-dark position-fixed d-flex align-items-center justify-content-center">
         <svg width="24" height="24" viewBox="0 0 640 640">
-            <path d="M342.6 105.4C330.1 92.9 309.8 92.9 297.3 105.4L137.3 265.4C124.8 277.9 124.8 298.2 137.3 310.7C149.8 323.2 170.1 323.2 182.6 310.7L320 173.3L457.4 310.6C469.9 323.1 490.2 323.1 502.7 310.6C515.2 298.1 515.2 277.8 502.7 265.3L342.7 105.3zM502.6 457.4L342.6 297.4C330.1 284.9 309.8 284.9 297.3 297.4L137.3 457.4C124.8 469.9 124.8 490.2 137.3 502.7C149.8 515.2 170.1 515.2 182.6 502.7L320 365.3L457.4 502.6C469.9 515.1 490.2 515.1 502.7 502.6C515.2 490.1 515.2 469.8 502.7 457.3z"/>
+            <path d="M342.6 105.4C330.1 92.9 309.8 92.9 297.3 105.4L137.3 265.4C124.8 277.9 124.8 298.2 137.3 310.7C149.8 323.2 170.1 323.2 182.6 310.7L320 173.3L457.4 310.6C469.9 323.1 490.2 323.1 502.7 310.6C515.2 298.1 515.2 277.8 502.7 265.3L342.7 105.3zM502.6 457.4L342.6 297.4C330.1 284.9 309.8 284.9 297.3 297.4L137.3 457.4C124.8 469.9 124.8 490.2 137.3 502.7C149.8 515.2 170.1 515.2 182.6 502.7L320 365.3L457.4 502.6C469.9 515.1 490.2 515.1 502.7 502.6C515.2 490.1 515.2 469.8 502.7 457.3z" />
         </svg>
     </div>
 
@@ -106,4 +152,5 @@
     <script src="~/js/Home/scrollBtn.js"></script>
     <script src="~/js/Home/opinions.js"></script>
     <script src="~/js/Home/reviews.js"></script>
+    <script src="~/js/Home/agentChat.js"></script>
 }
