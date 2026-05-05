@@ -1,6 +1,6 @@
-# Hotel Reservation System
+# BookIt
 
-HotelReservationSystem is a modern, scalable application built on .NET 8, designed for comprehensive management of hotel industry processes. The project combines Clean Architecture with the performance of the CQRS pattern and an innovative approach to AI integration via the Model Context Protocol (MCP).
+BookIt is a modern hotel reservation system, scalable application built on .NET 8, designed for comprehensive management of hotel industry processes. The project combines Clean Architecture with the performance of the CQRS pattern and an innovative approach to AI integration via the Model Context Protocol (MCP).
 
 ---
 
