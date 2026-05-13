@@ -10,7 +10,7 @@ Modern hospitality requires speed, reliability, and automation. Traditional syst
 
 1. Automating the reservation cycle: Eliminates manual errors from the moment of room selection, through discount calculation, up to payment finalization.
 2. Financial security: Integration with Stripe ensures secure transaction processing, handling of refunds, and webhooks without the need to store sensitive payment data.
-3. Staff work optimization: Thanks to the notification system (Slack integration) and dedicated background workers, staff are informed about key events in real-time.
+3. Staff work optimization: Thanks to the notification system (Discord integration) and dedicated background workers, staff are informed about key events in real-time.
 4. AI Readiness (Future-Proof): Implementing MCP (Model Context Protocol) allows interaction with the system through intelligent AI agents, opening the way for modern customer service and automated reception.
 5. Scalability and maintainability: By using Clean Architecture and CQRS, the system is easy to expand and test, which is crucial in a dynamically changing business environment.
 
@@ -46,8 +46,8 @@ One of the most innovative elements of the system is the automation of communica
 1. Interaction: A guest asks the AI Agent (e.g., via chat) for extra towels.
 2. Tool Invocation: The AI Agent, using the MCP protocol, invokes the `notify_staff` tool provided by the MCP server.
 3. Processing: The MCP server in the `HotelReservationSystem.MCP.Server` layer receives the request and forwards it to the `ReceptionTools` service.
-4. External Integration: The system builds a message and sends it asynchronously to a dedicated Slack channel using `SlackClient`.
-5. Staff Reaction: The reception or housekeeping staff receives a real-time notification on Slack and can immediately respond to the guest's request.
+4. External Integration: The system builds a message and sends it asynchronously to a dedicated Discord channel using `DiscordClient`.
+5. Staff Reaction: The reception or housekeeping staff receives a real-time notification on Discord and can immediately respond to the guest's request.
 
 ---
 

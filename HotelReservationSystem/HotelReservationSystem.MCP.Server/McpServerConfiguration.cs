@@ -12,12 +12,12 @@ public static class McpServerConfiguration
 {
     public static IServiceCollection AddHotelMcpServer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient("SlackClient", client =>
+        services.AddHttpClient("DiscordClient", client =>
         {
-            var slackUrl = configuration["StaffSettings:SlackWebhookUrl"];
-            if (!string.IsNullOrEmpty(slackUrl))
+            var discordUrl = configuration["StaffSettings:DiscordWebhookUrl"];
+            if (!string.IsNullOrEmpty(discordUrl))
             {
-                client.BaseAddress = new Uri(slackUrl);
+                client.BaseAddress = new Uri(discordUrl);
             }
         });
 

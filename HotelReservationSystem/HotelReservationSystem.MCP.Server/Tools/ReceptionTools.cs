@@ -12,7 +12,7 @@ public class ReceptionTools
 {
     private readonly ICQRSMediator mediator;
     private readonly IHttpContextAccessor httpContextAccessor;
-    private readonly HttpClient slackClient;
+    private readonly HttpClient discordClient;
 
     public ReceptionTools(
         ICQRSMediator mediator,
@@ -22,7 +22,7 @@ public class ReceptionTools
     {
         this.mediator = mediator;
         this.httpContextAccessor = httpContextAccessor;
-        this.slackClient = httpClientFactory.CreateClient("SlackClient");
+        this.discordClient = httpClientFactory.CreateClient("DiscordClient");
     }
 
     [McpServerTool(Name = "notify_staff")]
@@ -36,7 +36,7 @@ public class ReceptionTools
             text = $"[ZGŁOSZENIE] Kategoria: {category.ToUpper()} | Treść: {message}"
         };
 
-        var response = await this.slackClient.PostAsJsonAsync("", payload);
+        var response = await this.discordClient.PostAsJsonAsync("", payload);
 
         return response.IsSuccessStatusCode
             ? "Zgłoszenie zostało przekazane do personelu"

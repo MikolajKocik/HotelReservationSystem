@@ -5,16 +5,25 @@
     "removeComments": false,
     "sourceMap": true,
     "strict": true,
-    "moduleResolution": "node",
-    "skipLibCheck": true,
+
     "module": "esnext",
-    "outDir": "wwwroot/js",
+    "moduleResolution": "node",
+
     "target": "es6",
-    "lib": [ "DOM", "DOM.Iterable", "ESNext" ]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+
+    "outDir": "wwwroot/js",
+    "rootDir": "Scripts",
+
+    "skipLibCheck": true,
+
+    "ignoreDeprecations": "6.0"
   },
+
   "include": [
     "Scripts/**/*"
   ],
+
   "exclude": [
     "node_modules",
     "wwwroot"
