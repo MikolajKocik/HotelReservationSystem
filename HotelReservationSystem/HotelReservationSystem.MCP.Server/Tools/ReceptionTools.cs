@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HotelReservationSystem.MCP.Server.Tools;
 
-public class ReceptionTools
+public sealed class ReceptionTools
 {
     private readonly ICQRSMediator mediator;
     private readonly IHttpContextAccessor httpContextAccessor;
