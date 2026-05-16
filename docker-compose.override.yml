@@ -1,0 +1,26 @@
+networks:
+  bookit-dev:
+    name: bookit-dev-network
+    driver: bridge
+
+volumes:
+  sqlserver_data:
+  redis_data:
+
+services:
+  web:
+    image: bookit:latest 
+    networks:
+      - bookit-dev
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks: 
+      - bookit-dev
+  
+  redis:
+    image: redis:7-alpine
+    networks:
+      - bookit-dev
+
+  
