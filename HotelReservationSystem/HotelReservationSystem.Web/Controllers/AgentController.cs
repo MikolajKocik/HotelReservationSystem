@@ -15,7 +15,7 @@ public class AgentController : Controller
 
     [HttpPost("Ask")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Ask([FromBody] AskRequest request)
+    public async Task<IActionResult> Ask([FromBody] AskRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request?.Message))
         {
@@ -24,7 +24,7 @@ public class AgentController : Controller
 
         Guid sessionId = request.SessionId;
 
-        string answer = await this.agentService.ProcessMessageAsync(sessionId, request.Message);
+        string answer = await this.agentService.ProcessMessageAsync(sessionId, request.Message, cancellationToken);
 
         return Json(new { answer });
     }

@@ -4,93 +4,37 @@ using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.Text.Json;
 using HotelReservationSystem.MCP.Server.Interfaces;
-using System.Collections.Concurrent;
-using OpenAI.Assistants;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace HotelReservationSystem.MCP.Server.Services;
 
+public record ChatMessageDto(string Role, string Content);
+
 public class AgentService : IAgentService
 {
-    private static readonly ConcurrentDictionary<Guid, List<ChatMessage>> _activeSessions = new();
-    private readonly ReceptionTools receptionTools;
-    private readonly ChatClient chatClient;
-    private readonly string systemPrompt;
-    private readonly List<ChatTool> tools;
+    private readonly ReceptionTools _receptionTools;
+    private readonly ChatClient _chatClient;
+    private readonly string _systemPrompt;
+    private readonly List<ChatTool> _tools;
+    private readonly IDistributedCache _cache;
 
-    public AgentService(ReceptionTools receptionTools, IConfiguration configuration)
+    public AgentService(
+        ReceptionTools receptionTools,
+        IConfiguration configuration,
+        IDistributedCache cache
+        )
     {
-        this.receptionTools = receptionTools;
-        this.systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
+        _receptionTools = receptionTools;
+        _systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
 
-        this.tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
+        _tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
 
         string apiKey = configuration["OpenAI:ApiKey"] 
             ?? throw new InvalidOperationException("OpenAI Key not found");
         string model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
 
-        this.chatClient = new ChatClient(model, apiKey);
-    }
-    
-    /// <summary>
-    /// Process the chat bot answer for user's request
-    /// </summary>
-    /// <param name="sessionId"></param>
-    /// <param name="message"></param>
-    /// <returns>The answer based on user's request</returns>
-    public async Task<string> ProcessMessageAsync(Guid sessionId, string message)
-    {
-        if (!_activeSessions.TryGetValue(sessionId, out List<ChatMessage>? messages))
-        {
-            messages = new List<ChatMessage>
-            {
-                new SystemChatMessage(this.systemPrompt)
-            };
-            _activeSessions[sessionId] = messages;
-        }
-
-        if (messages.Count > 15)
-        {
-            messages.RemoveRange(1, 2); 
-        }
-
-        messages.Add(new UserChatMessage(message));
-
-        ChatCompletionOptions options = new()
-        {
-            Temperature = 0.2f,
-        };
-
-        foreach (var tool in this.tools)
-        {
-            options.Tools.Add(tool);
-        }
-
-        const int maxToolRounds = 5;
-
-        for (int i = 0; i < maxToolRounds; i++)
-        {
-            ChatCompletion completion = await this.chatClient.CompleteChatAsync(messages, options);
-
-            if (completion.FinishReason == ChatFinishReason.ToolCalls)
-            {
-                messages.Add(new AssistantChatMessage(completion));
-
-                foreach (ChatToolCall toolCall in completion.ToolCalls)
-                {
-                    string toolResult = await this.ExecuteToolAsync(toolCall);
-                    messages.Add(new ToolChatMessage(toolCall.Id, toolResult));
-                }
-            }
-            else
-            {
-                string finalAnswer = completion.Content[0].Text ?? "Przepraszam, błąd przetwarzania.";
-                messages.Add(new AssistantChatMessage(finalAnswer));
-
-                return finalAnswer;
-            }
-        }
-
-        return "Przepraszam, wystąpił problem z przetwarzaniem zapytania. Spróbuj ponownie.";
+        _chatClient = new ChatClient(model, apiKey);
+        _cache = cache;
     }
 
     /// <summary>
@@ -99,7 +43,7 @@ public class AgentService : IAgentService
     /// </summary>
     /// <param name="toolCall"></param>
     /// <returns>The relevant tool for chat message request</returns>
-    private async Task<string> ExecuteToolAsync(ChatToolCall toolCall)
+    private async Task<string> ExecuteToolAsync(ChatToolCall toolCall, CancellationToken cancellationToken)
     {
         try
         {
@@ -108,11 +52,11 @@ public class AgentService : IAgentService
 
             return toolCall.FunctionName switch
             {
-                "notify_staff" => await this.receptionTools.NotifyStaffAsync(
+                "notify_staff" => await _receptionTools.NotifyStaffAsync(
                     root.GetProperty("message").GetString()!,
                     root.GetProperty("category").GetString()!),
 
-                "book_room" => await this.receptionTools.BookRoomAsync(
+                "book_room" => await _receptionTools.BookRoomAsync(
                     DateTime.Parse(root.GetProperty("arrival").GetString()!),
                     DateTime.Parse(root.GetProperty("departure").GetString()!),
                     root.GetProperty("roomId").GetInt32(),
@@ -126,4 +70,100 @@ public class AgentService : IAgentService
             return $"Błąd wykonania narzędzia {toolCall.FunctionName}: {ex.Message}";
         }
     }
+
+    /// <summary>
+    /// Map chat data transfer object to OpenAI chat message class
+    /// depends on chat role
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>OpenAI chat message role</returns>
+    private ChatMessage MapToOpenAiMessage(ChatMessageDto dto)
+    {
+        return dto.Role.ToLowerInvariant() switch
+        {
+            "system" => new SystemChatMessage(dto.Content),
+            "assistant" => new AssistantChatMessage(dto.Content),
+            "user" => new UserChatMessage(dto.Content),
+            _ => new UserChatMessage(dto.Content)
+        };
+    }
+    
+    /// <summary>
+    /// Process the chat bot answer for user's request
+    /// </summary>
+    /// <param name="sessionId"></param>
+    /// <param name="message"></param>
+    /// <returns>The answer based on user's request</returns>
+    public async Task<string> ProcessMessageAsync(Guid sessionId, string message, CancellationToken cancellationToken)
+    {
+        string cacheKey = $"session_{sessionId}";
+        List<ChatMessageDto> historyDto = new();
+
+        string? cachedHistory = await _cache.GetStringAsync(cacheKey, cancellationToken);
+
+        if (!string.IsNullOrEmpty(cachedHistory))
+        {
+            historyDto = JsonSerializer.Deserialize<List<ChatMessageDto>>(cachedHistory) ?? new();
+        }
+        else
+        {
+            // new session
+            historyDto.Add(new ChatMessageDto("system", _systemPrompt));
+        }
+
+        historyDto.Add(new ChatMessageDto("user", message));
+
+        List<ChatMessage> openAiMessages = historyDto.Select(MapToOpenAiMessage).ToList();
+
+        ChatCompletionOptions options = new()
+        {
+            Temperature = 0.2f,
+        };
+
+        foreach (var tool in _tools)
+        {
+            options.Tools.Add(tool);
+        }
+
+        string finalAnswer = "Przepraszam, wystąpił błąd.";
+        const int maxToolRounds = 5;
+
+        for (int i = 0; i < maxToolRounds; i++)
+        {
+            ChatCompletion completion = await _chatClient.CompleteChatAsync(openAiMessages, options, cancellationToken);
+
+            if (completion.FinishReason == ChatFinishReason.ToolCalls)
+            {
+                openAiMessages.Add(new AssistantChatMessage(completion));
+
+                foreach (ChatToolCall toolCall in completion.ToolCalls)
+                {
+                    string toolResult = await this.ExecuteToolAsync(toolCall, cancellationToken);
+                    openAiMessages.Add(new ToolChatMessage(toolCall.Id, toolResult));
+                }
+            }
+            else
+            {
+                finalAnswer = completion.Content[0].Text ?? finalAnswer;
+                historyDto.Add(new ChatMessageDto("assistant", finalAnswer));
+                break; 
+            }
+        }
+
+        // cutting questions for context window and avoid memory-leak
+        if (historyDto.Count > 15)
+        {
+            historyDto.RemoveRange(1, 2); 
+        }
+
+        var cacheOptions = new DistributedCacheEntryOptions
+        {
+            SlidingExpiration = TimeSpan.FromMinutes(60)
+        };
+
+        string updatedHistoryJson = JsonSerializer.Serialize(historyDto);
+        await _cache.SetStringAsync(cacheKey, updatedHistoryJson, cacheOptions, cancellationToken);
+
+        return finalAnswer;
+    }    
 }

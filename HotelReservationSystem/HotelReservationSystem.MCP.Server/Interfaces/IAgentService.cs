@@ -2,5 +2,5 @@ namespace HotelReservationSystem.MCP.Server.Interfaces;
 
 public interface IAgentService
 {
-    Task<string> ProcessMessageAsync(Guid sessionId, string message);
+    Task<string> ProcessMessageAsync(Guid sessionId, string message, CancellationToken cancellationToken);
 }
