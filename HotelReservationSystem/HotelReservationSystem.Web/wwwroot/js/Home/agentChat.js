@@ -12,24 +12,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     const agentContainer = document.getElementById("agent-container");
     const agentButton = document.getElementById("agent-button");
     const closeButton = document.querySelector(".agent-header .btn");
+    const messagesList = document.querySelector(".text-messages-list");
+    let sessionId = sessionStorage.getItem("SESSION_ID");
+    if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        sessionStorage.setItem("SESSION_ID", sessionId);
+    }
     agentButton === null || agentButton === void 0 ? void 0 : agentButton.addEventListener('click', (e) => {
         e.stopPropagation();
         agentContainer === null || agentContainer === void 0 ? void 0 : agentContainer.classList.toggle('hidden');
     });
     closeButton === null || closeButton === void 0 ? void 0 : closeButton.addEventListener('click', () => {
         agentContainer === null || agentContainer === void 0 ? void 0 : agentContainer.classList.add('hidden');
-        const messagesList = document.querySelector(".text-messages-list");
         if (messagesList) {
             messagesList.innerHTML = '';
+            sessionStorage.removeItem("SESSION_ID");
+            sessionId = crypto.randomUUID();
+            sessionStorage.setItem("SESSION_ID", sessionId);
         }
     });
-    const sendMessage = (text) => __awaiter(void 0, void 0, void 0, function* () {
+    const sendMessage = (request) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
-        const messagesList = document.querySelector(".text-messages-list");
         const token = (_a = document.querySelector('input[name="__RequestVerificationToken"]')) === null || _a === void 0 ? void 0 : _a.value;
         const userMsgHtml = `
         <div class="text-message p-2 mb-2 rounded ms-auto bg-primary text-white" style="max-width: 70%;">
-            ${text}
+            ${request.message}
         </div>`;
         messagesList === null || messagesList === void 0 ? void 0 : messagesList.insertAdjacentHTML('beforeend', userMsgHtml);
         try {
@@ -39,7 +46,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     'Content-Type': 'application/json',
                     'RequestVerificationToken': token
                 },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify(request)
             });
             if (response.ok) {
                 const data = yield response.json();
@@ -57,22 +64,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
     const messageInput = document.querySelector(".send-message .text-wrapper textarea");
     const sendButton = document.querySelector(".send-message .btn-message-wrapper a");
-    sendButton === null || sendButton === void 0 ? void 0 : sendButton.addEventListener('click', (e) => {
-        e.preventDefault();
+    const handleSend = (e) => {
+        e === null || e === void 0 ? void 0 : e.stopPropagation();
         const text = messageInput === null || messageInput === void 0 ? void 0 : messageInput.value.trim();
-        if (text) {
-            sendMessage(text);
+        if (text && sessionId) {
+            const payload = {
+                message: text,
+                sessionId: sessionId
+            };
+            sendMessage(payload);
             messageInput.value = '';
         }
-    });
+    };
+    sendButton === null || sendButton === void 0 ? void 0 : sendButton.addEventListener('click', handleSend);
     messageInput === null || messageInput === void 0 ? void 0 : messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            const text = messageInput.value.trim();
-            if (text) {
-                sendMessage(text);
-                messageInput.value = '';
-            }
+            handleSend(e);
         }
     });
 })();

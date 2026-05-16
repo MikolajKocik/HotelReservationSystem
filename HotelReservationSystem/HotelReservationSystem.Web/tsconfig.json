@@ -7,7 +7,7 @@
     "strict": true,
 
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
 
     "target": "es6",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -15,9 +15,7 @@
     "outDir": "wwwroot/js",
     "rootDir": "Scripts",
 
-    "skipLibCheck": true,
-
-    "ignoreDeprecations": "6.0"
+    "skipLibCheck": true
   },
 
   "include": [
