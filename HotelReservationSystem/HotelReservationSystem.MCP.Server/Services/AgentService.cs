@@ -1,6 +1,5 @@
 using HotelReservationSystem.MCP.Server.Tools;
 using HotelReservationSystem.MCP.Server.Utils;
-using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.Text.Json;
 using HotelReservationSystem.MCP.Server.Interfaces;
@@ -10,7 +9,7 @@ namespace HotelReservationSystem.MCP.Server.Services;
 
 public record ChatMessageDto(string Role, string Content);
 
-public class AgentService : IAgentService
+public sealed class AgentService : IAgentService
 {
     private readonly ReceptionTools _receptionTools;
     private readonly ChatClient _chatClient;
@@ -20,21 +19,16 @@ public class AgentService : IAgentService
 
     public AgentService(
         ReceptionTools receptionTools,
-        IConfiguration configuration,
+        ChatClient chatClient,
         IDistributedCache cache
         )
     {
         _receptionTools = receptionTools;
-        _systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
-
-        _tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
-
-        string apiKey = configuration["OpenAI:ApiKey"] 
-            ?? throw new InvalidOperationException("OpenAI Key not found");
-        string model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
-
-        _chatClient = new ChatClient(model, apiKey);
+        _chatClient = chatClient;
         _cache = cache;
+
+        _systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
+        _tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
     }
 
     /// <summary>

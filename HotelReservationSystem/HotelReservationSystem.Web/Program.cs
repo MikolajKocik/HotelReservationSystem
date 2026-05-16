@@ -5,11 +5,14 @@ using HotelReservationSystem.Application.Extensions;
 using HotelReservationSystem.Web.Extensions;
 using HotelReservationSystem.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
-using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 using HotelReservationSystem.MCP.Server;
+using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
+using HotelReservationSystem.Web.Filters;
+using OpenAI.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<PromptInjectionFilter>();
 builder.Services.Configure<StaffSettings>(builder.Configuration.GetSection("StaffSettings"));
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -17,6 +20,12 @@ builder.Services.AddApplicationServices();
 builder.Services.AddWebServices();
 
 builder.Services.AddHttpContextAccessor();
+
+string openAiKey = builder.Configuration["OpenAI:ApiKey"] 
+    ?? throw new InvalidOperationException("OpenAI Key not found in configuration");
+string openAiModel = builder.Configuration["OpenAI:Model"] ?? "gpt-4o-mini";
+builder.Services.AddSingleton(new ChatClient(openAiModel, openAiKey));
+
 builder.Services.AddHotelMcpServer(builder.Configuration);
 
 var app = builder.Build();
@@ -72,4 +81,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+await app.RunAsync();
+
+public partial class Program { }

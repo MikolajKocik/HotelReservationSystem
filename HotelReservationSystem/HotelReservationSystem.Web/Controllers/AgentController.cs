@@ -1,4 +1,5 @@
 using HotelReservationSystem.MCP.Server.Interfaces;
+using HotelReservationSystem.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Web.Controllers;
@@ -15,6 +16,7 @@ public class AgentController : Controller
 
     [HttpPost("Ask")]
     [ValidateAntiForgeryToken]
+    [ServiceFilter(typeof(PromptInjectionFilter))]
     public async Task<IActionResult> Ask([FromBody] AskRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request?.Message))
