@@ -2,7 +2,7 @@ services:
   web:
     image: bookit:latest
     build: 
-      context: .
+      context: ./HotelReservationSystem
       dockerfile: HotelReservationSystem.Web/Dockerfile
     container_name: bookit_web
     ports:
@@ -47,9 +47,15 @@ services:
     ports:
       - "6380:6379"
     networks:
-      - bookit-dev
+      - bookit-tests
     volumes:
       - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   bookit-tests:

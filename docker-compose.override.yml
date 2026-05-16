@@ -1,5 +1,5 @@
 networks:
-  bookit-dev:
+  bookit-prod:
     name: bookit-dev-network
     driver: bridge
 
@@ -11,16 +11,16 @@ services:
   web:
     image: bookit:latest 
     networks:
-      - bookit-dev
+      - bookit-prod
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     networks: 
-      - bookit-dev
+      - bookit-prod
   
   redis:
     image: redis:7-alpine
     networks:
-      - bookit-dev
+      - bookit-prod
 
   
