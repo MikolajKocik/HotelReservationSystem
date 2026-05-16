@@ -22,13 +22,16 @@ public class AgentController : Controller
             return Json(new { answer = "Proszę podać wiadomość." });
         }
 
-        string answer = await this.agentService.ProcessMessageAsync(request.Message);
+        Guid sessionId = request.SessionId;
+
+        string answer = await this.agentService.ProcessMessageAsync(sessionId, request.Message);
 
         return Json(new { answer });
     }
 }
 
-public class AskRequest
+public sealed class AskRequest
 {
-    public string Message { get; set; } = string.Empty;
+    public string Message { get; init; } = string.Empty;
+    public Guid SessionId { get; init; } = Guid.NewGuid();
 }

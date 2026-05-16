@@ -4,11 +4,14 @@ using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.Text.Json;
 using HotelReservationSystem.MCP.Server.Interfaces;
+using System.Collections.Concurrent;
+using OpenAI.Assistants;
 
 namespace HotelReservationSystem.MCP.Server.Services;
 
 public class AgentService : IAgentService
 {
+    private static readonly ConcurrentDictionary<Guid, List<ChatMessage>> _activeSessions = new();
     private readonly ReceptionTools receptionTools;
     private readonly ChatClient chatClient;
     private readonly string systemPrompt;
@@ -27,18 +30,34 @@ public class AgentService : IAgentService
 
         this.chatClient = new ChatClient(model, apiKey);
     }
-
-    public async Task<string> ProcessMessageAsync(string message)
+    
+    /// <summary>
+    /// Process the chat bot answer for user's request
+    /// </summary>
+    /// <param name="sessionId"></param>
+    /// <param name="message"></param>
+    /// <returns>The answer based on user's request</returns>
+    public async Task<string> ProcessMessageAsync(Guid sessionId, string message)
     {
-        List<ChatMessage> messages = new()
+        if (!_activeSessions.TryGetValue(sessionId, out List<ChatMessage>? messages))
         {
-            new SystemChatMessage(this.systemPrompt),
-            new UserChatMessage(message)
-        };
+            messages = new List<ChatMessage>
+            {
+                new SystemChatMessage(this.systemPrompt)
+            };
+            _activeSessions[sessionId] = messages;
+        }
+
+        if (messages.Count > 15)
+        {
+            messages.RemoveRange(1, 2); 
+        }
+
+        messages.Add(new UserChatMessage(message));
 
         ChatCompletionOptions options = new()
         {
-            Temperature = 0.7f,
+            Temperature = 0.2f,
         };
 
         foreach (var tool in this.tools)
@@ -64,14 +83,22 @@ public class AgentService : IAgentService
             }
             else
             {
-                return completion.Content[0].Text
-                    ?? "Przepraszam, nie udało mi się przetworzyć odpowiedzi.";
+                string finalAnswer = completion.Content[0].Text ?? "Przepraszam, błąd przetwarzania.";
+                messages.Add(new AssistantChatMessage(finalAnswer));
+
+                return finalAnswer;
             }
         }
 
         return "Przepraszam, wystąpił problem z przetwarzaniem zapytania. Spróbuj ponownie.";
     }
 
+    /// <summary>
+    /// Executes the available tools for chatbot by reading the props from Json Document
+    /// and implement these parameters to dedicated tool.
+    /// </summary>
+    /// <param name="toolCall"></param>
+    /// <returns>The relevant tool for chat message request</returns>
     private async Task<string> ExecuteToolAsync(ChatToolCall toolCall)
     {
         try
