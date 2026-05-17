@@ -23,4 +23,7 @@ services:
     networks:
       - bookit-prod
 
-  
+  workers:
+    image: bookit-workers:latest
+    networks:
+      - bookit-prod

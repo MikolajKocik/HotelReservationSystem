@@ -1,5 +1,5 @@
 services:
-  web:
+  web-tests:
     image: bookit:latest
     build: 
       context: ./HotelReservationSystem
@@ -11,15 +11,19 @@ services:
       - bookit-tests
     environment:
       - ConnectionStrings__DefaultConnection=${CONN_STRING}
-      - ConnectionStrings__Redis=redis:6379
-      - OpenAI__ApiKey=${OPENAI_API_KEY} 
+      - ConnectionStrings__Redis=redis-tests:6379 
+      - ConnectionStrings__AzureStorage=${QUEUE_PARAMS}
+      - OpenAI__Endpoint=http://ollama-tests:11434/v1 
+      - OpenAI__ModelId=llama3.2:latest 
     depends_on:
-      sqlserver:
+      sqlserver-tests: 
         condition: service_healthy
-      redis:
+      redis-tests: 
         condition: service_healthy
+      azurite-tests: 
+        condition: service_started
 
-  sqlserver:
+  sqlserver-tests:
     image: mcr.microsoft.com/mssql/server:2022-latest
     networks:
       - bookit-tests
@@ -41,7 +45,7 @@ services:
       retries: 5
       start_period: 60s
 
-  redis:
+  redis-tests:
     image: redis:7-alpine
     container_name: bookit_redis
     ports:
@@ -56,6 +60,26 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  ollama-tests:
+    container_name: bookit_ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434" 
+    networks:
+      - bookit-tests
+    volumes:
+      - ~/.ollama:/root/.ollama
+    restart: unless-stopped
+
+  azurite-tests:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: bookit_azurite
+    ports:
+      - "10001:10001" 
+    networks:
+      - bookit-tests
+    command: "azurite --queueHost 0.0.0.0 --queuePort 10001"
 
 networks:
   bookit-tests:

@@ -57,3 +57,21 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  workers:
+    image: bookit-workers:latest
+    build:
+      context: ./HotelReservationSystem
+      dockerfile: HotelReservationSystem.Workers/Dockerfile
+    container_name: bookit_workers
+    networks:
+      - bookit-prod
+    environment:
+      - ConnectionStrings__DefaultConnection=${CONN_STRING}
+      - ConnectionStrings__Redis=redis:6379
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: always
