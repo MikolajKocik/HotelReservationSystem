@@ -43,11 +43,12 @@ public static class DbInitializer
             }
         }
 
-        var managerEmail = configuration["StaffSettings:Manager:Email"] ?? "manager@hotel.pl";
-        var managerPhone = configuration["StaffSettings:Manager:PhoneNumber"] ?? "987654321";
-        var managerFirstName = configuration["StaffSettings:Manager:FirstName"] ?? "Manager";
-        var managerLastName = configuration["StaffSettings:Manager:LastName"] ?? "Hotel";
-        var managerPassword = configuration["StaffSettings:Manager:Password"] ?? "Test123!";
+        // only as demo 
+        var managerEmail = configuration["StaffSettings:Manager:Email"]!;
+        var managerPhone = configuration["StaffSettings:Manager:PhoneNumber"]!;
+        var managerFirstName = configuration["StaffSettings:Manager:FirstName"]!;
+        var managerLastName = configuration["StaffSettings:Manager:LastName"]!;
+        var managerPassword = configuration["StaffSettings:Manager:Password"]!;
 
         Guest? manager = await userManager.FindByEmailAsync(managerEmail);
         if (manager == null)

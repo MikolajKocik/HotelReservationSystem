@@ -190,6 +190,11 @@ public sealed class ReservationRepository : IReservationRepository
         this.cache.Remove("AvailableRooms");
         this.cache.Remove($"Reservations_Room_{reservation.RoomId}");
     }
+
+    public async Task<List<Reservation>> GetExpiredReservations(CancellationToken cancellationToken)
+    => await this.context.Reservations.Where(r => 
+                    r.IsActive() && r.DepartureDate.Date <= DateTime.UtcNow.Date)
+                    .ToListAsync(cancellationToken);
 }
 
 
