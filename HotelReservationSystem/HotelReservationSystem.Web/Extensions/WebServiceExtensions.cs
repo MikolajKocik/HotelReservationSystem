@@ -17,10 +17,7 @@ namespace HotelReservationSystem.Web.Extensions;
 /// </summary>
 public static class WebServiceExtensions
 {
-    /// <summary>
-    /// Registers MVC and related services for the Web layer
-    /// </summary>
-    public static IServiceCollection AddWebServices(this IServiceCollection services)
+    public static IServiceCollection AddWebServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllersWithViews();
         services.AddIdentityServices();
@@ -36,13 +33,11 @@ public static class WebServiceExtensions
 
         services.AddScoped<IFileService, FileService>();
         services.AddHttpClient();
+        services.AddDiscordWebhookClient(configuration);
 
         return services;
     }
 
-    /// <summary>
-    /// Registers Identity services
-    /// </summary>
     private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
         services.AddIdentity<Guest, IdentityRole>()
@@ -72,11 +67,7 @@ public static class WebServiceExtensions
 
         return services;
     }
-
-    /// <summary>
-    /// Configures cookie authentication
-    /// </summary>
-    /// 
+ 
     private static IServiceCollection AddCookieAndSessionAuthentication(this IServiceCollection services)
     {
         services.ConfigureApplicationCookie(options =>
@@ -110,9 +101,6 @@ public static class WebServiceExtensions
         return services;
     }
 
-    /// <summary>
-    /// Registers FluentValidation services
-    /// </summary>
     private static IServiceCollection AddValidationServices(this IServiceCollection services)
     {
         services.AddFluentValidationAutoValidation();
@@ -121,9 +109,6 @@ public static class WebServiceExtensions
         return services;
     }
 
-    /// <summary>
-    /// Registers rate limiting services
-    /// </summary>
     private static IServiceCollection AddRateLimitingServices(this IServiceCollection services)
     {
         services.AddRateLimiter(options =>
@@ -145,6 +130,20 @@ public static class WebServiceExtensions
                 opt.Window = TimeSpan.FromMinutes(1);
                 opt.QueueLimit = 0;
             });
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddDiscordWebhookClient(this IServiceCollection services, IConfiguration cfg)
+    {
+        services.AddHttpClient("DiscordClient", client =>
+        {
+            string? discordUrl = cfg["DiscordWebhook"];
+            if (!string.IsNullOrEmpty(discordUrl))
+            {
+                client.BaseAddress = new Uri(discordUrl);
+            }
         });
 
         return services;

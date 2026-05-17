@@ -50,4 +50,6 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// Gets all guests for lookup purposes
         /// </summary>
         Task<List<Guest>> GetGuestsAsync(CancellationToken cancellationToken = default);
+
+        Task<List<Reservation>> GetExpiredReservations(CancellationToken cancellationToken);
     }

@@ -12,15 +12,6 @@ public static class McpServerConfiguration
 {
     public static IServiceCollection AddHotelMcpServer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient("DiscordClient", client =>
-        {
-            var discordUrl = configuration["StaffSettings:DiscordWebhookUrl"];
-            if (!string.IsNullOrEmpty(discordUrl))
-            {
-                client.BaseAddress = new Uri(discordUrl);
-            }
-        });
-
         services.AddMcpServer(options =>
         {
             options.ServerInfo = new ModelContextProtocol.Protocol.Implementation
