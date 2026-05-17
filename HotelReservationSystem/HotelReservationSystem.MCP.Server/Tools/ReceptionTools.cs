@@ -1,46 +1,37 @@
 ﻿using HotelReservationSystem.Application.CQRS.Abstractions;
 using HotelReservationSystem.Application.CQRS.Reservations.Commands;
+using HotelReservationSystem.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
-using System.Net.Http.Json;
 using System.Security.Claims;
 
 namespace HotelReservationSystem.MCP.Server.Tools;
 
 public sealed class ReceptionTools
 {
-    private readonly ICQRSMediator mediator;
-    private readonly IHttpContextAccessor httpContextAccessor;
-    private readonly HttpClient discordClient;
+    private readonly ICQRSMediator _mediator;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly INotificationQueueService _notificationQueueService;
 
     public ReceptionTools(
         ICQRSMediator mediator,
         IHttpContextAccessor httpContextAccessor,
-        IHttpClientFactory httpClientFactory
-        )
+        INotificationQueueService notificationQueueService) 
     {
-        this.mediator = mediator;
-        this.httpContextAccessor = httpContextAccessor;
-        this.discordClient = httpClientFactory.CreateClient("DiscordClient");
+        _mediator = mediator;
+        _httpContextAccessor = httpContextAccessor;
+        _notificationQueueService = notificationQueueService;
     }
 
     [McpServerTool(Name = "notify_staff")]
     [Description("Wysyła pilne zgłoszenie do personelu hotelowego. Używać tylko w przypadku próśb gości wymagających interwencji (np. brak ręczników, sprzątanie).")]
-    public async Task<string> NotifyStaffAsync(
+    public async Task NotifyStaffAsync(
         [Description("Treść zgłoszenia")] string message,
-        [Description("Kategoria: 'housekeeping', 'reception', 'technical'")] string category)
+        [Description("Kategoria: 'housekeeping', 'reception', 'technical'")] string category,
+        CancellationToken cancellationToken)
     {
-        var payload = new
-        {
-            text = $"[ZGŁOSZENIE] Kategoria: {category.ToUpper()} | Treść: {message}"
-        };
-
-        var response = await this.discordClient.PostAsJsonAsync("", payload);
-
-        return response.IsSuccessStatusCode
-            ? "Zgłoszenie zostało przekazane do personelu"
-            : "Wystąpił błąd komunikacji z systemem powiadomień";
+        await _notificationQueueService.SendStaffNotificationAsync(message, category, cancellationToken);
     }
 
     [McpServerTool(Name = "book_room")]
@@ -51,7 +42,7 @@ public sealed class ReceptionTools
         [Description("ID pokoju")] int roomId,
         [Description("Liczba gości")] int guests)
     {
-        ClaimsPrincipal? user = this.httpContextAccessor.HttpContext?.User;
+        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
         if (user == null || !user.Identity!.IsAuthenticated)
         {
             return "BŁĄD: Użytkownik nie jest zalogowany. Poproś użytkownika o zalogowanie się, aby dokonać rezerwacji.";
@@ -78,7 +69,7 @@ public sealed class ReceptionTools
 
         try
         {
-            var result = await this.mediator.SendAsync(command);
+            var result = await _mediator.SendAsync(command);
             return $"SUKCES: Rezerwacja została utworzona dla {email}. Numer potwierdzenia: {result}";
         }
         catch (Exception ex)
