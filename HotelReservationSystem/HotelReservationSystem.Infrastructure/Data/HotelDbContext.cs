@@ -1,4 +1,5 @@
 ﻿using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Core.Domain.Entities.GuestPref;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public sealed class HotelDbContext : IdentityDbContext<Guest>
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Opinion> Opinions { get; set; }
+    public DbSet<GuestPreference> GuestPreferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -3,6 +3,7 @@ using HotelReservationSystem.Core.Domain.Entities;
 using HotelReservationSystem.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Dapper;
+using HotelReservationSystem.Core.Domain.Entities.GuestPref;
 
 namespace HotelReservationSystem.Infrastructure.Repositories;
 
@@ -88,4 +89,18 @@ public sealed class GuestRepository : IGuestRepository
             .ThenInclude(r => r.Guest)
             .ToListAsync(cancellationToken);
     }
+
+    
+    public async Task AddGuestPreferenceAsync(GuestPreference preference, CancellationToken cancellationToken)
+    {
+        this.context.Add(preference);
+        await this.context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<List<GuestPreference>> GetGuestPreferencesAsync(string email, CancellationToken cancellationToken)
+        => await this.context.GuestPreferences
+            .Where(g => g.Email == email)
+            .GroupBy(g => g.Category)
+            .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault()!)
+            .ToListAsync(cancellationToken);
 }

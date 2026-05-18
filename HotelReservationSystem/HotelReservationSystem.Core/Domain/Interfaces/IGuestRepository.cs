@@ -1,4 +1,5 @@
 ﻿using HotelReservationSystem.Core.Domain.Entities;
+using HotelReservationSystem.Core.Domain.Entities.GuestPref;
 
 namespace HotelReservationSystem.Core.Domain.Interfaces;
 
@@ -41,4 +42,14 @@ public interface IGuestRepository
     /// Gets payment transactions for reporting
     /// </summary>
     Task<List<Payment>> GetTransactions(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Add guest preference to remember guest while chatting
+    /// </summary>
+    Task AddGuestPreferenceAsync(GuestPreference preference, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets the guest preferences for long term user memorizing
+    /// </summary>
+    Task<List<GuestPreference>> GetGuestPreferencesAsync(string email, CancellationToken cancellationToken);
 }
