@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Security.Claims;
 using System.Text;
 using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Guests.Commands;
 using HotelReservationSystem.Application.CQRS.Reservations.Queries;
 using HotelReservationSystem.Application.CQRS.Rooms.Queries;
 using HotelReservationSystem.Application.Dtos.Reservation;
@@ -101,5 +102,26 @@ public sealed class GuestTools
         {
             return $"Wystąpił błąd techniczny podczas pobierania rezerwacji. Poinformuj gościa, aby spróbował ponownie później.";
         }
+    }
+
+    [McpServerTool(Name = "save_guest_preference")]
+    [Description("Zapisuje ważną preferencję lub fakt o gościu w pamięci długoterminowej. Używaj ZAWSZE, gdy gość wspomni o swoich wymaganiach (np. alergie, ulubione piętro, potrzeba faktury na firmę).")]
+    public async Task<string> SavePreferenceAsync(
+        [Description("Kategoria faktu. Dozwolone: 'diet', 'room_preference', 'general'")] string category,
+        [Description("Treść faktu, np. 'Alergia na orzechy', 'Woli miękkie poduszki'")] string value,
+        CancellationToken cancellationToken)
+    {
+        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
+        if (user == null || !user.Identity!.IsAuthenticated)
+        {
+            return "BŁĄD: Gość jest niezalogowany. Nie mogę zapisać preferencji.";
+        }
+
+        string email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.Identity.Name!;
+
+        var command = new SaveGuestPreferenceCommand(email, category, value);
+        await _mediator.SendAsync(command, cancellationToken);
+
+        return "Fakt został pomyślnie zapisany w profilu gościa na przyszłość.";
     }
 }

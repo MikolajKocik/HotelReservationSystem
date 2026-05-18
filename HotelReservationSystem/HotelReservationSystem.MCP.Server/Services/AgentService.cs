@@ -4,6 +4,11 @@ using OpenAI.Chat;
 using System.Text.Json;
 using HotelReservationSystem.MCP.Server.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Guests.Queries;
+using System.Text;
 
 namespace HotelReservationSystem.MCP.Server.Services;
 
@@ -17,18 +22,24 @@ public sealed class AgentService : IAgentService
     private readonly string _systemPrompt;
     private readonly List<ChatTool> _tools;
     private readonly IDistributedCache _cache;
+    private readonly IHttpContextAccessor _httpContext;
+    private readonly ICQRSMediator _mediator;
 
     public AgentService(
         ReceptionTools receptionTools,
         GuestTools guestTools,
         ChatClient chatClient,
-        IDistributedCache cache
+        IDistributedCache cache,
+        IHttpContextAccessor httpContext,
+        ICQRSMediator mediator
         )
     {
         _guestTools = guestTools;
         _receptionTools = receptionTools;
         _chatClient = chatClient;
         _cache = cache;
+        _httpContext = httpContext;
+        _mediator = mediator;
 
         _systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
         _tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
@@ -68,6 +79,12 @@ public sealed class AgentService : IAgentService
                     DateTime.Parse(root.GetProperty("departure").GetString()!),
                     root.GetProperty("guests").GetInt32(),
                     cancellationToken),
+                
+                "save_guest_preference" => await _guestTools.SavePreferenceAsync(
+                    root.GetProperty("category").GetString()!,
+                    root.GetProperty("value").GetString()!,
+                    cancellationToken
+                ),
 
                 "get_my_reservations" => await _guestTools.GetMyReservationsAsync(cancellationToken),
 
@@ -116,8 +133,33 @@ public sealed class AgentService : IAgentService
         }
         else
         {
-            // new session
-            historyDto.Add(new ChatMessageDto("system", _systemPrompt));
+            string personalizedSystemPrompt = _systemPrompt;
+
+            string? email = _httpContext.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                var preferences = await _mediator.SendAsync(new GetGuestPreferenceQuery(email), cancellationToken);       
+
+                if (preferences.Any())
+                {
+                    var memoryBuilder = new StringBuilder();
+                    memoryBuilder.AppendLine("\n--- Pamięć długoterminowa gościa ---");
+                    memoryBuilder.AppendLine(@"Wykorzystaj te informacje, aby spersonalizować obsługę.
+                    Jeśli gość rezerwuje pokój lub zamawia jedzenie, od razu weź pod uwagę te fakty:");
+
+                    foreach (var pref in preferences)
+                    {
+                        memoryBuilder.AppendLine($"- [{pref.Category.ToUpper()}]: {pref.Value}");
+                    }
+                    memoryBuilder.AppendLine("-----------------------------------------");
+
+                    personalizedSystemPrompt += memoryBuilder.ToString();
+                }     
+            }
+
+            historyDto.Add(new ChatMessageDto("system", personalizedSystemPrompt));
+
         }
 
         historyDto.Add(new ChatMessageDto("user", message));
@@ -159,10 +201,19 @@ public sealed class AgentService : IAgentService
             }
         }
 
-        // cutting questions for context window and avoid memory-leak
         if (historyDto.Count > 15)
         {
-            historyDto.RemoveRange(1, 2); 
+            // Skip(0) because its system prompt message
+            var oldMessages = historyDto.Skip(1).Take(8).ToList();
+            
+            string chatLogToSummarize = string.Join("\n", oldMessages.Select(m => $"{m.Role}: {m.Content}"));
+            
+            string summaryPrompt = $"Streszcz w jednym krótkim zdaniu najważniejsze fakty z tej rozmowy, zachowując kontekst ustaleń: \n{chatLogToSummarize}";
+            var summary = await _chatClient.CompleteChatAsync(new[] { new SystemChatMessage(summaryPrompt) });
+            
+            historyDto.RemoveRange(1, 8);
+            
+            historyDto.Insert(1, new ChatMessageDto("system", $"[Streszczenie wcześniejszej części rozmowy]: {summary.Value.Content[0].Text}"));
         }
 
         var cacheOptions = new DistributedCacheEntryOptions
