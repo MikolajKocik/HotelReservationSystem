@@ -2,5 +2,5 @@ namespace HotelReservationSystem.Application.Interfaces;
 
 public interface INotificationQueueService
 {
-    Task SendStaffNotificationAsync(string message, string category, CancellationToken cancellationToken);
+    Task SendStaffNotificationAsync(int roomId, string message, string category, CancellationToken cancellationToken);
 }
