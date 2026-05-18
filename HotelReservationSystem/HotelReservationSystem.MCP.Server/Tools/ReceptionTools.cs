@@ -26,21 +26,31 @@ public sealed class ReceptionTools
 
     [McpServerTool(Name = "notify_staff")]
     [Description("Wysyła pilne zgłoszenie do personelu hotelowego. Używać tylko w przypadku próśb gości wymagających interwencji (np. brak ręczników, sprzątanie).")]
-    public async Task NotifyStaffAsync(
-        [Description("Treść zgłoszenia")] string message,
-        [Description("Kategoria: 'housekeeping', 'reception', 'technical'")] string category,
+    public async Task<string> NotifyStaffAsync(
+        [Description("Numer pokoju gościa. UWAGA: Jeśli gość nie podał numeru pokoju, NIE WYWOŁUJ tego narzędzia. Zamiast tego zapytaj gościa o numer pokoju.")] 
+        int roomId,
+        [Description("Zwięzła treść zgłoszenia (max 2 zdania), np. 'Brak ręczników' lub 'Zepsuta klimatyzacja'.")] 
+        string message,
+        [Description("Kategoria zgłoszenia. DOZWOLONE WARTOŚCI TO TYLKO: 'housekeeping' (sprzątanie, braki), 'reception' (zapytania ogólne), 'technical' (usterki). Nie wolno używać innych wartości!")] 
+        string category,
         CancellationToken cancellationToken)
     {
-        await _notificationQueueService.SendStaffNotificationAsync(message, category, cancellationToken);
+        await _notificationQueueService.SendStaffNotificationAsync(roomId, message, category, cancellationToken);
+        return "Zgłoszenie wysłane, dziękujemy i prosimy o cierpliwość";
     }
 
     [McpServerTool(Name = "book_room")]
-    [Description("Tworzy rezerwację pokoju dla gościa.")]
+    [Description("Tworzy nową rezerwację pokoju dla gościa. Używaj tylko, gdy masz komplet danych i są dostępne pokoje.")]    
     public async Task<string> BookRoomAsync(
-        [Description("Data przyjazdu (YYYY-MM-DD)")] DateTime arrival,
-        [Description("Data wyjazdu (YYYY-MM-DD)")] DateTime departure,
-        [Description("ID pokoju")] int roomId,
-        [Description("Liczba gości")] int guests)
+        [Description("Data przyjazdu w ścisłym formacie YYYY-MM-DD. Jeśli gość podał datę nieprecyzyjnie (np. 'jutro'), oblicz ją. Jeśli gość w ogóle nie podał daty przyjazdu, NIE WYWOŁUJ narzędzia i dopytaj o nią.")] 
+        DateTime arrival,
+        [Description("Data wyjazdu w ścisłym formacie YYYY-MM-DD. Jeśli gość nie podał daty wyjazdu, NIE WYWOŁUJ narzędzia i dopytaj o nią.")] 
+        DateTime departure,
+        [Description("ID pokoju w bazie danych (np. 1, 2, 3). Zobacz ostrzeżenie poniżej.")] 
+        int roomId,
+        [Description("Liczba gości (osób dorosłych i dzieci). Jeśli brak tej informacji, dopytaj.")] 
+        int guests,
+        CancellationToken cancellationToken)
     {
         ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
         if (user == null || !user.Identity!.IsAuthenticated)
@@ -69,7 +79,7 @@ public sealed class ReceptionTools
 
         try
         {
-            var result = await _mediator.SendAsync(command);
+            string result = await _mediator.SendAsync(command, cancellationToken);
             return $"SUKCES: Rezerwacja została utworzona dla {email}. Numer potwierdzenia: {result}";
         }
         catch (Exception ex)

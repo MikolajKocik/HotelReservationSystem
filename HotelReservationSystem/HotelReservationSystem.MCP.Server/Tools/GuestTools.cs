@@ -1,0 +1,105 @@
+using System.ComponentModel;
+using System.Security.Claims;
+using System.Text;
+using HotelReservationSystem.Application.CQRS.Abstractions;
+using HotelReservationSystem.Application.CQRS.Reservations.Queries;
+using HotelReservationSystem.Application.CQRS.Rooms.Queries;
+using HotelReservationSystem.Application.Dtos.Reservation;
+using HotelReservationSystem.Application.Dtos.Room;
+using HotelReservationSystem.Core.Domain.Enums;
+using Microsoft.AspNetCore.Http;
+using ModelContextProtocol.Server;
+
+namespace HotelReservationSystem.MCP.Server.Tools;
+
+public sealed class GuestTools
+{
+    private readonly ICQRSMediator _mediator;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public GuestTools(
+        ICQRSMediator mediator,
+        IHttpContextAccessor httpContextAccessor)
+    {
+        _mediator = mediator;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    [McpServerTool(Name = "search_available_rooms")]
+    [Description("Wyszukuje dostępne pokoje w hotelu w podanym terminie. Użyj tego narzędzia ZAWSZE przed próbą rezerwacji (book_room), aby uzyskać ID dostępnego pokoju i przedstawić ofertę gościowi.")]
+    public async Task<string> SearchAvailableRoomsAsync(
+        [Description("Data przyjazdu (YYYY-MM-DD)")] DateTime arrival,
+        [Description("Data wyjazdu (YYYY-MM-DD)")] DateTime departure,
+        [Description("Dla ilu osób ma być pokój?")] int guests,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAvailableRoomsQuery(arrival, departure, guests);
+        IQueryable<RoomDto> availableRooms = await _mediator.SendAsync(query, cancellationToken);
+
+        if (!availableRooms.Any())
+        {
+            return "Brak dostępnych pokoi w tym terminie. Poinformuj o tym gościa i zaproponuj zmianę daty.";
+        }
+
+        var responseBuilder = new StringBuilder("Znaleziono następujące wolne pokoje:\n");
+        foreach (var room in availableRooms)
+        {
+            responseBuilder.AppendLine($"- ID: {room.Id} | Liczba gości: {(room.Type.Equals(RoomType.Single) ? 2 : 4)} | Cena za noc: {room.PricePerNight} PLN");
+        }
+
+        return responseBuilder.ToString();
+    }
+
+    [McpServerTool(Name = "get_my_reservations")]
+    [Description("Pobiera listę aktualnych rezerwacji dla gościa, z którym rozmawiasz. Używaj tego ZAWSZE, gdy gość pyta o szczegóły swojego pobytu, daty, przydzielony pokój lub status płatności.")]
+    public async Task<string> GetMyReservationsAsync(CancellationToken cancellationToken)
+    {
+        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
+        
+        if (user == null || !user.Identity!.IsAuthenticated)
+        {
+            return "BŁĄD: Użytkownik nie jest zalogowany. Poinformuj go, że musi się zalogować, aby przeglądać swoje rezerwacje.";
+        }
+
+        string email = user.FindFirst(ClaimTypes.Email)?.Value ?? user.Identity.Name!;
+
+        try
+        {
+            var query = new GetReservationsByGuestEmailQuery(email);
+            
+            IEnumerable<ReservationDto> reservations = await _mediator.SendAsync(query, cancellationToken);
+
+            if (!reservations.Any())
+            {
+                return "System: Ten gość nie ma obecnie żadnych zapisanych rezerwacji.";
+            }
+
+            var responseBuilder = new StringBuilder("System: Znaleziono następujące rezerwacje tego gościa:\n");
+            
+            foreach (var res in reservations)
+            {
+                responseBuilder.AppendLine($"- ID Rezerwacji: {res.Id}");
+                 
+                if (res.RoomNumber != null && !res.RoomType.Equals(default))
+                {
+                    responseBuilder.AppendLine($" Numer pokoju: {res.RoomNumber} (Typ: {res.RoomType})");
+                }
+                
+                responseBuilder.AppendLine($"  Przyjazd: {res.ArrivalDate:yyyy-MM-dd}");
+                responseBuilder.AppendLine($"  Wyjazd: {res.DepartureDate:yyyy-MM-dd}");
+                
+                if (res.PaymentStatus != null)
+                {
+                    responseBuilder.AppendLine($"  Status płatności: {res.PaymentStatus}");
+                }
+                responseBuilder.AppendLine("---");
+            }
+
+            return responseBuilder.ToString();
+        }
+        catch (Exception)
+        {
+            return $"Wystąpił błąd techniczny podczas pobierania rezerwacji. Poinformuj gościa, aby spróbował ponownie później.";
+        }
+    }
+}

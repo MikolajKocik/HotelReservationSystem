@@ -27,6 +27,9 @@ public static class McpServerUtils
 
             foreach (var param in method.GetParameters())
             {
+                if (param.ParameterType == typeof(CancellationToken)) 
+                    continue;
+
                 var paramDescAttr = param.GetCustomAttribute<DescriptionAttribute>();
                 string paramDesc = paramDescAttr?.Description ?? "";
 

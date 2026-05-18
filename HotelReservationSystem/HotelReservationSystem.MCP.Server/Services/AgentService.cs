@@ -12,6 +12,7 @@ public record ChatMessageDto(string Role, string Content);
 public sealed class AgentService : IAgentService
 {
     private readonly ReceptionTools _receptionTools;
+    private readonly GuestTools _guestTools;
     private readonly ChatClient _chatClient;
     private readonly string _systemPrompt;
     private readonly List<ChatTool> _tools;
@@ -19,16 +20,19 @@ public sealed class AgentService : IAgentService
 
     public AgentService(
         ReceptionTools receptionTools,
+        GuestTools guestTools,
         ChatClient chatClient,
         IDistributedCache cache
         )
     {
+        _guestTools = guestTools;
         _receptionTools = receptionTools;
         _chatClient = chatClient;
         _cache = cache;
 
         _systemPrompt = McpServerUtils.LoadPromptFromYaml("AuroraBase.yaml");
         _tools = McpServerUtils.GenerateToolsFrom<ReceptionTools>();
+        _tools.AddRange(McpServerUtils.GenerateToolsFrom<GuestTools>());
     }
 
     /// <summary>
@@ -47,14 +51,25 @@ public sealed class AgentService : IAgentService
             return toolCall.FunctionName switch
             {
                 "notify_staff" => await _receptionTools.NotifyStaffAsync(
+                    root.GetProperty("roomId").GetInt32(),
                     root.GetProperty("message").GetString()!,
-                    root.GetProperty("category").GetString()!),
+                    root.GetProperty("category").GetString()!,
+                    cancellationToken),
 
                 "book_room" => await _receptionTools.BookRoomAsync(
                     DateTime.Parse(root.GetProperty("arrival").GetString()!),
                     DateTime.Parse(root.GetProperty("departure").GetString()!),
                     root.GetProperty("roomId").GetInt32(),
-                    root.GetProperty("guests").GetInt32()),
+                    root.GetProperty("guests").GetInt32(),
+                    cancellationToken),
+
+                "search_available_rooms" => await _guestTools.SearchAvailableRoomsAsync(
+                    DateTime.Parse(root.GetProperty("arrival").GetString()!),
+                    DateTime.Parse(root.GetProperty("departure").GetString()!),
+                    root.GetProperty("guests").GetInt32(),
+                    cancellationToken),
+
+                "get_my_reservations" => await _guestTools.GetMyReservationsAsync(cancellationToken),
 
                 _ => $"Nieznane narzędzie: {toolCall.FunctionName}"
             };
