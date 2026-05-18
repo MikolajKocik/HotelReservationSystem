@@ -8,5 +8,6 @@ namespace HotelReservationSystem.Application.CQRS.Rooms.Queries;
 /// </summary>
 public record GetAvailableRoomsQuery(
     DateTime FromDate,
-    DateTime ToDate
+    DateTime ToDate,
+    int Guests
 ) : IQuery<IQueryable<RoomDto>>;

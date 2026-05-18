@@ -19,7 +19,7 @@ namespace HotelReservationSystem.Core.Domain.Interfaces;
         /// <summary>
         /// Gets available rooms for a date range
         /// </summary>
-        Task<IQueryable<Room>> GetAvailableRoomsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
+        Task<IQueryable<Room>> GetAvailableRoomsAsync(DateTime from, DateTime to, int guests, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Gets rooms by type with availability status for date range
