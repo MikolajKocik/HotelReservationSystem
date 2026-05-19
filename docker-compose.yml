@@ -6,18 +6,22 @@ services:
       dockerfile: HotelReservationSystem.Web/Dockerfile
     container_name: bookit_web
     ports:
-      - "8080:80"
+      - "8080:8080"
     networks:
       - bookit-prod
     environment:
-      - ConnectionStrings__DefaultConnection=${CONN_STRING}
+      - ConnectionStrings__Default=${CONN_STRING}
       - ConnectionStrings__Redis=redis:6379
-      - OpenAI__ApiKey=${OPENAI_API_KEY} 
+      - ConnectionStrings__AzureStorage=${AZURITE_CONN_STRING}
+      - OpenAI__ApiKey=${OPENAI_API_KEY}
+      - ASPNETCORE_ENVIRONMENT=Development 
     depends_on:
       sqlserver:
         condition: service_healthy
       redis:
         condition: service_healthy
+      azurite:
+        condition: service_started
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -36,10 +40,10 @@ services:
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P $${SQL_PASSWORD} -Q \"SELECT 1\" > /dev/null 2>&1 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
@@ -64,6 +68,7 @@ services:
       context: ./HotelReservationSystem
       dockerfile: HotelReservationSystem.Workers/Dockerfile
     container_name: bookit_workers
+    profiles: ["background"]
     networks:
       - bookit-prod
     environment:
@@ -75,3 +80,12 @@ services:
       redis:
         condition: service_healthy
     restart: always
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: bookit_azurite
+    ports:
+      - "10001:10001"
+    networks:
+      - bookit-prod
+    command: "azurite --queueHost 0.0.0.0 --queuePort 10001"

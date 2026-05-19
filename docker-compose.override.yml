@@ -1,6 +1,6 @@
 networks:
   bookit-prod:
-    name: bookit-dev-network
+    name: bookit-network
     driver: bridge
 
 volumes:

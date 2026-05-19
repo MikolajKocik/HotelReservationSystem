@@ -10,3 +10,6 @@
 
 # Git
 .git/
+
+# JS
+**/node_modules/
