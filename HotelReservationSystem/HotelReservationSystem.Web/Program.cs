@@ -9,8 +9,20 @@ using HotelReservationSystem.MCP.Server;
 using HotelReservationSystem.Web.Middleware.MiddlewareExtensions;
 using HotelReservationSystem.Web.Filters;
 using OpenAI.Chat;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+var dpBuilder = builder.Services.AddDataProtection()
+    .SetApplicationName("HotelAuroraApp");
+
+var keysPath = builder.Configuration["DataProtectionKeysPath"];
+
+if (!string.IsNullOrEmpty(keysPath))
+{
+    dpBuilder.PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+}
 
 builder.Services.AddScoped<PromptInjectionFilter>();
 builder.Services.Configure<StaffSettings>(builder.Configuration.GetSection("StaffSettings"));

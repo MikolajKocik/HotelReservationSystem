@@ -34,6 +34,10 @@ public sealed partial class Guest
 
     private static bool IsValidPhoneNumber(string phoneNumber)
     {
-        return phoneNumber.All(char.IsDigit) && phoneNumber.Length >= 9 && phoneNumber.Length <= 15;
+        var numberToCheck = phoneNumber.StartsWith('+') ? phoneNumber[1..] : phoneNumber;
+
+        return numberToCheck.All(char.IsDigit) 
+            && numberToCheck.Length >= 9 
+            && numberToCheck.Length <= 15;
     }
 }
