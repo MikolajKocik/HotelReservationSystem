@@ -15,6 +15,8 @@ services:
       - ConnectionStrings__AzureStorage=${AZURITE_CONN_STRING}
       - OpenAI__ApiKey=${OPENAI_API_KEY}
       - ASPNETCORE_ENVIRONMENT=Development 
+    volumes:
+      - data-protection-keys:/home/app/.aspnet/DataProtection-Keys
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -88,4 +90,4 @@ services:
       - "10001:10001"
     networks:
       - bookit-prod
-    command: "azurite --queueHost 0.0.0.0 --queuePort 10001"
+    command: "azurite --queueHost 0.0.0.0 --queuePort 10001 --skipApiVersionCheck"

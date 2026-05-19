@@ -4,6 +4,7 @@ networks:
     driver: bridge
 
 volumes:
+  data-protection-keys:
   sqlserver_data:
   redis_data:
 
