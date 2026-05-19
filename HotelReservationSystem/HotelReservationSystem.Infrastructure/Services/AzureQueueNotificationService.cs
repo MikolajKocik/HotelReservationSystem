@@ -14,11 +14,11 @@ public sealed class AzureQueueNotificationService : INotificationQueueService
         _queueClient = queueClient;
     }
 
-    public async Task SendStaffNotificationAsync(string message, string category, CancellationToken cancellationToken)
+    public async Task SendStaffNotificationAsync(int roomId, string message, string category, CancellationToken cancellationToken)
     {
         var payload = new
         {
-            text = $"[ZGŁOSZENIE] Kategoria: {category.ToUpper()} | Treść: {message}"
+            text = $"[ZGŁOSZENIE] Kategoria: {category.ToUpper()} | Treść: {message} | Numer pokokju: {roomId}"
         };
 
         string jsonMsg = JsonSerializer.Serialize(payload);

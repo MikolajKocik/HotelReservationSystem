@@ -17,7 +17,7 @@ builder.Services.Configure<StaffSettings>(builder.Configuration.GetSection("Staf
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddWebServices();
+builder.Services.AddWebServices(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
 
