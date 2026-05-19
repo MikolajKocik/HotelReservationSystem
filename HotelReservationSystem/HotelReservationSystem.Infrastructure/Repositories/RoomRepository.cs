@@ -42,7 +42,10 @@ public sealed class RoomRepository : IRoomRepository
     public async Task<IQueryable<Room>> GetAvailableRoomsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
     => await Task.FromResult(this.context.Rooms
         .AsNoTracking()
-        .Where(r => r.IsAvailable && r.CanBeReserved(from, to)));
+        .Where(r => r.IsAvailable && !r.Reservations.Any(res =>
+            (res.Status == ReservationStatus.Confirmed || res.Status == ReservationStatus.Pending) &&
+            from < res.DepartureDate &&
+            to > res.ArrivalDate)));
 
     /// <summary>
     /// Gets rooms by type with availability status for date range
