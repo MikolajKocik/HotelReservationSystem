@@ -21,8 +21,10 @@ public class CQRSMediator : ICQRSMediator
         object handler = serviceProvider.GetRequiredService(handlerType);
         
         MethodInfo? method = handlerType.GetMethod("HandleAsync");
-        TResult result = await (Task<TResult>)method!.Invoke(handler, new object[] { query, cancellationToken })!;
-        
+        var task = method!.Invoke(handler, new object[] { query, cancellationToken }) as Task<TResult>
+            ?? throw new InvalidOperationException("Returned object is not a awaited Task<TResult>.");
+
+        TResult result = await task;
         return result;
     }
 
@@ -32,7 +34,10 @@ public class CQRSMediator : ICQRSMediator
         object handler = serviceProvider.GetRequiredService(handlerType);
         
         MethodInfo? method = handlerType.GetMethod("HandleAsync");
-        await (Task)method!.Invoke(handler, new object[] { command, cancellationToken })!;
+        var task = method!.Invoke(handler, new object[] { command, cancellationToken }) as Task ??
+            throw new InvalidOperationException("Returned object is not a awaited Task.");
+
+        await task;
     }
 
     public async Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
@@ -41,8 +46,10 @@ public class CQRSMediator : ICQRSMediator
         object handler = serviceProvider.GetRequiredService(handlerType);
         
         MethodInfo? method = handlerType.GetMethod("HandleAsync");
-        TResult result = await (Task<TResult>)method!.Invoke(handler, new object[] { command, cancellationToken })!;
+        var task = method!.Invoke(handler, new object[] { command, cancellationToken }) as Task<TResult>
+            ?? throw new InvalidOperationException("Returned object is not a awaited Task<TResult>.");
         
+        TResult result = await task;
         return result;
     }
 }
