@@ -34,7 +34,7 @@ public sealed class GuestTools
         [Description("Dla ilu osób ma być pokój?")] int guests,
         CancellationToken cancellationToken)
     {
-        if (guests < 0) return "Proszę podać liczbę gości.";
+        if (guests < 0 || guests.Equals(default) || guests == 0) return "Proszę podać liczbę gości.";
 
         var query = new GetAvailableRoomsQuery(arrival, departure);
         IQueryable<RoomDto> availableRooms = await _mediator.SendAsync(query, cancellationToken);
