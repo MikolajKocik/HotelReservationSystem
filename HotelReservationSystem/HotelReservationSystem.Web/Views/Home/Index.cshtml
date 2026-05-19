@@ -1,4 +1,4 @@
-﻿@model HomeViewModel
+@model HomeViewModel
 
 <section class="bg-light">
     <div id="up-wrapper" class="container d-flex flex-column align-items-center text-center py-5">
@@ -29,32 +29,44 @@
                     </button>
                 </div>
 
-                <div id="agent-container" class="d-flex flex-column rounded hidden">
-                    @Html.AntiForgeryToken()
-                    <div class="agent-header d-flex flex-row justify-content-between align-items-center">
-                        <p>Agent Aurora</p>
-                        <button class="btn">&#10005</button>
+                <div id="agent-container" class="position-fixed bg-white border shadow-lg rounded-3 overflow-hidden d-flex flex-column d-none" style="z-index: 9999;">                    @Html.AntiForgeryToken()
+                    <div class="agent-header d-flex align-items-center justify-content-between text-white p-3 w-100">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="position-relative">
+                                <div class="avatar d-flex align-items-center justify-content-center bg-white bg-opacity-25 rounded-circle fw-bold text-white">A</div>
+                                <span class="status-dot position-absolute rounded-circle bg-success border border-white"></span>
+                            </div>
+                            <div class="text-start lh-sm">
+                                <h6 class="m-0 fw-bold" style="font-size: 0.95rem;">Agent Aurora</h6>
+                                <small class="text-white-50" style="font-size: 0.75rem;">Online</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white btn-close-chat" aria-label="Close"></button>
                     </div>
-                    <div class="agent-body d-flex flex-column flex-grow-1">
-                        <div class="text-messages-list text-center p-1 rounded flex-grow-1">
+                    <div class="d-flex flex-column flex-grow-1 overflow-hidden bg-light">
+                        <div class="text-messages-list overflow-y-auto flex-grow-1 p-3 d-flex flex-column gap-2">
                             @foreach (var msg in Model.Messages)
                             {
-                                <div class="text-message p-2 mb-2 rounded @(msg.IsUser ? "ms-auto bg-primary text-white" : "me-auto")">
+                                <div class="text-message p-2 px-3 shadow-sm @(msg.IsUser ? "user-message align-self-end text-white bg-primary" : "bot-message align-self-start bg-white text-dark border")">
                                     @msg.Content
                                 </div>
                             }
                         </div>
-                        <div class="send-message d-flex d-row justify-content-center gap-2">
-                            <div class="text-wrapper rounded-pill">
-                                <textarea type="text" rows="2" placeholder="Zadaj pytanie..."></textarea>
+                        <div id="chat-typing-indicator" class="chat-typing-indicator px-3 py-2 bg-light text-muted d-flex align-items-center gap-1 d-none" style="font-size: 0.8rem;">
+                            <span>Aurora pisze</span>
+                            <span class="typing-dot">.</span>
+                            <span class="typing-dot">.</span>
+                            <span class="typing-dot">.</span>
+                        </div>
+                        <div class="bg-white border-top p-2 d-flex align-items-center gap-2">
+                            <div class="flex-grow-1">
+                                <textarea class="chat-input form-control rounded-pill px-3 py-1 border" rows="1" placeholder="Zadaj pytanie..." style="resize: none; font-size: 0.9rem;"></textarea>
                             </div>
-                            <div class="btn-message-wrapper">
-                                <a asp-controller="Agent" asp-action="Ask" id="send-btn" class="btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                                        <path d="M322.5 351.7L523.4 150.9L391 520.3L322.5 351.7zM489.4 117L288.6 317.8L120 249.3L489.4 117zM70.1 280.8L275.9 364.4L359.5 570.2C364.8 583.3 377.6 591.9 391.8 591.9C406.5 591.9 419.6 582.7 424.6 568.8L602.6 72C606.1 62.2 603.6 51.4 596.3 44C589 36.6 578.1 34.2 568.3 37.7L71.4 215.7C57.5 220.7 48.3 233.8 48.3 248.5C48.3 262.7 56.9 275.5 70 280.8z" />
-                                    </svg>
-                                </a>
-                            </div>
+                            <button type="button" id="send-btn" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 2.25rem; height: 2.25rem; min-width: 2.25rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 1.1rem; height: 1.1rem; fill: white;">
+                                    <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L411.8 114.1c4.5-5 4.5-12.5-.1-17.6s-12.5-4.5-17.6 .1L135.6 350.6c-9.6 10.6-25.4 14.9-39.4 10.7L18.7 337.8c-10.4-3.1-18-11.8-19.5-22.6s4-21.2 14-26.2l448-224C471.5-1 488-1.5 498.1 5.6z"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>                   
                 </div>
@@ -108,41 +120,57 @@
         <h3 class="mb-4">Opinie naszych klientów</h3>
         <hr class="mx-auto w-25 border-top border-3 mb-5" style="border-color: #23405c !important;" />
         
-        <div id="reviews-container" class="row g-4 justify-content-center">
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="review-item card h-100 border-0 shadow-sm rounded-3">
-                    <div class="rating-review-section card-header d-flex align-items-center justify-content-between border-0">
-                        <div class="rating-review">
-                            <span class="rating-stars text-warning">☆ ☆ ☆ ☆ ☆</span>
+        <div id="opinionsCarousel" class="carousel slide" data-bs-ride="carousel" style="max-width: 600px; margin: 0 auto;">
+            <!-- Indicators -->
+            <div class="carousel-indicators mb-0" id="carousel-indicators" style="position: relative; bottom: -20px; z-index: 15;">
+                <!-- Dynamically loaded -->
+            </div>
+            
+            <!-- Slides -->
+            <div class="carousel-inner" id="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="review-item card h-100 border-0 shadow-sm rounded-3">
+                        <div class="rating-review-section card-header d-flex align-items-center justify-content-between border-0">
+                            <div class="rating-review">
+                                <span class="rating-stars text-warning">☆ ☆ ☆ ☆ ☆</span>
+                            </div>
+                            <div class="rating-review-icon rounded-circle bg-white d-flex align-items-center justify-content-center shadow-sm">
+                                <svg width="24" height="24" viewBox="0 0 640 640">
+                                    <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="rating-review-icon rounded-circle bg-white d-flex align-items-center justify-content-center shadow-sm">
-                            <svg width="24" height="24" viewBox="0 0 640 640">
-                                <path d="M240 192C240 147.8 275.8 112 320 112C364.2 112 400 147.8 400 192C400 236.2 364.2 272 320 272C275.8 272 240 236.2 240 192zM448 192C448 121.3 390.7 64 320 64C249.3 64 192 121.3 192 192C192 262.7 249.3 320 320 320C390.7 320 448 262.7 448 192zM144 544C144 473.3 201.3 416 272 416L368 416C438.7 416 496 473.3 496 544L496 552C496 565.3 506.7 576 520 576C533.3 576 544 565.3 544 552L544 544C544 446.8 465.2 368 368 368L272 368C174.8 368 96 446.8 96 544L96 552C96 565.3 106.7 576 120 576C133.3 576 144 565.3 144 552L144 544z"/>
-                            </svg>
+                        <div class="card-body bg-light text-start p-4">
+                            <p class="review-text m-0 text-dark">Ładowanie opinii...</p>
                         </div>
-                    </div>
-                    <div class="card-body bg-light text-start p-4">
-                        <p class="review-text m-0 text-dark">Brak opinii</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#opinionsCarousel" data-bs-slide="prev" style="width: 5%; left: -40px;">
+                <span class="carousel-control-prev-icon bg-secondary rounded-circle" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#opinionsCarousel" data-bs-slide="next" style="width: 5%; right: -40px;">
+                <span class="carousel-control-next-icon bg-secondary rounded-circle" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
     </div>
 
-    <div id="scroll-up-button" class="btn btn-white shadow-lg rounded-circle border-2 border-dark position-fixed d-flex align-items-center justify-content-center">
-        <svg width="24" height="24" viewBox="0 0 640 640">
-            <path d="M342.6 105.4C330.1 92.9 309.8 92.9 297.3 105.4L137.3 265.4C124.8 277.9 124.8 298.2 137.3 310.7C149.8 323.2 170.1 323.2 182.6 310.7L320 173.3L457.4 310.6C469.9 323.1 490.2 323.1 502.7 310.6C515.2 298.1 515.2 277.8 502.7 265.3L342.7 105.3zM502.6 457.4L342.6 297.4C330.1 284.9 309.8 284.9 297.3 297.4L137.3 457.4C124.8 469.9 124.8 490.2 137.3 502.7C149.8 515.2 170.1 515.2 182.6 502.7L320 365.3L457.4 502.6C469.9 515.1 490.2 515.1 502.7 502.6C515.2 490.1 515.2 469.8 502.7 457.3z" />
-        </svg>
-    </div>
-
-    <nav id="bottom-navigation" class="container mt-5" aria-label="Opinions navigation">
-        <div class="hstack gap-3 justify-content-center">
-            <button id="bottom-nav-left" type="button" class="btn border-0 fs-2" aria-label="Previous reviews">‹</button>
-            <div id="bottom-nav-dots" class="bottom-nav-dots hstack gap-2 bg-white px-3 py-2 rounded-pill shadow-sm">
-                </div>
-            <button id="bottom-nav-right" type="button" class="btn border-0 fs-2" aria-label="Next reviews">›</button>
+    <div class="d-flex flex-column p">
+        <div id="agent-button" class="btn btn-white shadow-lg rounded-circle border-2 border-dark position-fixed d-flex align-items-center justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 640 640" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M14 2C14 2.74028 13.5978 3.38663 13 3.73244V4H20C21.6569 4 23 5.34315 23 7V19C23 20.6569 21.6569 22 20 22H4C2.34315 22 1 20.6569 1 19V7C1 5.34315 2.34315 4 4 4H11V3.73244C10.4022 3.38663 10 2.74028 10 2C10 0.895431 10.8954 0 12 0C13.1046 0 14 0.895431 14 2ZM4 6H11H13H20C20.5523 6 21 6.44772 21 7V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V7C3 6.44772 3.44772 6 4 6ZM15 11.5C15 10.6716 15.6716 10 16.5 10C17.3284 10 18 10.6716 18 11.5C18 12.3284 17.3284 13 16.5 13C15.6716 13 15 12.3284 15 11.5ZM16.5 8C14.567 8 13 9.567 13 11.5C13 13.433 14.567 15 16.5 15C18.433 15 20 13.433 20 11.5C20 9.567 18.433 8 16.5 8ZM7.5 10C6.67157 10 6 10.6716 6 11.5C6 12.3284 6.67157 13 7.5 13C8.32843 13 9 12.3284 9 11.5C9 10.6716 8.32843 10 7.5 10ZM4 11.5C4 9.567 5.567 8 7.5 8C9.433 8 11 9.567 11 11.5C11 13.433 9.433 15 7.5 15C5.567 15 4 13.433 4 11.5ZM10.8944 16.5528C10.6474 16.0588 10.0468 15.8586 9.55279 16.1056C9.05881 16.3526 8.85858 16.9532 9.10557 17.4472C9.68052 18.5971 10.9822 19 12 19C13.0178 19 14.3195 18.5971 14.8944 17.4472C15.1414 16.9532 14.9412 16.3526 14.4472 16.1056C13.9532 15.8586 13.3526 16.0588 13.1056 16.5528C13.0139 16.7362 12.6488 17 12 17C11.3512 17 10.9861 16.7362 10.8944 16.5528Z" fill="#000000"/>
+            </svg>
         </div>
-    </nav>
+        <div id="scroll-up-button" class="btn btn-white shadow-lg rounded-circle border-2 border-dark position-fixed d-flex align-items-center justify-content-center">
+            <svg width="24" height="24" viewBox="0 0 640 640">
+                <path d="M342.6 105.4C330.1 92.9 309.8 92.9 297.3 105.4L137.3 265.4C124.8 277.9 124.8 298.2 137.3 310.7C149.8 323.2 170.1 323.2 182.6 310.7L320 173.3L457.4 310.6C469.9 323.1 490.2 323.1 502.7 310.6C515.2 298.1 515.2 277.8 502.7 265.3L342.7 105.3zM502.6 457.4L342.6 297.4C330.1 284.9 309.8 284.9 297.3 297.4L137.3 457.4C124.8 469.9 124.8 490.2 137.3 502.7C149.8 515.2 170.1 515.2 182.6 502.7L320 365.3L457.4 502.6C469.9 515.1 490.2 515.1 502.7 502.6C515.2 490.1 515.2 469.8 502.7 457.3z" />
+            </svg>
+        </div>
+    </div>
 </section>
 
 @section Scripts{
@@ -151,6 +179,6 @@
     <script src="~/js/Home/availRoomsBtn.js"></script>
     <script src="~/js/Home/scrollBtn.js"></script>
     <script src="~/js/Home/opinions.js"></script>
-    <script src="~/js/Home/reviews.js"></script>
     <script src="~/js/Home/agentChat.js"></script>
+    <script src="~/js/Layout/datePicker.js"></script>
 }
