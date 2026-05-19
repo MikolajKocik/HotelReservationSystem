@@ -38,7 +38,7 @@ public sealed class GenerateReportQueryHandler : IQueryHandler<GenerateReportQue
         int canceledReservations = reservations.Count(r => r.Status == ReservationStatus.Cancelled);
         
         List<Payment> allPayments = await this.paymentRepository.GetAllAsync(cancellationToken);
-        // Sumuj płatności - zarówno Paid jak i inne zakończone sukcesem
+        
         decimal totalPayments = allPayments
             .Where(p => p.Status == PaymentStatus.Paid || p.Status == PaymentStatus.Pending)
             .Sum(p => p.Amount);

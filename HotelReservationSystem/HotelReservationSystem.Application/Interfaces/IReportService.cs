@@ -4,5 +4,5 @@ namespace HotelReservationSystem.Application.Interfaces;
 
 public interface IReportService
 {
-    Task<ReportDto> GenerateReportAsync(DateTime from, DateTime to);
+    Task<ReportDto> GenerateReportAsync(DateTime from, DateTime to, CancellationToken cancellationToken);
 }

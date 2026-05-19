@@ -34,18 +34,24 @@ public sealed class GuestTools
         [Description("Dla ilu osób ma być pokój?")] int guests,
         CancellationToken cancellationToken)
     {
-        var query = new GetAvailableRoomsQuery(arrival, departure, guests);
+        if (guests < 0) return "Proszę podać liczbę gości.";
+
+        var query = new GetAvailableRoomsQuery(arrival, departure);
         IQueryable<RoomDto> availableRooms = await _mediator.SendAsync(query, cancellationToken);
 
         if (!availableRooms.Any())
         {
             return "Brak dostępnych pokoi w tym terminie. Poinformuj o tym gościa i zaproponuj zmianę daty.";
         }
-
+        
         var responseBuilder = new StringBuilder("Znaleziono następujące wolne pokoje:\n");
+
         foreach (var room in availableRooms)
         {
-            responseBuilder.AppendLine($"- ID: {room.Id} | Liczba gości: {(room.Type.Equals(RoomType.Single) ? 2 : 4)} | Cena za noc: {room.PricePerNight} PLN");
+            responseBuilder.AppendLine(
+                @$"- ID: {room.Id} | 
+                Typ pokoju: {(guests > 2 ? RoomType.Double : RoomType.Single)} | 
+                Cena za noc: {room.PricePerNight} PLN");
         }
 
         return responseBuilder.ToString();

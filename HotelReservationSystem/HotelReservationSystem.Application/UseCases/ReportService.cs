@@ -17,12 +17,12 @@ public sealed class ReportService : IReportService
         this.roomRepository = roomRepository;
     }
 
-    public async Task<ReportDto> GenerateReportAsync(DateTime from, DateTime to)
+    public async Task<ReportDto> GenerateReportAsync(DateTime from, DateTime to, CancellationToken cancellationToken)
     {
-        var reservations = await this.reservationRepository.GetByDateRangeAsync(from, to);
+        var reservations = await this.reservationRepository.GetByDateRangeAsync(from, to, cancellationToken);
 
-        var availableRooms = await this.roomRepository.GetAvailableRoomsAsync(from, to);
-        int availableRoomsCount = await availableRooms.CountAsync();
+        var availableRooms = await this.roomRepository.GetAvailableRoomsAsync(from, to, cancellationToken);
+        int availableRoomsCount = await availableRooms.CountAsync(cancellationToken);
 
         return new ReportDto
         {
